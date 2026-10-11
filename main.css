@@ -1,0 +1,150 @@
+﻿:root {
+            --ink: #0c1a2e;          /* основний фон */
+            --ink-raised: #12243d;   /* панелі */
+            --ink-line: #233d5e;     /* лінії */
+            --paper: #e7edf4;        /* текст */
+            --muted: #8ea3bd;        /* другорядний текст */
+            --gold: #d6ad52;         /* акцент */
+ 
+            --bs-body-bg: var(--ink);
+            --bs-body-color: var(--paper);
+            --bs-border-color: var(--ink-line);
+            --bs-link-color-rgb: 214, 173, 82;
+            --bs-link-hover-color-rgb: 236, 200, 120;
+            --bs-body-font-family: "Alegreya Sans", "Segoe UI", Roboto, Arial, sans-serif;
+        }
+ 
+        body {
+            background: var(--ink);
+            color: var(--paper);
+            font-size: 1.0625rem;
+        }
+ 
+        h1, h2, h3, .navbar-brand {
+            font-family: "Alegreya", Georgia, "Times New Roman", serif;
+        }
+ 
+        /* ---------- Шапка ---------- */
+        .site-header {
+            background: var(--ink-raised);
+            border-bottom: 1px solid var(--ink-line);
+        }
+        .site-header .navbar-brand {
+            color: var(--paper);
+            font-size: 1.35rem;
+            white-space: normal;
+        }
+        .site-header .navbar-brand:hover { color: var(--gold); }
+ 
+        .topics-toggle {
+            color: var(--paper);
+            border: 1px solid var(--ink-line);
+            background: transparent;
+        }
+        .topics-toggle:hover,
+        .topics-toggle:focus-visible {
+            color: var(--ink);
+            background: var(--gold);
+            border-color: var(--gold);
+        }
+ 
+        /* ---------- Бічна панель з темами ---------- */
+        .topics {
+            --bs-offcanvas-bg: var(--ink-raised);
+            --bs-offcanvas-color: var(--paper);
+            --bs-offcanvas-width: 300px;
+            border-right: 1px solid var(--ink-line);
+        }
+ 
+        @media (min-width: 992px) {
+            .topics {
+                width: 290px;
+                flex-shrink: 0;
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                background: var(--ink-raised);
+            }
+            .topics .offcanvas-body {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+ 
+        .topics-title {
+            font-family: "Alegreya", Georgia, serif;
+            font-size: 1.15rem;
+            margin: 0;
+        }
+ 
+        .topics-search {
+            background: var(--ink);
+            color: var(--paper);
+            border: 1px solid var(--ink-line);
+        }
+        .topics-search::placeholder { color: var(--muted); }
+        .topics-search:focus {
+            background: var(--ink);
+            color: var(--paper);
+            border-color: var(--gold);
+            box-shadow: 0 0 0 .2rem rgba(214, 173, 82, .25);
+        }
+ 
+        .topic-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+            flex: 1;
+            scrollbar-width: thin;
+            scrollbar-color: var(--ink-line) transparent;
+        }
+ 
+        .topic-list a {
+            display: flex;
+            align-items: baseline;
+            gap: .75rem;
+            padding: .45rem .75rem;
+            color: var(--paper);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            line-height: 1.3;
+        }
+        .topic-list a .num {
+            min-width: 1.6rem;
+            text-align: right;
+            color: var(--muted);
+            font-variant-numeric: tabular-nums;
+            font-size: .9rem;
+        }
+        .topic-list a:hover {
+            background: rgba(255, 255, 255, .04);
+        }
+        .topic-list a:hover .num { color: var(--gold); }
+        .topic-list a:focus-visible {
+            outline: 2px solid var(--gold);
+            outline-offset: -2px;
+        }
+        .topic-list a.active {
+            border-left-color: var(--gold);
+            background: rgba(214, 173, 82, .1);
+            color: #fff;
+        }
+        .topic-list a.active .num { color: var(--gold); }
+ 
+        .no-results {
+            color: var(--muted);
+            padding: .5rem .75rem;
+        }
+ 
+        /* ---------- Вміст і підвал ---------- */
+        .page-content {
+            max-width: 46rem;
+        }
+ 
+        .site-footer {
+            border-top: 1px solid var(--ink-line);
+            color: var(--muted);
+            font-size: .9rem;
+        }
