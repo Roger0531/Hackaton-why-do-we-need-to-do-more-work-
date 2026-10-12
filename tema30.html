@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta name="color-scheme" content="dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест — Українська мова</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap&subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --green: #00bc8c;
+    --green-dark: #00a077;
+    --border: #00bc8c;
+    --label: #00bc8c;
+    --red: #e74c3c;
+    --grey-btn: #444444;
+    --grey-box: #303030;
+    --active-bg: #0b5c49;
+    --text: #ffffff;
+    --muted: #c8c8c8;
+    --bg: #222222;
+    --panel: #303030;
+    --line: #444444;
+    --ok: #00bc8c;
+    --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Lato", "Segoe UI", Arial, sans-serif;
+    font-size: 17px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); }
+  .meta b { color: var(--text); }
+
+  /* сітка номерів завдань */
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num {
+    width: 33px; height: 33px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    font: inherit; font-size: 16px; color: var(--text);
+    cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .num.done { border-color: var(--border); }
+  .num.seen { border-color: var(--border); }
+  .num.current {
+    background: var(--active-bg);
+    box-shadow: 0 0 6px 2px rgba(0,188,140,.55);
+    border-color: var(--border);
+  }
+  .num.correct { background: #0b5c49; }
+  .num.wrong   { background: #6b2620; border-color: var(--bad); }
+
+  /* розділювач з лічильником */
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%;
+    border-top: 1px solid var(--line);
+  }
+  .counter {
+    position: relative; display: inline-block;
+    padding: 8px 14px; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 17px;
+  }
+
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0 0 6px; cursor: pointer; width: fit-content;
+  }
+  .option .letter {
+    background: var(--grey-box);
+    width: 33px; height: 33px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px;
+  }
+  .option .txt { font-size: 18px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; }
+  .option.wrong .letter { background: var(--bad); color: #fff; }
+
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: 17px; }
+  .box {
+    width: 34px; height: 34px;
+    border: 1px solid #555555; border-radius: 4px; background: var(--panel);
+    cursor: pointer; font-size: 20px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; color: var(--text);
+  }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn {
+    display: block; width: 212px; height: 43px;
+    border: 0; font: inherit; font-size: 17px; color: #fff;
+    background: var(--green); cursor: pointer;
+  }
+  .btn:hover { background: var(--green-dark); }
+  .btn.red { background: var(--red); width: 213px; }
+  .btn.red:hover { background: #d43f2f; }
+  .btn.grey { background: var(--grey-btn); color: var(--text); }
+  .btn.grey:hover { background: #555555; }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible {
+    outline: 3px solid #3498db; outline-offset: 2px;
+  }
+
+  .explain {
+    margin-top: 24px; padding: 14px 16px;
+    border-left: 4px solid var(--border);
+    background: var(--panel); color: var(--muted); font-size: 17px; line-height: 1.5;
+  }
+  .hidden { display: none; }
+
+  /* теорія */
+  .num.theory-btn { font-weight: 700; }
+  .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); }
+  .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
+  .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .result { margin-top: 18px; font-weight: 600; }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 12px 14px 40px; }
+    .num { width: 30px; height: 30px; font-size: 14px; }
+    .nums { gap: 9px; }
+    .btn, .btn.red { width: 100%; }
+    .left { width: 100%; }
+    .row { flex-direction: column; }
+    .right { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-line"></div>
+
+  <div class="meta">
+    <div><span>Предмет:</span> Українська мова</div>
+    <div><span>Розділ:</span> Фонетика. Графіка. Орфоепія</div>
+    <div><span>Тема:</span> Склад. Наголос</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">61</b></div>
+  </div>
+
+  <div class="nums" id="nums"></div>
+
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 61</span></div>
+
+  <div id="testView">
+  <p class="question" id="question"></p>
+  <ul class="options" id="options"></ul>
+
+  <p class="answers-label">Позначте відповіді:</p>
+  <div class="answer-grid" id="answerGrid"></div>
+
+  <div class="row">
+    <div class="left">
+      <button class="btn" id="skip">Пропустити</button>
+      <button class="btn" id="show">Показати відповідь</button>
+      <button class="btn grey" id="explainBtn">Читати пояснення</button>
+    </div>
+    <div class="right">
+      <button class="btn red" id="later">Продовжити пізніше</button>
+    </div>
+  </div>
+
+  <div class="explain hidden" id="explain"></div>
+  <div class="result" id="result"></div>
+  </div>
+
+  <div id="theoryView" class="hidden"></div>
+</div>
+
+<script>
+/* ===== ДАНІ ТЕСТУ =====
+   Додавайте або змінюйте завдання в цьому масиві.
+   correct — індекс правильного варіанта (0 = А, 1 = Б, 2 = В, 3 = Г). */
+const LETTERS = ["А", "Б", "В", "Г"];
+const TOTAL = 61;
+
+const tasks = [
+  {
+    q: "На перший склад падає наголос у всіх словах, ОКРІМ",
+    options: ["причіп", "косий", "жалюзі", "випадок"],
+    correct: 2,
+    explain: "Слово «жалюзі» вимовляється з наголосом на останньому складі: жалюзі́."
+  }
+  // { q: "...", options: ["...", "...", "...", "..."], correct: 0, explain: "..." },
+];
+
+// Для завдань, яких ще немає, створюємо порожній шаблон
+for (let i = tasks.length; i < TOTAL; i++) {
+  tasks.push({
+    q: "Текст завдання " + (i + 1),
+    options: ["Варіант А", "Варіант Б", "Варіант В", "Варіант Г"],
+    correct: 0,
+    explain: "Пояснення до завдання " + (i + 1) + "."
+  });
+}
+
+/* ===== ТЕОРІЯ (кнопка «Т») =====
+   Кожен елемент — окремий абзац; між абзацами автоматично малюється лінія.
+   Дозволено <b>...</b> для виділення. */
+const theory = [
+  { h: "Що таке склад",
+    t: "<b>Склад</b> — частина слова, яка вимовляється одним поштовхом видихуваного повітря: ді-ти, ву-ли-ця, при-чіп." },
+  { h: "Скільки складів у слові",
+    t: "Складів у слові стільки, скільки в ньому <b>голосних звуків</b>. Склад утворює лише голосний; приголосні складу не творять. Слова бувають односкладові (ліс), двоскладові (ко-сий), трискладові (ви-па-док) та багатоскладові." },
+  { h: "Відкриті й закриті склади",
+    t: "<b>Відкритий</b> склад закінчується голосним (ма-ма, ві-тер). <b>Закритий</b> склад закінчується приголосним (пар-та, ліс)." },
+  { h: "Що таке наголос",
+    t: "<b>Наголос</b> — виділення голосом одного зі складів у слові. Наголошений голосний вимовляється чіткіше й довше. Знак наголосу ставимо над голосним: жалюзі́." },
+  { h: "Особливості українського наголосу",
+    t: "Наголос в українській мові <b>вільний</b> — може падати на будь-який склад, і <b>рухомий</b> — у формах слова може змінювати місце: вода́ — во́ди — воду́." },
+  { h: "Приклади для запам'ятовування",
+    t: "На перший склад: <b>при́чіп, ко́сий, ви́падок</b>. На третій склад: <b>жалюзі́</b>. Наголос у складних випадках треба перевіряти за орфоепічним словником." }
+];
+
+/* ===== СТАН ===== */
+let current = 0;
+const state = tasks.map(() => ({ picked: null, revealed: false, seen: false }));
+const LS_KEY = "ukr-test-progress";
+
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.state && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => Object.assign(state[i], s));
+    current = saved.current || 0;
+  }
+} catch (e) {}
+
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ state, current })); } catch (e) {}
+}
+
+/* ===== ВІДОБРАЖЕННЯ ===== */
+const $ = id => document.getElementById(id);
+
+function buildNums() {
+  const box = $("nums");
+  box.innerHTML = "";
+  // кнопка «Т» — перша
+  const t = document.createElement("button");
+  t.className = "num theory-btn";
+  t.id = "tBtn";
+  t.textContent = "Т";
+  t.setAttribute("aria-label", "Теорія");
+  t.onclick = showTheory;
+  box.appendChild(t);
+
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button");
+    b.className = "num";
+    b.dataset.i = i;
+    b.textContent = i + 1;
+    b.setAttribute("aria-label", "Завдання " + (i + 1));
+    b.onclick = () => go(i);
+    box.appendChild(b);
+  });
+}
+
+let inTheory = false;
+
+function buildTheory() {
+  const v = $("theoryView");
+  v.innerHTML = '<h2 class="theory-title">Теорія</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div");
+    d.className = "theory-block";
+    d.innerHTML = "<h3></h3><p></p>";
+    d.querySelector("h3").textContent = item.h;
+    d.querySelector("p").innerHTML = item.t;
+    v.appendChild(d);
+  });
+  const end = document.createElement("div");
+  end.className = "theory-end";
+  v.appendChild(end);
+}
+
+function showTheory() {
+  inTheory = true;
+  $("testView").classList.add("hidden");
+  $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія";
+  paintNums();
+}
+
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") {
+      b.className = "num theory-btn" + (inTheory ? " current" : "");
+      return;
+    }
+    const i = +b.dataset.i;
+    const s = state[i];
+    b.className = "num";
+    if (s.revealed && s.picked !== null) {
+      b.classList.add(s.picked === tasks[i].correct ? "correct" : "wrong");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+
+function render() {
+  inTheory = false;
+  $("theoryView").classList.add("hidden");
+  $("testView").classList.remove("hidden");
+  const t = tasks[current];
+  const s = state[current];
+  s.seen = true;
+
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+  $("question").textContent = t.q;
+
+  const ul = $("options");
+  ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li");
+    li.className = "option";
+    li.tabIndex = 0;
+    if (s.picked === i) li.classList.add("selected");
+    if (s.revealed) {
+      if (i === t.correct) li.classList.add("right");
+      else if (s.picked === i) li.classList.add("wrong");
+    }
+    li.innerHTML = '<span class="letter">' + LETTERS[i] + '</span><span class="txt"></span>';
+    li.querySelector(".txt").textContent = text;
+    li.onclick = () => pick(i);
+    li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(i); } };
+    ul.appendChild(li);
+  });
+
+  const grid = $("answerGrid");
+  grid.innerHTML = "";
+  LETTERS.forEach((L, i) => {
+    const col = document.createElement("div");
+    col.className = "answer-col";
+    col.innerHTML = "<b>" + L + "</b>";
+    const bx = document.createElement("button");
+    bx.className = "box" + (s.picked === i ? " on" : "");
+    bx.textContent = s.picked === i ? "✓" : "";
+    bx.setAttribute("aria-label", "Відповідь " + L);
+    bx.onclick = () => pick(i);
+    col.appendChild(bx);
+    grid.appendChild(col);
+  });
+
+  $("explain").classList.add("hidden");
+  $("explain").textContent = "";
+  $("result").textContent = s.revealed
+    ? (s.picked === null ? "Правильна відповідь: " + LETTERS[t.correct]
+       : s.picked === t.correct ? "Правильно!" : "Неправильно. Правильна відповідь: " + LETTERS[t.correct])
+    : "";
+
+  paintNums();
+  save();
+}
+
+function pick(i) {
+  if (state[current].revealed) return;
+  state[current].picked = state[current].picked === i ? null : i;
+  render();
+}
+
+function go(i) {
+  current = Math.max(0, Math.min(TOTAL - 1, i));
+  render();
+}
+
+/* ===== КНОПКИ ===== */
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+
+$("show").onclick = () => {
+  state[current].revealed = true;
+  render();
+};
+
+$("explainBtn").onclick = () => {
+  const box = $("explain");
+  box.textContent = tasks[current].explain;
+  box.classList.toggle("hidden");
+};
+
+$("later").onclick = () => {
+  save();
+  $("result").textContent = "Прогрес збережено. Можна повернутися пізніше.";
+};
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (e.key === "ArrowRight") go(current + 1);
+  if (e.key === "ArrowLeft") go(current - 1);
+});
+
+buildNums();
+buildTheory();
+render();
+</script>
+</body>
+</html>
