@@ -249,9 +249,6 @@
 <body>
 <div class="wrap">
   <div class="topbar">
-    <button type="button" class="menu-btn" id="menuBtn" aria-label="Відкрити список тестів" aria-expanded="false" aria-controls="drawer" title="Усі тести">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>
-    </button>
     <a class="home-btn" href="main.html">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
       На головну
@@ -975,106 +972,6 @@ document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") go(current + 1);
   if (e.key === "ArrowLeft") go(current - 1);
 });
-
-/* ===== МЕНЮ ТЕМ ===== */
-const TOPIC_COUNT = 33;
-const TOPIC_TITLES = { 30: "Відновлення незалежності України", 32: "Творення нової України" };
-// адреса тесту кожної теми — змініть під свою назву файлів
-const TOPIC_HREF = n => (n === TOPIC_ID ? "test.html" : "tema-" + n + ".html");
-
-function readProgress(n) {
-  try {
-    const v = JSON.parse(localStorage.getItem(summaryKey(n)) || "null");
-    if (v && typeof v.answered === "number" && typeof v.total === "number") return v;
-  } catch (e) {}
-  return null;
-}
-
-function buildTopicList() {
-  const q = $("topicSearch").value.trim().toLowerCase();
-  const ul = $("topicList");
-  ul.innerHTML = "";
-  let shown = 0;
-  for (let n = 1; n <= TOPIC_COUNT; n++) {
-    const title = TOPIC_TITLES[n] || "";
-    if (q && ("тема " + n + " " + title).toLowerCase().indexOf(q) === -1) continue;
-    shown++;
-    const prog = n === TOPIC_ID
-      ? { answered: state.filter((_, i) => isDone(i)).length, total: TOTAL }
-      : readProgress(n);
-
-    const li = document.createElement("li");
-    const a = document.createElement("a");
-    a.className = "topic-link";
-    a.href = TOPIC_HREF(n);
-    if (n === TOPIC_ID) a.setAttribute("aria-current", "page");
-
-    const name = document.createElement("span");
-    name.className = "t-name";
-    name.textContent = "Тема " + n;
-    if (title) {
-      const sm = document.createElement("small");
-      sm.textContent = title;
-      name.appendChild(sm);
-    }
-    const pr = document.createElement("span");
-    pr.className = "t-prog";
-    if (prog) {
-      pr.textContent = prog.answered + " з " + prog.total;
-      if (prog.total > 0 && prog.answered >= prog.total) pr.classList.add("full");
-    } else {
-      pr.textContent = "—";
-      pr.title = "Тест ще не розпочато";
-    }
-    a.appendChild(name);
-    a.appendChild(pr);
-    li.appendChild(a);
-    ul.appendChild(li);
-  }
-  if (!shown) {
-    const li = document.createElement("li");
-    li.className = "topic-empty";
-    li.textContent = "Нічого не знайдено";
-    ul.appendChild(li);
-  }
-}
-
-function openDrawer() {
-  $("topicSearch").value = "";
-  buildTopicList();
-  $("drawer").classList.add("open");
-  $("drawerOverlay").classList.add("open");
-  $("drawer").setAttribute("aria-hidden", "false");
-  $("menuBtn").setAttribute("aria-expanded", "true");
-  document.body.style.overflow = "hidden";
-  $("drawerClose").focus();
-}
-
-function closeDrawer() {
-  $("drawer").classList.remove("open");
-  $("drawerOverlay").classList.remove("open");
-  $("drawer").setAttribute("aria-hidden", "true");
-  $("menuBtn").setAttribute("aria-expanded", "false");
-  document.body.style.overflow = "";
-  $("menuBtn").focus();
-}
-
-$("menuBtn").onclick = openDrawer;
-$("drawerClose").onclick = closeDrawer;
-$("drawerOverlay").onclick = closeDrawer;
-$("topicSearch").addEventListener("input", buildTopicList);
-document.addEventListener("keydown", e => {
-  if (!$("drawer").classList.contains("open")) return;
-  if (e.key === "Escape") { closeDrawer(); return; }
-  if (e.key === "Tab") { // тримаємо фокус усередині меню
-    const f = [...$("drawer").querySelectorAll("button, input, a")];
-    if (!f.length) return;
-    const first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-  }
-});
-
 $("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
 window.addEventListener("scroll", updateToTop, { passive: true });
 
