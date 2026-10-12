@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхідний тест – Підготовка до НМТ з історії</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/darkly/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <header class="site-header">
+        <nav class="navbar px-3 px-lg-4">
+            <a class="navbar-brand fw-bold" href="index.html">Підготовка до НМТ з історії</a>
+            <button class="btn topics-toggle d-lg-none" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#topics" aria-controls="topics">
+                Усі теми
+            </button>
+        </nav>
+    </header>
+
+    <div class="d-flex flex-grow-1">
+
+        <!-- На великих екранах це бічна панель, на телефонах вона виїжджає збоку -->
+        <aside class="topics offcanvas-lg offcanvas-start" tabindex="-1" id="topics" aria-labelledby="topicsLabel">
+            <div class="offcanvas-header">
+                <h2 class="topics-title" id="topicsLabel">Теми</h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        data-bs-target="#topics" aria-label="Закрити"></button>
+            </div>
+            <div class="offcanvas-body flex-column p-3 gap-3">
+                <h2 class="topics-title d-none d-lg-block">Теми</h2>
+                <input type="search" class="form-control form-control-sm topics-search"
+                       placeholder="Знайти тему" aria-label="Знайти тему" id="topicSearch">
+                <div class="legend d-none" id="topicLegend">
+                    <span class="l-gap">прогалина</span><span class="l-weak">повторити</span><span class="l-ok">засвоєно</span>
+                </div>
+                <ul class="topic-list" id="topicList"></ul>
+                <p class="no-results d-none" id="noResults">Такої теми немає. Спробуйте інше слово.</p>
+            </div>
+        </aside>
+
+        <div class="d-flex flex-column flex-grow-1 min-w-0">
+            <main class="flex-grow-1 px-3 px-lg-5 py-4 py-lg-5">
+                <div class="page-content">
+                    <!-- Вступ -->
+                    <section id="intro" class="intro">
+                        <h1>З чого почати підготовку</h1>
+                        <p class="lead-text">Пройдіть вхідний тест у форматі НМТ з історії України. Після нього ви побачите,
+                            які теми вже знаєте, а до яких треба повернутися. Теми з прогалинами позначаться в списку ліворуч.</p>
+
+                        <ul class="meta mt-4">
+                            <li>Предмет: <b>Історія України</b></li>
+                            <li>Період: <b>найдавніші часи – початок XXI ст.</b></li>
+                            <li>Кількість завдань: <b>30</b></li>
+                            <li>Час: <b>орієнтовно 60 хвилин</b>, як на НМТ</li>
+                            <li>Максимум: <b>54 тестові бали</b></li>
+                        </ul>
+
+                        <div class="table-wrap">
+                            <table class="structure">
+                                <tr><th>Завдання</th><th>Що треба зробити</th><th>Бали</th></tr>
+                                <tr><td>1–20</td><td>Вибрати одну правильну відповідь із чотирьох</td><td>по 1</td></tr>
+                                <tr><td>21–24</td><td>Встановити відповідність: утворити чотири логічні пари</td><td>до 4</td></tr>
+                                <tr><td>25–27</td><td>Розташувати чотири події в хронологічній послідовності</td><td>до 3</td></tr>
+                                <tr><td>28–30</td><td>Вибрати три правильні відповіді із семи</td><td>до 3</td></tr>
+                            </table>
+                        </div>
+
+                        <button type="button" class="btn btn-act btn-green" id="startBtn">Почати тест</button>
+                        <p class="resume-note" id="resumeNote" aria-live="polite"></p>
+                    </section>
+
+                    <!-- Тест -->
+                    <section id="test" hidden aria-label="Вхідний тест"></section>
+
+                    <!-- Результати -->
+                    <section id="results" hidden></section>
+                </div>
+            </main>
+
+            <footer class="site-footer py-3 px-3 px-lg-5">
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                    <span>Підготовка до НМТ з історії</span>
+                    <span>Учні 11-Б класу: Герасімов Костянтин, Красін Тимофій, Марченко Микита, Нікулін Євген, 2026</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/topics.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/data/diagnostic.js"></script>
+    <script src="js/test.js"></script>
+</body>
+</html>
