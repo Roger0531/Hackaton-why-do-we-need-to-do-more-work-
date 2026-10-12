@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta name="color-scheme" content="dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тема 25. Західноукраїнські землі в міжвоєнний період</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap&subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --cell: 36px;
+    --cell-font: 16px;
+    --green: #00bc8c;
+    --green-dark: #00a077;
+    --border: #00bc8c;
+    --label: #00bc8c;
+    --red: #e74c3c;
+    --grey-btn: #444444;
+    --grey-box: #303030;
+    --active-bg: #0b5c49;
+    --text: #ffffff;
+    --muted: #c8c8c8;
+    --bg: #222222;
+    --panel: #303030;
+    --line: #444444;
+    --ok: #00bc8c;
+    --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Lato", "Segoe UI", Arial, sans-serif;
+    font-size: 17px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin: 4px 0 18px; }
+  .menu-btn {
+    width: 44px; padding: 0; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--green); background: transparent; color: var(--text); cursor: pointer;
+    transition: background .15s;
+  }
+  .menu-btn:hover { background: var(--green); }
+  .menu-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .home-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin: 0; padding: 9px 18px;
+    border: 1px solid var(--green); color: var(--text); background: transparent;
+    font-size: 17px; text-decoration: none; cursor: pointer;
+    transition: background .15s;
+  }
+  .home-btn:hover { background: var(--green); }
+  .home-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); }
+  .meta b { color: var(--text); }
+
+  /* сітка номерів завдань */
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid var(--border);
+    background: var(--panel);
+    font: inherit; font-size: var(--cell-font); line-height: 1; color: var(--text);
+    cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .num.done { border-color: var(--border); }
+  .num.seen { border-color: var(--border); }
+  .num.current {
+    background: var(--active-bg);
+    box-shadow: 0 0 6px 2px rgba(0,188,140,.55);
+    border-color: var(--border);
+  }
+  .num.correct { background: #0b5c49; }
+  .num.wrong   { background: #6b2620; border-color: var(--bad); }
+
+  /* розділювач з лічильником */
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%;
+    border-top: 1px solid var(--line);
+  }
+  .counter {
+    position: relative; display: inline-block;
+    padding: 8px 14px; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 17px;
+  }
+
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin: 0 0 6px; cursor: pointer; max-width: 100%;
+  }
+  .option .letter {
+    background: var(--grey-box);
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: var(--cell-font); line-height: 1;
+  }
+  .option .txt { font-size: 18px; line-height: 1.4; padding-top: 6px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; }
+  .option.wrong .letter { background: var(--bad); color: #fff; }
+
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: var(--cell-font); width: var(--cell); text-align: center; }
+  .box {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid #555555; border-radius: 4px; background: var(--panel);
+    cursor: pointer; font-size: var(--cell-font); line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; color: var(--text);
+  }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+  .option.locked, .box.locked { cursor: default; }
+  .box.right { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .box.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn {
+    display: block; width: 212px; height: 43px;
+    border: 0; font: inherit; font-size: 17px; color: #fff;
+    background: var(--green); cursor: pointer;
+  }
+  .btn:hover { background: var(--green-dark); }
+  .btn.red { background: var(--red); width: 213px; }
+  .btn.red:hover { background: #d43f2f; }
+  .btn.grey { background: var(--grey-btn); color: var(--text); }
+  .btn.grey:hover { background: #555555; }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible {
+    outline: 3px solid #3498db; outline-offset: 2px;
+  }
+
+  .explain {
+    margin-top: 24px; padding: 18px 20px;
+    border-left: 4px solid var(--border);
+    background: var(--panel); color: var(--text); font-size: 17px; line-height: 1.55;
+  }
+  .explain.good { border-left-color: var(--ok); }
+  .explain.bad  { border-left-color: var(--bad); }
+  .explain .score b { font-weight: 700; }
+  .explain h4 { margin: 16px 0 4px; font-size: 17px; font-weight: 700; color: var(--green); }
+  .explain .why { margin: 0; }
+  .explain .repeat { margin: 16px 0 0; font-size: 15px; color: #9a9a9a; }
+  .explain .repeat a { color: var(--green); text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+
+  /* теорія */
+  .num.theory-btn { font-weight: 700; }
+  .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); }
+  .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
+  .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .theory-block ul { margin: 6px 0 0; padding-left: 22px; color: var(--muted); font-size: 18px; line-height: 1.6; }
+  .theory-block li { margin: 0 0 6px; }
+  .theory-block p + ul { margin-top: 10px; }
+  .theory-block blockquote {
+    margin: 0; padding: 10px 14px; border-left: 4px solid var(--green);
+    background: var(--panel); color: var(--muted); font-size: 17px; line-height: 1.6; font-style: italic;
+  }
+  .theory-block blockquote + ul, .theory-block ul + p.after, .theory-block blockquote + p.after { margin-top: 12px; }
+  .theory-block p.after { margin-top: 12px; }
+  .question { white-space: pre-line; }
+  .question em { display: block; margin-top: 12px; color: var(--muted); font-size: 16px; }
+  .num.answered { background: #1d4a40; }
+
+  /* бічне меню зі списком тестів */
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6);
+    opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; z-index: 90;
+  }
+  .drawer-overlay.open { opacity: 1; visibility: visible; }
+  .drawer {
+    position: fixed; top: 0; left: 0; bottom: 0; width: min(360px, 88vw);
+    background: var(--bg); border-right: 1px solid var(--line);
+    padding: 18px 16px 24px; overflow-y: auto; overscroll-behavior: contain;
+    transform: translateX(-100%); visibility: hidden;
+    transition: transform .22s ease, visibility .22s; z-index: 100;
+  }
+  .drawer.open { transform: none; visibility: visible; }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .drawer-head h2 { margin: 0; font-size: 28px; font-weight: 700; }
+  .drawer-close {
+    width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); background: transparent;
+    color: var(--text); font-size: 18px; cursor: pointer;
+  }
+  .drawer-close:hover { background: var(--panel); }
+  .topic-search {
+    width: 100%; padding: 9px 10px; margin-bottom: 14px;
+    border: 0; border-radius: 3px; background: #fff; color: #222; font: inherit; font-size: 15px;
+  }
+  .topic-search::placeholder { color: #888; }
+  .topic-list { list-style: none; margin: 0; padding: 0; }
+  .topic-link {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    padding: 11px 10px; border-bottom: 1px solid #333; border-left: 3px solid transparent;
+    color: var(--green); text-decoration: none; font-size: 17px;
+  }
+  .topic-link:hover { background: var(--panel); }
+  .topic-link[aria-current="page"] { background: var(--panel); border-left-color: var(--green); }
+  .topic-link .t-name small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .topic-link .t-prog { color: var(--muted); font-size: 15px; white-space: nowrap; }
+  .topic-link .t-prog.full { color: var(--green); font-weight: 700; }
+  .topic-empty { padding: 14px 10px; color: var(--muted); }
+
+  /* кнопка «Нагору» (лише у теорії) */
+  .to-top {
+    position: fixed;
+    right: max(20px, env(safe-area-inset-right));
+    bottom: max(20px, env(safe-area-inset-bottom));
+    width: 48px; height: 48px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: 0; border-radius: 50%;
+    background: var(--green); color: #fff; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.5);
+    opacity: 0; visibility: hidden; transform: translateY(8px);
+    transition: opacity .2s, transform .2s, visibility .2s, background .15s;
+    z-index: 50;
+  }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; }
+  .to-top:hover { background: var(--green-dark); }
+  .to-top:focus-visible { outline: 3px solid #3498db; outline-offset: 3px; }
+  .result { margin-top: 18px; font-weight: 600; }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 12px 14px 40px; }
+    :root { --cell: 32px; --cell-font: 14px; }
+    .nums { gap: 9px; }
+    .btn, .btn.red { width: 100%; }
+    .left { width: 100%; }
+    .row { flex-direction: column; }
+    .right { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="home-btn" href="main.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      На головну
+    </a>
+  </div>
+
+  <div class="top-line"></div>
+
+  <div class="meta">
+    <div><span>Предмет:</span> Історія України</div>
+    <div><span>Розділ:</span> Україна в міжвоєнний період</div>
+    <div><span>Тема:</span> Тема 25. Західноукраїнські землі в міжвоєнний період</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">20</b></div>
+  </div>
+
+  <div class="nums" id="nums"></div>
+
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 20</span></div>
+
+  <div id="testView">
+  <p class="question" id="question"></p>
+  <ul class="options" id="options"></ul>
+
+  <p class="answers-label" id="answersLabel">Позначте відповіді:</p>
+  <div class="answer-grid" id="answerGrid"></div>
+
+  <div class="row">
+    <div class="left">
+      <button class="btn" id="skip">Пропустити</button>
+    </div>
+  </div>
+
+  <div class="explain hidden" id="explain"></div>
+  </div>
+
+  <div id="theoryView" class="hidden"></div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Список тестів" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Теми</h2>
+    <button type="button" class="drawer-close" id="drawerClose" aria-label="Закрити список">✕</button>
+  </div>
+  <input type="search" class="topic-search" id="topicSearch" placeholder="Знайти тему" aria-label="Знайти тему" autocomplete="off">
+  <ul class="topic-list" id="topicList"></ul>
+</aside>
+
+<button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ===== ДАНІ ТЕСТУ =====
+   id — номер завдання; q — текст; note — примітка (наприклад, про ілюстрацію);
+   options — варіанти; labels — підписи варіантів (за замовчуванням А, Б, В, Г);
+   multi — скільки відповідей потрібно обрати (для завдань з кількома відповідями);
+   ordered — true, якщо важлива послідовність вибору (хронологія, відповідності);
+   hint — власний підпис над кнопками відповідей; answerText — власний текст правильної відповіді;
+   correct (необов'язково), explain (необов'язково) — правильна відповідь і пояснення.
+   Кнопка «Читати пояснення» з'являється лише у завдань, де є explain. */
+const LETTERS = ["А", "Б", "В", "Г"];
+
+const tasks = [
+  { id: "25.1.",
+    q: "У якому році було ухвалено рішення щодо автономного статусу Східної Галичини?",
+    options: ["1919 рік", "1921 рік", "1923 рік", "1929 рік"] },
+  { id: "25.2.",
+    q: "Які галузі промисловості переважали в економіці східних земель міжвоєнної Польщі?",
+    options: ["Нафтодобувна, деревообробна та харчова", "Авіакосмічна і приладобудівна", "Електронна й атомна енергетика", "Літакобудівна та суднобудівна"] },
+  { id: "25.3.",
+    q: "Про що свідчило непропорційно мале число робітників і підприємств у заселених українцями регіонах Польщі?",
+    options: ["Про нерівномірний промисловий розвиток і периферійне становище регіону", "Про високі темпи індустріалізації цих земель", "Про перевагу українського бізнесу у всій Польщі", "Про повну відсутність сільського населення"] },
+  { id: "25.5.",
+    q: "Яке твердження не характеризує український кооперативний рух у Польщі?",
+    options: ["Кооперативи формували економічну основу українського суспільства", "Кооперативи захищали економічні права українців", "Учасники кооперативів зберігали право на свою землю", "Кооперативний рух остаточно відчужив українців від польської держави"] },
+  { id: "25.13.",
+    q: "Чим Українська військова організація та ОУН приваблювали українську молодь?",
+    options: ["Парламентська боротьба за демократичні права", "Рішуча боротьба за незалежну державу", "Підтримка політики нормалізації відносин з Польщею", "Матеріальна допомога українським громадським організаціям"] },
+  { id: "25.14.",
+    q: "З якою політикою польської влади були пов’язані каральні експедиції проти українського населення у 1930 році?",
+    options: ["Польська політика пацифікації 1930 року", "Утворення Організації українських націоналістів", "Проголошення незалежності Карпатської України", "Запровадження польською владою воєнного стану"] },
+  { id: "25.21.",
+    q: "Який український навчальний заклад не функціонував у міжвоєнній Чехословаччині?",
+    options: ["Український вільний університет", "Український педагогічний інститут імені Михайла Драгоманова", "Українська господарська академія", "Таємний Український університет"] },
+  { id: "25.24.",
+    q: "Яке твердження про замах на польського міністра Броніслава Перацького є неправильним?",
+    options: ["Замах організували як помсту за пацифікацію", "Замах відбувся 1928 року", "Організація українських націоналістів узяла відповідальність", "До суду притягнули учасників ОУН"] },
+  { id: "25.25.",
+    q: "Які українські території не були захоплені Румунією?",
+    options: ["Хотинщина", "Закарпаття", "Північна Буковина", "Бессарабія"] },
+  { id: "25.36.",
+    q: "Розташуйте історичні події на західноукраїнських землях у хронологічній послідовності (від найраніших до найпізніших).",
+    ordered: true, multi: 4,
+    hint: "Позначте події у хронологічному порядку (потрібно обрати 4):",
+    options: ["Карпатська Україна проголосила незалежність", "Бессарабський протокол щодо румунського кордону", "Рішення конференції послів про Східну Галичину", "Пацифікація українських сіл польськими військами"] },
+  { id: "25.39.",
+    q: "Установіть правильну хронологію подій: Бессарабського протоколу, створення ОУН, пацифікації та проголошення незалежності Карпатської України (від найраніших до найпізніших).",
+    ordered: true, multi: 4,
+    hint: "Позначте події у хронологічному порядку (потрібно обрати 4):",
+    options: ["Бессарабський протокол", "Створення ОУН", "Початок пацифікації", "Проголошення незалежності Карпатської України"] },
+  { id: "25.40.",
+    q: "Як у міжвоєнній Польщі називали каральну політику «умиротворення» українського населення?",
+    options: ["Пацифікація", "Українізація", "Коренізація", "Десталінізація"] },
+  { id: "25.41.",
+    q: "Яка течія на Закарпатті обстоювала ідею належності місцевих українців до ширшого українського народу?",
+    options: ["Українофільство", "Русофільство", "Мадярофільство", "Італійський фашизм"] },
+  { id: "25.43.",
+    q: "Установіть відповідність між історичними діячами та їхніми біографіями.\n\n1) Августин Волошин\n2) Дмитро Донцов\n3) Євген Коновалець\n4) Василь Мудрий",
+    ordered: true, multi: 4,
+    labels: ["А", "Б", "В", "Г", "Д"],
+    hint: "Позначте біографії по черзі: спершу для 1, потім для 2, 3 і 4 (потрібно обрати 4):",
+    answerText: "1–Д, 2–Г, 3–В, 4–А",
+    options: ["Український політичний діяч, провідник політики нормалізації українсько-польських відносин",
+              "Митрополит УГКЦ, засуджував комунізм і нацизм",
+              "Командир січових стрільців, очолював ОУН у 1929–1938 роках",
+              "Теоретик інтегрального націоналізму, очільник Союзу визволення України",
+              "Голова автономного уряду і президент Карпатської України"] },
+  { id: "25.45.",
+    q: "Які події характеризували культурне життя західноукраїнських земель у 1919–1938 роках?",
+    multi: 3,
+    labels: ["1", "2", "3", "4", "5", "6", "7"],
+    options: ["У Польщі проводили масштабну політику українізації освіти",
+              "Румунський закон розширив сферу української мови в навчанні",
+              "Скорочувалася кількість українських шкіл у Польщі та Румунії",
+              "Заборонили «Просвіту» та Наукове товариство імені Шевченка в усіх країнах",
+              "Закривали кафедри української мови в університетах Львова й Чернівців",
+              "У Чехословаччині діяли українські виші й театральні колективи",
+              "У Львові відкрили державний український університет"] },
+  { id: "25.46.",
+    q: "Який політичний напрям був властивий програмним засадам ОУН у міжвоєнний період?",
+    options: ["Інтегральний націоналізм", "Ліберальний парламентаризм", "Радянський націонал-комунізм", "Монархічний легітимізм"] },
+  { id: "25.47.",
+    q: "Які поняття характеризують становище українських земель під владою Польщі в міжвоєнний період?",
+    multi: 3,
+    labels: ["1", "2", "3", "4", "5", "6", "7"],
+    options: ["Пацифікація", "Русинство", "Осадництво", "Автономія", "Нормалізація", "Карпатська Січ", "Мадяронство"] },
+  { id: "25.48.",
+    q: "Яку політику румунська влада проводила в освіті на підконтрольних їй українських землях?",
+    options: ["Румунізацію й обмеження українського шкільництва", "Запровадження загальної українізації", "Розширення автономії українських шкіл", "Визнання української мови єдиною державною"] },
+  { id: "25.49.",
+    q: "З якою організацією пов’язана політична діяльність Володимира Залозецького в міжвоєнній Буковині?",
+    options: ["Українською національною партією", "Організацією українських націоналістів", "Українською військовою організацією", "Українською Гельсінською групою"] },
+  { id: "25.50.",
+    q: "Які твердження правильно характеризують проголошення та існування Карпатської України?",
+    multi: 3,
+    labels: ["1", "2", "3", "4", "5", "6", "7"],
+    options: ["Карпатська Україна стала прикладом збройного опору агресивним планам Гітлера",
+              "Декларація незалежності була реакцією на вторгнення угорських військ",
+              "Незалежність проголосили в листопаді 1938 року",
+              "Провідною політичною силою була Українська національна партія",
+              "Політику пацифікації здійснював український уряд",
+              "Оборонну організацію «Карпатська Січ» створили восени 1938 року",
+              "УРСР виступила на підтримку незалежності Карпатської України"] }
+];
+
+/* ===== ТЕОРІЯ (кнопка «Т») =====
+   Блок: { h: заголовок, p: абзац, list: [пункти], quote: цитата-джерело, after: абзац після списку }.
+   Між блоками автоматично малюється лінія. Дозволено <b>...</b>. */
+const theory = [
+  { h: "Поділ західноукраїнських земель",
+    p: "Після Першої світової війни Східна Галичина, Західна Волинь, Полісся й Холмщина опинилися під владою <b>Польщі</b>; Північна Буковина та Бессарабія — <b>Румунії</b>; Закарпаття — <b>Чехословаччини</b>. Українці не мали на цих територіях власної незалежної держави.",
+    after: "У <b>1923 р.</b> Рада послів держав Антанти визнала владу Польщі над Східною Галичиною. Обіцяна автономія не була реалізована, а східні землі Польщі називали «східними кресами»." },
+  { h: "Політика польської влади",
+    p: "Польський уряд посилював адміністративний контроль над українськими землями, обмежував використання української мови у школах та установах, підтримував польське осадництво й проводив асиміляційну політику.",
+    after: "У <b>1930 р.</b> влада здійснила <b>пацифікацію</b> — масштабну карально-поліційну акцію проти українських громад. Вона супроводжувалася обшуками, побиттями, арештами й руйнуванням майна, поглибивши суспільну напруженість." },
+  { h: "Економіка і громадський рух під Польщею",
+    p: "Західноукраїнські території переважно залишалися аграрними й економічно менш розвиненими. Важливими формами самоорганізації були кооперативи, товариства «Просвіта», «Рідна школа», «Сільський господар», молодіжний «Пласт».",
+    after: "У політичному житті помітну роль відігравало Українське національно-демократичне об’єднання (УНДО), що відстоювало права українців парламентськими засобами. Одним з його діячів був <b>Василь Мудрий</b>." },
+  { h: "Український націоналістичний рух",
+    list: ["<b>1920 р.</b> виникла Українська військова організація (УВО), пов’язана з Євгеном Коновальцем.",
+           "<b>1929 р.</b> у Відні створено Організацію українських націоналістів (ОУН), яка виступала за незалежність України й практикувала підпільні методи боротьби.",
+           "Великий ідеологічний вплив на націоналістичне середовище мав <b>Дмитро Донцов</b>.",
+           "Серед резонансних подій — убивство польського міністра Броніслава Перацького <b>1934 р.</b>; польська влада посилила репресії проти українських націоналістів.",
+           "Євген Коновалець загинув 1938 р."] },
+  { h: "Українські землі у складі Румунії",
+    p: "Румунська влада контролювала Північну Буковину, Хотинщину та південну частину Бессарабії. Для українського населення характерними були румунізація освіти й адміністрації, політичні обмеження та економічні труднощі.",
+    after: "У <b>1924 р.</b> в Бессарабії відбулося Татарбунарське повстання, яке румунські сили придушили. Бессарабське питання стало одним із джерел напруженості в регіоні." },
+  { h: "Закарпаття у Чехословаччині",
+    p: "У складі Чехословаччини Закарпаття мало ширші можливості для політичного й культурного життя, ніж українські землі у Польщі чи Румунії. Діяли українські школи й товариства, хоча господарські проблеми та суперечки щодо національної ідентичності залишалися.",
+    after: "У міжвоєнній Чехословаччині працювали українські освітні центри, зокрема Український вільний університет у Празі та Українська господарська академія у Подєбрадах." },
+  { h: "Карпатська Україна",
+    list: ["Після Мюнхенської угоди 1938 р. Закарпаття здобуло автономію. <b>Августин Волошин</b> очолив уряд краю; назва «Карпатська Україна» стала символом прагнення державності.",
+           "<b>15 березня 1939 р.</b> у Хусті Сойм проголосив незалежність Карпатської України, її президентом обрали Августина Волошина.",
+           "Невдовзі угорські війська зайняли край, незважаючи на опір Карпатської Січі."] },
+  { h: "Культура і церква",
+    p: "Попри політичні обмеження західноукраїнське суспільство розвивало пресу, театри, кооперацію й мережу громадських товариств. Значущою постаттю релігійного й суспільного життя Східної Галичини був митрополит <b>Андрей Шептицький</b>.",
+    after: "Умови життя українців суттєво різнилися між трьома державами, але прагнення зберегти національну мову, освіту та ідентичність залишалося спільним." },
+  { h: "Хронологічні орієнтири",
+    list: ["<b>1923</b> — визнання польського контролю над Східною Галичиною.",
+           "<b>1924</b> — Татарбунарське повстання.",
+           "<b>1929</b> — створення ОУН.",
+           "<b>1930</b> — пацифікація.",
+           "<b>1934</b> — убивство Б. Перацького.",
+           "<b>Жовтень 1938</b> — автономія Закарпаття.",
+           "<b>15 березня 1939</b> — незалежність Карпатської України."] },
+  { h: "Ключові поняття",
+    list: ["<b>Пацифікація</b> — каральні акції польської влади 1930 р.",
+           "<b>Осадництво</b> — поселення польських колоністів на західноукраїнських землях.",
+           "<b>УВО</b> — Українська військова організація.",
+           "<b>ОУН</b> — Організація українських націоналістів, створена 1929 р.",
+           "<b>Карпатська Січ</b> — формування оборонців Карпатської України."] }
+];
+
+/* Правильні відповіді: індекси варіантів (0 = А/1, 1 = Б/2, 2 = В/3, 3 = Г/4 ...).
+   Для завдання з кількома відповідями — масив індексів (для ordered — у правильному порядку). */
+const ANSWERS = [2, 0, 0, 3, 1, 0, 3, 1, 1, [1, 2, 3, 0], [0, 1, 2, 3], 0, 0, [4, 3, 2, 0], [2, 4, 5], 0, [0, 2, 4], 0, 0, [0, 1, 5]];
+tasks.forEach((t, i) => { t.correct = ANSWERS[i]; });
+
+/* Пояснення, що з'являються після відповіді: why — «Чому так», repeat — заголовок блоку теорії для посилання «Повторити». */
+const EXPLAIN = [
+  { why: "Статус Східної Галичини визначила Рада послів Антанти у <b>1923 р.</b>: вона визнала владу Польщі над краєм. Обіцяну автономію не реалізували.", repeat: "Поділ західноукраїнських земель" },
+  { why: "Західноукраїнські землі залишалися переважно аграрними й менш розвиненими, тому там переважали сировинні й переробні галузі: <b>нафтодобувна, деревообробна та харчова</b>. Авіакосмічна, атомна, літако- й суднобудівна галузі потребують розвиненої індустрії, якої в регіоні не було.", repeat: "Економіка і громадський рух під Польщею" },
+  { why: "Мале число робітників і підприємств свідчило про <b>нерівномірний промисловий розвиток і периферійне становище</b> регіону («східні креси»), а не про швидку індустріалізацію.", repeat: "Економіка і громадський рух під Польщею" },
+  { why: "Кооперативи були формою самоорганізації: формували економічну основу українського суспільства й захищали економічні права українців. Твердження, що кооперативний рух «остаточно відчужив українців від польської держави», <b>не характеризує</b> його.", repeat: "Економіка і громадський рух під Польщею" },
+  { why: "УВО й ОУН приваблювали молодь <b>рішучою боротьбою за незалежну державу</b> та підпільними методами, на відміну від парламентської діяльності УНДО.", repeat: "Український націоналістичний рух" },
+  { why: "Каральні експедиції проти українського населення 1930 р. були складником польської політики <b>пацифікації</b>.", repeat: "Політика польської влади" },
+  { why: "Український вільний університет і Український педагогічний інститут ім. М. Драгоманова працювали в Празі, Українська господарська академія — у Подєбрадах. <b>Таємний Український університет</b> діяв у Львові — під владою Польщі, а не в Чехословаччині.", repeat: "Закарпаття у Чехословаччині" },
+  { why: "Замах на Б. Перацького відбувся <b>1934 р.</b>, а не 1928-го. Його організувала ОУН як помсту за пацифікацію, і до суду притягнули учасників ОУН.", repeat: "Український націоналістичний рух" },
+  { why: "Румунія захопила Північну Буковину, Хотинщину та Бессарабію. <b>Закарпаття</b> опинилося у складі Чехословаччини.", repeat: "Українські землі у складі Румунії" },
+  { why: "Бессарабський протокол (1920 р.) → рішення конференції послів про Східну Галичину (<b>1923 р.</b>) → пацифікація (<b>1930 р.</b>) → проголошення незалежності Карпатської України (<b>15 березня 1939 р.</b>).", repeat: "Хронологічні орієнтири" },
+  { why: "Бессарабський протокол (1920 р.) → створення ОУН (<b>1929 р.</b>) → початок пацифікації (<b>1930 р.</b>) → проголошення незалежності Карпатської України (<b>1939 р.</b>).", repeat: "Хронологічні орієнтири" },
+  { why: "Карально-поліційну акцію польської влади проти українських громад 1930 р. називали <b>пацифікацією</b> («умиротворенням»).", repeat: "Політика польської влади" },
+  { why: "<b>Українофільство</b> обстоювало єдність закарпатських українців із ширшим українським народом. Русофільство орієнтувалося на російську спільноту, а мадярофільство — на угорську.", repeat: "Закарпаття у Чехословаччині" },
+  { why: "Августин Волошин — голова автономного уряду і президент Карпатської України <b>(Д)</b>; Дмитро Донцов — теоретик інтегрального націоналізму <b>(Г)</b>; Євген Коновалець — командир січових стрільців, голова ОУН у 1929–1938 рр. <b>(В)</b>; Василь Мудрий — діяч УНДО, прихильник нормалізації відносин з Польщею <b>(А)</b>. Біографія <b>(Б)</b> належить митрополитові Андрею Шептицькому.", repeat: "Український націоналістичний рух" },
+  { why: "Правильні: скорочення кількості українських шкіл у Польщі та Румунії <b>(3)</b>, закриття кафедр української мови у Львові й Чернівцях <b>(5)</b>, українські виші й театри в Чехословаччині <b>(6)</b>. Хибні: у Польщі проводили асиміляцію, а не українізацію <b>(1)</b>; Румунія проводила румунізацію <b>(2)</b>; «Просвіту» та НТШ не забороняли в усіх країнах <b>(4)</b>; державного українського університету у Львові не відкривали <b>(7)</b>.", repeat: "Культура і церква" },
+  { why: "Програмним засадам ОУН був властивий <b>інтегральний націоналізм</b>, ідеологом якого був Дмитро Донцов.", repeat: "Український націоналістичний рух" },
+  { why: "Становище земель під Польщею характеризують <b>пацифікація (1)</b>, <b>осадництво (3)</b> і <b>нормалізація (5)</b>. Русинство, мадяронство й Карпатська Січ пов’язані із Закарпаттям, а обіцяна автономія Східної Галичини реалізована не була.", repeat: "Політика польської влади" },
+  { why: "Румунська влада проводила <b>румунізацію</b> освіти й адміністрації та обмежувала українське шкільництво.", repeat: "Українські землі у складі Румунії" },
+  { why: "Політична діяльність Володимира Залозецького на Буковині була пов’язана з <b>Українською національною партією</b>. ОУН і УВО були підпільними структурами, а Українська Гельсінська група діяла значно пізніше.", repeat: "Українські землі у складі Румунії" },
+  { why: "Правильні: Карпатська Україна стала прикладом збройного опору планам Гітлера <b>(1)</b>; декларація була реакцією на вторгнення угорських військ <b>(2)</b>; «Карпатську Січ» створили восени 1938 р. <b>(6)</b>. Незалежність проголосили <b>15 березня 1939 р.</b>, а не в листопаді 1938-го; пацифікацію здійснювала Польща; УРСР незалежність Карпатської України не підтримувала.", repeat: "Карпатська Україна" }
+];
+tasks.forEach((t, i) => { t.explain = EXPLAIN[i]; });
+
+function renderExplain(t) {
+  const box = $("explain");
+  if (!(INSTANT_FEEDBACK && isDone(current) && t.explain)) {
+    box.className = "explain hidden";
+    box.innerHTML = "";
+    return;
+  }
+  const right = isRight(current);
+  const labels = labelsOf(t);
+  const ans = t.answerText || correctSet(t).map(i => labels[i]).join(t.ordered ? " → " : ", ");
+  box.className = "explain " + (right ? "good" : "bad");
+  box.innerHTML =
+    '<div class="score">Правильна відповідь: <b>' + ans + '</b>. Бали: ' + (right ? 1 : 0) +
+    ' з 1. Після показу відповіді змінити її вже не можна.</div>' +
+    '<h4>Чому так</h4><p class="why">' + t.explain.why + '</p>' +
+    '<p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';
+  const a = $("repeatLink");
+  a.textContent = t.explain.repeat;
+  a.onclick = e => { e.preventDefault(); showTheoryAt(t.explain.repeat); };
+}
+
+function showTheoryAt(heading) {
+  showTheory();
+  const idx = theory.findIndex(b => b.h === heading);
+  const blocks = document.querySelectorAll ? document.querySelectorAll(".theory-block") : [];
+  if (idx >= 0 && blocks[idx]) blocks[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+const INSTANT_FEEDBACK = true; // true — після відповіді одразу показувати правильно/неправильно
+
+const correctSet = t => Array.isArray(t.correct) ? t.correct : [t.correct];
+function isDone(i) {
+  const t = tasks[i], n = state[i].picked.length;
+  return n === (t.multi || 1);
+}
+function isRight(i) {
+  const t = tasks[i], p = state[i].picked, c = correctSet(t);
+  if (t.ordered) return p.length === c.length && c.every((x, k) => p[k] === x);
+  return p.length === c.length && c.every(x => p.includes(x));
+}
+
+const TOTAL = tasks.length;
+
+/* ===== СТАН ===== */
+let current = 0;
+let inTheory = false;
+const state = tasks.map(() => ({ picked: [] }));
+const TOPIC_ID = 25; // номер теми цієї сторінки
+const LS_KEY = "hist" + TOPIC_ID + "-progress";
+const summaryKey = n => "progress-topic-" + n;
+
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.state && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => { if (Array.isArray(s.picked)) state[i].picked = s.picked; });
+    current = Math.min(saved.current || 0, TOTAL - 1);
+  }
+} catch (e) {}
+
+function save() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, current }));
+    // короткий підсумок для меню: скільки завдань уже виконано
+    const answered = state.filter((_, i) => isDone(i)).length;
+    localStorage.setItem(summaryKey(TOPIC_ID), JSON.stringify({ answered, total: TOTAL }));
+  } catch (e) {}
+}
+
+const $ = id => document.getElementById(id);
+const labelsOf = t => t.labels || LETTERS;
+
+/* ===== СІТКА НОМЕРІВ ===== */
+function buildNums() {
+  const box = $("nums");
+  box.innerHTML = "";
+  const t = document.createElement("button");
+  t.className = "num theory-btn";
+  t.id = "tBtn";
+  t.textContent = "Т";
+  t.setAttribute("aria-label", "Теорія");
+  t.onclick = showTheory;
+  box.appendChild(t);
+
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button");
+    b.className = "num";
+    b.dataset.i = i;
+    b.textContent = i + 1;
+    b.setAttribute("aria-label", "Завдання " + (i + 1));
+    b.onclick = () => go(i);
+    box.appendChild(b);
+  });
+}
+
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") {
+      b.className = "num theory-btn" + (inTheory ? " current" : "");
+      return;
+    }
+    const i = +b.dataset.i;
+    b.className = "num";
+    if (state[i].picked.length) {
+      if (INSTANT_FEEDBACK && isDone(i)) b.classList.add(isRight(i) ? "correct" : "wrong");
+      else b.classList.add("answered");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+
+/* ===== ТЕОРІЯ ===== */
+function buildTheory() {
+  const v = $("theoryView");
+  v.innerHTML = '<h2 class="theory-title">Теорія</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div");
+    d.className = "theory-block";
+    const h = document.createElement("h3");
+    h.textContent = item.h;
+    d.appendChild(h);
+    if (item.p) { const p = document.createElement("p"); p.innerHTML = item.p; d.appendChild(p); }
+    if (item.quote) { const q = document.createElement("blockquote"); q.textContent = item.quote; d.appendChild(q); }
+    if (item.list) {
+      const ul = document.createElement("ul");
+      item.list.forEach(x => { const li = document.createElement("li"); li.innerHTML = x; ul.appendChild(li); });
+      d.appendChild(ul);
+    }
+    if (item.after) { const p = document.createElement("p"); p.className = "after"; p.innerHTML = item.after; d.appendChild(p); }
+    v.appendChild(d);
+  });
+  const end = document.createElement("div");
+  end.className = "theory-end";
+  v.appendChild(end);
+}
+
+function updateToTop() {
+  const show = inTheory && window.scrollY > 200;
+  $("toTop").classList.toggle("show", show);
+}
+
+function showTheory() {
+  inTheory = true;
+  $("testView").classList.add("hidden");
+  $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія";
+  paintNums();
+  window.scrollTo({ top: 0 });
+  updateToTop();
+}
+
+/* ===== ТЕСТ ===== */
+function render() {
+  inTheory = false;
+  updateToTop();
+  $("theoryView").classList.add("hidden");
+  $("testView").classList.remove("hidden");
+  const t = tasks[current];
+  const s = state[current];
+  const labels = labelsOf(t);
+  const done = INSTANT_FEEDBACK && isDone(current);
+
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+
+  const q = $("question");
+  q.textContent = "";
+  const idEl = document.createElement("b");
+  idEl.textContent = t.id + " ";
+  q.appendChild(idEl);
+  q.appendChild(document.createTextNode(t.q));
+  if (t.note) {
+    const em = document.createElement("em");
+    em.textContent = t.note;
+    q.appendChild(em);
+  }
+
+  $("answersLabel").textContent = t.hint || (t.multi
+    ? "Позначте відповіді (потрібно обрати " + t.multi + "):"
+    : "Позначте відповіді:");
+
+  const ul = $("options");
+  ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li");
+    const pos = t.ordered ? s.picked.indexOf(i) : -1;
+    let cls = "option" + (s.picked.includes(i) ? " selected" : "");
+    if (done) {
+      if (t.ordered) {
+        if (pos >= 0) cls += correctSet(t)[pos] === i ? " right" : " wrong";
+      } else {
+        if (correctSet(t).includes(i)) cls += " right";
+        else if (s.picked.includes(i)) cls += " wrong";
+      }
+      cls += " locked";
+    }
+    li.className = cls;
+    li.tabIndex = 0;
+    li.innerHTML = '<span class="letter"></span><span class="txt"></span>';
+    li.querySelector(".letter").textContent = /\bright\b/.test(cls) ? "✓" : /\bwrong\b/.test(cls) ? "✕" : labels[i];
+    li.querySelector(".txt").textContent = (pos >= 0 ? "[" + (pos + 1) + "] " : "") + text;
+    li.onclick = () => pick(i);
+    li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(i); } };
+    ul.appendChild(li);
+  });
+
+  const grid = $("answerGrid");
+  grid.innerHTML = "";
+  labels.forEach((L, i) => {
+    const on = s.picked.includes(i);
+    const pos = s.picked.indexOf(i);
+    const col = document.createElement("div");
+    col.className = "answer-col";
+    const b = document.createElement("b");
+    b.textContent = L;
+    const bx = document.createElement("button");
+    let bc = "box" + (on ? " on" : "");
+    let mark = on ? (t.ordered ? String(pos + 1) : "✓") : "";
+    if (done) {
+      let ok, bad;
+      if (t.ordered) { ok = on && correctSet(t)[pos] === i; bad = on && !ok; }
+      else { ok = correctSet(t).includes(i); bad = !ok && on; }
+      if (ok) { bc = "box right"; mark = "✓"; }
+      else if (bad) { bc = "box wrong"; mark = "✕"; }
+      bc += " locked";
+    }
+    bx.className = bc;
+    bx.textContent = mark;
+    bx.setAttribute("aria-label", "Відповідь " + L);
+    bx.onclick = () => pick(i);
+    col.appendChild(b);
+    col.appendChild(bx);
+    grid.appendChild(col);
+  });
+
+  renderExplain(t);
+
+  paintNums();
+  save();
+}
+
+function pick(i) {
+  const t = tasks[current];
+  const s = state[current];
+  if (INSTANT_FEEDBACK && isDone(current)) return; // відповідь зафіксовано
+  const k = s.picked.indexOf(i);
+  if (k >= 0) s.picked.splice(k, 1);
+  else if (t.multi) { if (s.picked.length < t.multi) s.picked.push(i); }
+  else s.picked = [i];
+  render();
+}
+
+function go(i) {
+  current = Math.max(0, Math.min(TOTAL - 1, i));
+  render();
+  window.scrollTo({ top: 0 });
+}
+
+/* ===== КНОПКИ ===== */
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (inTheory || $("drawer").classList.contains("open")) return;
+  if (e.key === "ArrowRight") go(current + 1);
+  if (e.key === "ArrowLeft") go(current - 1);
+});
+$("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+window.addEventListener("scroll", updateToTop, { passive: true });
+
+$("total").textContent = TOTAL;
+buildNums();
+buildTheory();
+render();      // готуємо вигляд тесту (з урахуванням збереженого прогресу)
+showTheory();   // при відкритті першою показується вкладка «Т» з теорією
+</script>
+</body>
+</html>

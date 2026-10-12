@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta name="color-scheme" content="dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тема 24. Утвердження більшовицького тоталітарного режиму в Україні</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap&subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --cell: 36px; --cell-font: 16px;
+    --green: #00bc8c; --green-dark: #00a077; --border: #00bc8c; --red: #e74c3c;
+    --grey-btn: #444444; --grey-box: #303030; --active-bg: #0b5c49;
+    --text: #ffffff; --muted: #c8c8c8; --bg: #222222; --panel: #303030; --line: #444444;
+    --ok: #00bc8c; --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Lato", "Segoe UI", Arial, sans-serif; font-size: 17px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin: 4px 0 18px; }
+  .home-btn {
+    display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 9px 18px;
+    border: 1px solid var(--green); color: var(--text); background: transparent;
+    font-size: 17px; text-decoration: none; cursor: pointer; transition: background .15s;
+  }
+  .home-btn:hover { background: var(--green); }
+  .home-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); }
+  .meta b { color: var(--text); }
+
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid var(--border); background: var(--panel);
+    font: inherit; font-size: var(--cell-font); line-height: 1; color: var(--text);
+    cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .num.current { background: var(--active-bg); box-shadow: 0 0 6px 2px rgba(0,188,140,.55); border-color: var(--border); }
+  .num.correct { background: #0b5c49; }
+  .num.wrong   { background: #6b2620; border-color: var(--bad); }
+  .num.answered { background: #1d4a40; }
+  .num.theory-btn { font-weight: 700; }
+
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--line); }
+  .counter { position: relative; display: inline-block; padding: 8px 14px; background: var(--bg); color: var(--text); border: 1px solid var(--border); font-size: 17px; }
+
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; white-space: pre-line; }
+  .question em { display: block; margin-top: 12px; color: var(--muted); font-size: 16px; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 6px; cursor: pointer; max-width: 100%; }
+  .option .letter {
+    background: var(--grey-box); width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--cell-font); line-height: 1;
+  }
+  .option .txt { font-size: 18px; line-height: 1.4; padding-top: 6px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; }
+  .option.wrong .letter { background: var(--bad); color: #fff; }
+
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: var(--cell-font); width: var(--cell); text-align: center; }
+  .answer-grid.match { flex-direction: column; gap: 7px; }
+  .match-row { display: flex; gap: 7px; align-items: center; }
+  .match-row b { width: var(--cell); text-align: center; font-size: var(--cell-font); }
+  .box {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid #555555; border-radius: 4px; background: var(--panel);
+    cursor: pointer; font-size: var(--cell-font); line-height: 1;
+    display: flex; align-items: center; justify-content: center; padding: 0; color: var(--text);
+  }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+  .option.locked, .box.locked { cursor: default; }
+  .box.right { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .box.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn { display: block; width: 212px; height: 43px; border: 0; font: inherit; font-size: 17px; color: #fff; background: var(--green); cursor: pointer; }
+  .btn:hover { background: var(--green-dark); }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+
+  .explain { margin-top: 24px; padding: 18px 20px; border-left: 4px solid var(--border); background: var(--panel); color: var(--text); font-size: 17px; line-height: 1.55; }
+  .explain.good { border-left-color: var(--ok); }
+  .explain.bad  { border-left-color: var(--bad); }
+  .explain h4 { margin: 16px 0 4px; font-size: 17px; font-weight: 700; color: var(--green); }
+  .explain .why { margin: 0; }
+  .explain .repeat { margin: 16px 0 0; font-size: 15px; color: #9a9a9a; }
+  .explain .repeat a { color: var(--green); text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+
+  .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); }
+  .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
+  .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .theory-block ul { margin: 6px 0 0; padding-left: 22px; color: var(--muted); font-size: 18px; line-height: 1.6; }
+  .theory-block li { margin: 0 0 6px; }
+  .theory-block p + ul { margin-top: 10px; }
+  .theory-block p.after { margin-top: 12px; }
+
+  .to-top {
+    position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom));
+    width: 48px; height: 48px; padding: 0; display: flex; align-items: center; justify-content: center;
+    border: 0; border-radius: 50%; background: var(--green); color: #fff; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transform: translateY(8px);
+    transition: opacity .2s, transform .2s, visibility .2s, background .15s; z-index: 50;
+  }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; }
+  .to-top:hover { background: var(--green-dark); }
+  .to-top:focus-visible { outline: 3px solid #3498db; outline-offset: 3px; }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 12px 14px 40px; }
+    :root { --cell: 32px; --cell-font: 14px; }
+    .nums { gap: 9px; }
+    .btn { width: 100%; }
+    .left { width: 100%; }
+    .row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="home-btn" href="main.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      На головну
+    </a>
+  </div>
+
+  <div class="top-line"></div>
+
+  <div class="meta">
+    <div><span>Предмет:</span> Історія України</div>
+    <div><span>Розділ:</span> Україна в 1920–1930-х роках</div>
+    <div><span>Тема:</span> Тема 24. Утвердження більшовицького тоталітарного режиму в Україні</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">20</b></div>
+  </div>
+
+  <div class="nums" id="nums"></div>
+
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 20</span></div>
+
+  <div id="testView">
+    <p class="question" id="question"></p>
+    <ul class="options" id="options"></ul>
+
+    <p class="answers-label" id="answersLabel">Позначте відповіді:</p>
+    <div class="answer-grid" id="answerGrid"></div>
+
+    <div class="row">
+      <div class="left">
+        <button class="btn" id="skip">Пропустити</button>
+      </div>
+    </div>
+
+    <div class="explain hidden" id="explain"></div>
+  </div>
+
+  <div id="theoryView" class="hidden"></div>
+</div>
+
+<button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ===== ДАНІ ТЕСТУ =====
+   Типи завдань:
+   — звичайне: options + correct (індекс);
+   — кілька відповідей: multi (скільки обрати) + correct (масив індексів);
+   — на відповідність: match: true, items (пункти 1–4), options (варіанти А–Д),
+     correct — масив: для кожного пункту індекс правильного варіанта. */
+const LETTERS = ["А", "Б", "В", "Г", "Д"];
+
+const tasks = [
+  { id: "24.1.", q: "Які основні складові охоплювала сталінська модернізація?",
+    options: ["Розкуркулення, соціалістичне змагання, п'ятирічки", "Тоталітаризм, масові репресії, Голодомор", "Індустріалізація, кооперація, ліквідація неписьменності", "Індустріалізація, колективізація, культурна революція"] },
+  { id: "24.6.", q: "Яке твердження не можна вважати досягненням першої п'ятирічки?",
+    options: ["Зростання потужності електростанцій", "Спорудження великих машинобудівних заводів", "Пуск нових доменних печей", "Масове підвищення виробництва завдяки стахановському рухові"] },
+  { id: "24.17.", q: "Проти кого були спрямовані обмеження торгівлі, запроваджені постановою радянської влади?",
+    options: ["Села, що порушили закон про колгоспне майно", "Села, населення яких відмовлялося вступати до колгоспу", "Села, занесені на «чорні дошки»", "Міста, населення яких не брало участі в індустріалізації"] },
+  { id: "24.19.", q: "Яке твердження правильно характеризує наслідки сталінської модернізації?",
+    options: ["Планова економіка 1930-х років співіснувала з вільним ринком", "Колективізація сповільнила урбанізацію України", "Зростання життєвого рівня стало наслідком світової депресії", "Стахановський рух став підставою для збільшення виробничих норм"] },
+  { id: "24.27.", q: "Яку назву в народі отримав закон про покарання за розкрадання колгоспного майна?",
+    options: ["Закон «Запаморочення від успіхів»", "Закон «Великий перелом»", "Закон про п'ять колосків", "Закон «Розстріляне відродження»"] },
+  { id: "24.28.", q: "Яким поняттям позначають цілеспрямоване знищення національної групи?",
+    options: ["Репресії", "Тоталітаризм", "Націонал-ухильництво", "Геноцид"] },
+  { id: "24.40.", q: "Установіть відповідність між політичними репресіями та сфабрикованими справами.",
+    match: true,
+    items: ["1) Шахтинська справа", "2) Справа Української національної організації", "3) Справа Військової організації України", "4) Справа Спілки визволення України"],
+    options: ["Обвинувачення Михайла Грушевського як очільника політичного центру", "Фабрикація звинувачень у правничій сфері з новою кримінальною статтею", "Надія на міжнародну допомогу в боротьбі за Україну", "Звинувачення співробітників Академії наук у створенні підпільної організації", "Сфабриковані звинувачення групи українських діячів у 1933 році"] },
+  { id: "24.41.", q: "Установіть відповідність між українськими митцями та фактами їхніх біографій.",
+    match: true,
+    items: ["1) Казимир Малевич", "2) Лесь Курбас", "3) Михайло Бойчук", "4) Олександр Довженко"],
+    options: ["Театральний режисер, творець театру «Березіль»", "Кінорежисер, автор фільму «Земля»", "Письменник-сатирик, автор «ВАПЛІТЕ»", "Художник, автор «Чорного квадрата»", "Художник-монументаліст, перший президент Української академії мистецтв"] },
+  { id: "24.42.", q: "Установіть відповідність між поняттями й установами сталінської репресивної системи.",
+    match: true,
+    items: ["1) Початок репресій за оперативним наказом НКВС №00447", "2) Позасудове винесення вироків трьома посадовими особами", "3) Позасудовий орган НКВС з адміністративного покарання", "4) Ярлик діячів, звинувачених у перебільшенні національних особливостей"],
+    options: ["ГУЛАГ", "Трійка", "Великий терор", "Націонал-ухильництво", "Особлива нарада"] },
+  { id: "24.7.", q: "Із якою сфабрикованою справою пов'язаний один із перших великих показових процесів проти фахівців у період індустріалізації?",
+    options: ["Шахтинською справою", "Справою «Березоля»", "Процесом у Нюрнберзі", "Справою Кирило-Мефодіївського товариства"] },
+  { id: "24.8.", q: "Яку проблему спорудження Харківського тракторного заводу відображали повідомлення про його дострокове завершення?",
+    options: ["Штурмівщину й порушення планових строків", "Відсутність державного фінансування", "Повне припинення промислового будівництва", "Будівництво тільки коштом приватних інвесторів"] },
+  { id: "24.18.", q: "Який акт став правовим інструментом суворого покарання навіть за дрібне привласнення колгоспного майна?",
+    options: ["Постанова від 7 серпня 1932 року («закон про п'ять колосків»)", "Берестейський мирний договір", "Конституція УРСР 1978 року", "Закон про громадянство УНР"] },
+  { id: "24.26.", q: "Як називалася система виправно-трудових таборів СРСР, пов'язана з масовими репресіями?",
+    options: ["ГУЛАГ", "Раднаргосп", "УАПЦ", "Просвіта"] },
+  { id: "24.29.", q: "Хто з наведених діячів був причетний до здійснення політики, що призвела до Голодомору 1932–1933 років?",
+    options: ["Станіслав Косіор", "Олександр Довженко", "Микола Скрипник", "Василь Стус"] },
+  { id: "24.34.", q: "Який напрям національно-культурної політики посилився в УСРР у 1930-х роках?",
+    options: ["Русифікація та переслідування українських митців", "Повне відновлення українізації 1920-х років", "Запровадження багатопартійності", "Державна підтримка незалежних культурних спілок"] },
+  { id: "24.43.", q: "Що означав термін «розкуркулення» в радянській політиці?",
+    options: ["Примусове вилучення майна й ліквідацію заможних селянських господарств", "Відкриття приватних банків на селі", "Розвиток вільної торгівлі зерном", "Передавання колгоспної землі у приватну власність"] },
+  { id: "24.44.", q: "Що було важливим внутрішнім джерелом фінансування форсованої індустріалізації?",
+    options: ["Перекачування ресурсів із сільського господарства", "Кредити за планом Маршалла", "Іноземна допомога ООН", "Масові інвестиції приватних західних корпорацій"] },
+  { id: "24.45.", q: "Яким був політичний наслідок сталінської модернізації України?",
+    options: ["Зміцнення тоталітарного режиму", "Ліквідація радянської однопартійності", "Розширення незалежності УСРР", "Створення парламентської республіки"] },
+  { id: "24.47.", q: "Яка подія пов'язана з піком сталінських репресій 1937–1938 років?",
+    options: ["Великий терор", "Ухвалення І Універсалу", "Створення Української Центральної Ради", "Укладання Ризького миру"] },
+  { id: "24.49.", q: "Який із наведених процесів є проявом репресивної політики 1930-х років в УСРР?",
+    options: ["Масові політичні арешти та показові судові процеси", "Вільні конкурентні вибори", "Відновлення незалежних селянських партій", "Скасування цензури й каральних органів"] }
+];
+
+/* ===== ТЕОРІЯ (кнопка «Т») ===== */
+const theory = [
+  { h: "Сталінська модернізація",
+    p: "Наприкінці 1920-х років радянське керівництво згорнуло НЕП і розпочало форсовану модернізацію, що складалася з <b>індустріалізації, суцільної колективізації та «культурної революції»</b>. Їх проводили командно-адміністративними методами, без вільного політичного обговорення.",
+    after: "Перша п'ятирічка припала на 1928–1932 рр., друга — на 1933–1937 рр. Офіційна пропаганда регулярно оголошувала перевиконання планів; реальні соціальні витрати й диспропорції приховувалися." },
+  { h: "Індустріалізація УСРР",
+    p: "Будували й модернізували великі підприємства: Дніпровську ГЕС, Харківський тракторний завод, заводи машинобудування, металургійні й гірничі комплекси Донбасу та Придніпров'я. Це прискорило розвиток важкої промисловості та урбанізацію.",
+    after: "Переважання важкої промисловості залишало виробництво товарів повсякденного попиту недостатнім. Будівництва відбувалися в умовах жорсткої трудової дисципліни, нестачі техніки, завищених норм і пропагандистського тиску. Стахановський рух виник 1935 р. як кампанія рекордних виробничих показників." },
+  { h: "Колективізація та розкуркулення",
+    p: "У 1929 р. Сталін оголосив курс на «великий перелом». Селян примушували вступати в колгоспи, вилучали худобу й майно, а заможніших господарів оголошували «куркулями». Розкуркулення супроводжувалося конфіскацією власності, виселенням і репресіями.",
+    after: "Сільське господарство стало джерелом дешевих ресурсів для індустріалізації. Продажі зерна за кордон та хлібозаготівельні плани підривали продовольчу безпеку українського села." },
+  { h: "Голодомор 1932–1933 років",
+    p: "Голодомор був наслідком цілеспрямованої політики сталінського керівництва: нереальних планів хлібозаготівель, вилучення їжі, штрафів натуральними продуктами, блокування виїзду селян і застосування режиму «чорних дощок». Він призвів до загибелі мільйонів людей.",
+    after: "<b>7 серпня 1932 р.</b> ухвалено постанову про захист соціалістичної власності, відому в народі як закон «про п'ять колосків». Голодомор 1932–1933 рр. в Україні визнано геноцидом українського народу. Не можна змішувати його з голодом 1921–1923 років." },
+  { h: "Політичні репресії та Великий терор",
+    p: "Сталінська система використовувала каральні органи, цензуру та показові судові процеси для придушення опору. «Шахтинська справа» 1928 р. і процес «Спілки визволення України» 1930 р. були частинами репресивної кампанії проти інтелігенції й професійних груп.",
+    after: "У 1937–1938 рр. Великий терор охопив партійні кадри, військових, учених і звичайних громадян. Із репресивним апаратом пов'язані НКВС, ГУЛАГ, позасудові трійки. Терор знищував реальних або уявних супротивників режиму й утверджував атмосферу страху." },
+  { h: "Тоталітарна держава й конституції",
+    p: "В УСРР утвердилася монополія Комуністичної партії, підпорядкування судів та рад партійному керівництву, культ особи Сталіна. 1934 р. столицю УСРР перенесли з Харкова до Києва; із 1937 р. офіційна назва республіки — УРСР.",
+    after: "Конституція УРСР 1937 р. декларувала права та виборчі механізми, але політичне життя не було демократичним. Формальні норми суперечили реальній практиці масових переслідувань." },
+  { h: "Культурна революція і розстріляне відродження",
+    p: "Держава розвивала масову школу й ліквідовувала неписьменність, але водночас запроваджувала обов'язкову ідеологічну лінію, соціалістичний реалізм, цензуру та посилення русифікації.",
+    after: "Репресовано багатьох письменників і митців, серед них Миколу Куліша, Леся Курбаса, Миколу Зерова, художників-бойчукістів. Розстріли в Сандармосі 1937 р. стали символом знищення українського культурного покоління." },
+  { h: "Наслідки перетворень",
+    p: "УСРР стала великим індустріальним районом СРСР, але ці досягнення були оплачені примусом, знищенням селянського укладу, голодом, людськими втратами та позбавленням громадян політичних свобод." },
+  { h: "Поняття, які варто розрізняти",
+    list: ["<b>Індустріалізація</b> — розвиток великої машинної промисловості.",
+           "<b>Колективізація</b> — примусове об'єднання господарств у колгоспи.",
+           "<b>Розкуркулення</b> — репресивне вилучення майна й виселення.",
+           "<b>Тоталітаризм</b> — всеосяжний контроль держави."] },
+  { h: "Хронологічні орієнтири",
+    list: ["<b>1928–1932</b> — перша п'ятирічка.",
+           "<b>1929</b> — курс на суцільну колективізацію.",
+           "<b>1930</b> — показовий процес «СВУ».",
+           "<b>1932–1933</b> — Голодомор.",
+           "<b>7 серпня 1932</b> — закон «про п'ять колосків».",
+           "<b>1934</b> — перенесення столиці до Києва.",
+           "<b>1935</b> — стахановський рух.",
+           "<b>1937–1938</b> — Великий терор."] },
+  { h: "Ключові поняття",
+    list: ["<b>Індустріалізація</b> — форсований розвиток великої промисловості.",
+           "<b>Колективізація</b> — примусове зведення селянських господарств до колгоспів.",
+           "<b>Розкуркулення</b> — репресивна кампанія проти сільських господарів.",
+           "<b>Голодомор</b> — організований сталінським режимом голод-геноцид в Україні 1932–1933 рр.",
+           "<b>ГУЛАГ</b> — мережа радянських виправно-трудових таборів."] }
+];
+
+/* Правильні відповіді: індекси варіантів (0 = А/1, 1 = Б/2, ...).
+   Кілька відповідей і відповідність — масив індексів. */
+const ANSWERS = [3, 3, 2, 3, 2, 3, [1, 0, 4, 3], [3, 0, 4, 1], [2, 1, 4, 3], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+tasks.forEach((t, i) => { t.correct = ANSWERS[i]; });
+
+/* Пояснення: why — «Чому так», repeat — заголовок блоку теорії для посилання «Повторити». */
+const EXPLAIN = [
+  { why: "Сталінська модернізація складалася з <b>індустріалізації, суцільної колективізації та «культурної революції»</b>. Тоталітаризм, репресії й Голодомор були засобами та наслідками, а не складовими модернізації.", repeat: "Сталінська модернізація" },
+  { why: "Перша п'ятирічка тривала 1928–1932 рр., а стахановський рух виник лише 1935 р. Тож <b>підвищення виробництва завдяки стахановському рухові</b> не можна вважати її досягненням.", repeat: "Індустріалізація УСРР" },
+  { why: "Режим «чорних дощок» застосовували до сіл, які не виконали хлібозаготівельних планів: їх позбавляли торгівлі й постачання. Обмеження торгівлі були спрямовані проти <b>сіл, занесених на «чорні дошки»</b>.", repeat: "Голодомор 1932–1933 років" },
+  { why: "Стахановський рух виник 1935 р. як кампанія рекордних виробничих показників, а рекорди ставали <b>підставою для збільшення виробничих норм</b>. Планова економіка не співіснувала з вільним ринком, а колективізація прискорила, а не сповільнила урбанізацію.", repeat: "Індустріалізація УСРР" },
+  { why: "Постанову від 7 серпня 1932 р. про захист соціалістичної власності в народі називали <b>законом про п'ять колосків</b>.", repeat: "Голодомор 1932–1933 років" },
+  { why: "Цілеспрямоване знищення національної групи називають <b>геноцидом</b>. Голодомор 1932–1933 рр. в Україні визнано геноцидом українського народу.", repeat: "Голодомор 1932–1933 років" },
+  { why: "Відповідність за наведеним ключем: Шахтинська справа — <b>Б</b>; справа Української національної організації — <b>А</b>; справа Військової організації України — <b>Д</b>; справа Спілки визволення України — <b>Г</b> (процес «СВУ» 1930 р. проти інтелігенції, зокрема співробітників Академії наук).", repeat: "Політичні репресії та Великий терор" },
+  { why: "Казимир Малевич — автор «Чорного квадрата» (<b>Г</b>); Лесь Курбас — творець театру «Березіль» (<b>А</b>); Михайло Бойчук — художник-монументаліст, очільник бойчукістів (<b>Д</b>); Олександр Довженко — кінорежисер, автор фільму «Земля» (<b>Б</b>).", repeat: "Культурна революція і розстріляне відродження" },
+  { why: "Великий терор (1937–1938 рр.) розпочався за наказом НКВС №00447 (<b>В</b>); позасудові вироки виносили трійки (<b>Б</b>); адміністративно карала Особлива нарада НКВС (<b>Д</b>); ярлик діячів, звинувачених у перебільшенні національних особливостей, — націонал-ухильництво (<b>Г</b>).", repeat: "Політичні репресії та Великий терор" },
+  { why: "Одним із перших показових процесів проти фахівців у період індустріалізації була <b>«Шахтинська справа»</b> 1928 р.", repeat: "Політичні репресії та Великий терор" },
+  { why: "Повідомлення про дострокове завершення будівництва відображали <b>штурмівщину й порушення планових строків</b>: будівництва відбувалися під пропагандистським тиском і з завищеними нормами. Харківський тракторний завод належав до державних новобудов.", repeat: "Індустріалізація УСРР" },
+  { why: "Правовим інструментом суворого покарання за привласнення колгоспного майна стала постанова від 7 серпня 1932 р., відома як <b>закон «про п'ять колосків»</b>.", repeat: "Голодомор 1932–1933 років" },
+  { why: "<b>ГУЛАГ</b> — мережа радянських виправно-трудових таборів, пов'язана з масовими репресіями.", repeat: "Ключові поняття" },
+  { why: "У політиці, що призвела до Голодомору, брало участь тогочасне партійне керівництво УСРР, зокрема <b>Станіслав Косіор</b>, який очолював КП(б)У. Довженко був митцем, Скрипник — діячем українізації, а Стус — поетом і дисидентом наступної доби.", repeat: "Голодомор 1932–1933 років" },
+  { why: "У 1930-х роках державна політика була спрямована на <b>русифікацію та переслідування українських митців</b>: запроваджувалася обов'язкова ідеологічна лінія, соціалістичний реалізм, цензура.", repeat: "Культурна революція і розстріляне відродження" },
+  { why: "<b>Розкуркулення</b> — репресивна кампанія проти заможніх сільських господарів: конфіскація майна, виселення, репресії.", repeat: "Колективізація та розкуркулення" },
+  { why: "Сільське господарство стало <b>джерелом дешевих ресурсів для індустріалізації</b>: продаж зерна за кордон і хлібозаготівлі фінансували розбудову промисловості. Західних кредитів чи допомоги ООН тоді не було.", repeat: "Колективізація та розкуркулення" },
+  { why: "Політичним наслідком модернізації стало <b>зміцнення тоталітарного режиму</b>: монополія партії, підпорядкування судів і рад, культ особи Сталіна.", repeat: "Тоталітарна держава й конституції" },
+  { why: "Піком сталінських репресій 1937–1938 рр. був <b>Великий терор</b>, що охопив партійні кадри, військових, учених і звичайних громадян.", repeat: "Політичні репресії та Великий терор" },
+  { why: "Проявами репресивної політики 1930-х років були <b>масові політичні арешти та показові судові процеси</b>. Каральні органи й цензура, навпаки, посилювалися.", repeat: "Політичні репресії та Великий терор" }
+];
+tasks.forEach((t, i) => { t.explain = EXPLAIN[i]; });
+
+const INSTANT_FEEDBACK = true; // true — після відповіді одразу показувати правильно/неправильно
+
+const correctSet = t => Array.isArray(t.correct) ? t.correct : [t.correct];
+const hasAnswer = i => tasks[i].match ? state[i].picked.some(x => x >= 0) : state[i].picked.length > 0;
+function isDone(i) {
+  const t = tasks[i], p = state[i].picked;
+  return t.match ? p.every(x => x >= 0) : p.length === (t.multi || 1);
+}
+function matchScore(i) { return state[i].picked.filter((x, k) => x === tasks[i].correct[k]).length; }
+function isRight(i) {
+  const t = tasks[i], p = state[i].picked, c = correctSet(t);
+  if (t.match) return matchScore(i) === c.length;
+  return p.length === c.length && c.every(x => p.includes(x));
+}
+
+const TOTAL = tasks.length;
+
+/* ===== СТАН ===== */
+let current = 0;
+let inTheory = false;
+const state = tasks.map(t => ({ picked: t.match ? t.items.map(() => -1) : [] }));
+const TOPIC_ID = 24;
+const LS_KEY = "hist" + TOPIC_ID + "-progress";
+const summaryKey = n => "progress-topic-" + n;
+
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.state && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => {
+      if (Array.isArray(s.picked) && (!tasks[i].match || s.picked.length === tasks[i].items.length)) state[i].picked = s.picked;
+    });
+    current = Math.min(saved.current || 0, TOTAL - 1);
+  }
+} catch (e) {}
+
+function save() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, current }));
+    const answered = state.filter((_, i) => isDone(i)).length;
+    localStorage.setItem(summaryKey(TOPIC_ID), JSON.stringify({ answered, total: TOTAL }));
+  } catch (e) {}
+}
+
+const $ = id => document.getElementById(id);
+const labelsOf = t => t.labels || LETTERS.slice(0, t.options.length);
+
+function renderExplain(t) {
+  const box = $("explain");
+  if (!(INSTANT_FEEDBACK && isDone(current) && t.explain)) {
+    box.className = "explain hidden";
+    box.innerHTML = "";
+    return;
+  }
+  const right = isRight(current);
+  const labels = labelsOf(t);
+  const ans = t.match
+    ? t.correct.map((c, k) => (k + 1) + "–" + labels[c]).join(", ")
+    : correctSet(t).map(i => labels[i]).join(", ");
+  const pts = t.match ? matchScore(current) : (right ? 1 : 0);
+  const max = t.match ? t.correct.length : 1;
+  box.className = "explain " + (right ? "good" : "bad");
+  box.innerHTML =
+    '<div class="score">Правильна відповідь: <b>' + ans + '</b>. Бали: ' + pts +
+    ' з ' + max + '. Після показу відповіді змінити її вже не можна.</div>' +
+    '<h4>Чому так</h4><p class="why">' + t.explain.why + '</p>' +
+    '<p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';
+  const a = $("repeatLink");
+  a.textContent = t.explain.repeat;
+  a.onclick = e => { e.preventDefault(); showTheoryAt(t.explain.repeat); };
+}
+
+function showTheoryAt(heading) {
+  showTheory();
+  const idx = theory.findIndex(b => b.h === heading);
+  const blocks = document.querySelectorAll(".theory-block");
+  if (idx >= 0 && blocks[idx]) blocks[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ===== СІТКА НОМЕРІВ ===== */
+function buildNums() {
+  const box = $("nums");
+  box.innerHTML = "";
+  const t = document.createElement("button");
+  t.className = "num theory-btn";
+  t.id = "tBtn";
+  t.textContent = "Т";
+  t.setAttribute("aria-label", "Теорія");
+  t.onclick = showTheory;
+  box.appendChild(t);
+
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button");
+    b.className = "num";
+    b.dataset.i = i;
+    b.textContent = i + 1;
+    b.setAttribute("aria-label", "Завдання " + (i + 1));
+    b.onclick = () => go(i);
+    box.appendChild(b);
+  });
+}
+
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") {
+      b.className = "num theory-btn" + (inTheory ? " current" : "");
+      return;
+    }
+    const i = +b.dataset.i;
+    b.className = "num";
+    if (hasAnswer(i)) {
+      if (INSTANT_FEEDBACK && isDone(i)) b.classList.add(isRight(i) ? "correct" : "wrong");
+      else b.classList.add("answered");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+
+/* ===== ТЕОРІЯ ===== */
+function buildTheory() {
+  const v = $("theoryView");
+  v.innerHTML = '<h2 class="theory-title">Теорія</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div");
+    d.className = "theory-block";
+    const h = document.createElement("h3");
+    h.textContent = item.h;
+    d.appendChild(h);
+    if (item.p) { const p = document.createElement("p"); p.innerHTML = item.p; d.appendChild(p); }
+    if (item.list) {
+      const ul = document.createElement("ul");
+      item.list.forEach(x => { const li = document.createElement("li"); li.innerHTML = x; ul.appendChild(li); });
+      d.appendChild(ul);
+    }
+    if (item.after) { const p = document.createElement("p"); p.className = "after"; p.innerHTML = item.after; d.appendChild(p); }
+    v.appendChild(d);
+  });
+  const end = document.createElement("div");
+  end.className = "theory-end";
+  v.appendChild(end);
+}
+
+function updateToTop() {
+  $("toTop").classList.toggle("show", inTheory && window.scrollY > 200);
+}
+
+function showTheory() {
+  inTheory = true;
+  $("testView").classList.add("hidden");
+  $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія";
+  paintNums();
+  window.scrollTo({ top: 0 });
+  updateToTop();
+}
+
+/* ===== ТЕСТ ===== */
+function render() {
+  inTheory = false;
+  updateToTop();
+  $("theoryView").classList.add("hidden");
+  $("testView").classList.remove("hidden");
+  const t = tasks[current];
+  const s = state[current];
+  const labels = labelsOf(t);
+  const done = INSTANT_FEEDBACK && isDone(current);
+
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+
+  const q = $("question");
+  q.textContent = "";
+  const idEl = document.createElement("b");
+  idEl.textContent = t.id + " ";
+  q.appendChild(idEl);
+  q.appendChild(document.createTextNode(t.q + (t.match ? "\n\n" + t.items.join("\n") : "")));
+  if (t.note) {
+    const em = document.createElement("em");
+    em.textContent = t.note;
+    q.appendChild(em);
+  }
+
+  $("answersLabel").textContent = t.match
+    ? "Позначте відповіді (для кожного пункту — одна літера):"
+    : t.multi ? "Позначте відповіді (потрібно обрати " + t.multi + "):" : "Позначте відповіді:";
+
+  const ul = $("options");
+  ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li");
+    let cls = "option";
+    if (t.match) {
+      cls += " locked";
+    } else {
+      if (s.picked.includes(i)) cls += " selected";
+      if (done) {
+        if (correctSet(t).includes(i)) cls += " right";
+        else if (s.picked.includes(i)) cls += " wrong";
+        cls += " locked";
+      }
+    }
+    li.className = cls;
+    li.innerHTML = '<span class="letter"></span><span class="txt"></span>';
+    li.querySelector(".letter").textContent = /\bright\b/.test(cls) ? "✓" : /\bwrong\b/.test(cls) ? "✕" : labels[i];
+    li.querySelector(".txt").textContent = text;
+    if (!t.match) {
+      li.tabIndex = 0;
+      li.onclick = () => pick(i);
+      li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(i); } };
+    }
+    ul.appendChild(li);
+  });
+
+  const grid = $("answerGrid");
+  grid.innerHTML = "";
+  grid.className = "answer-grid" + (t.match ? " match" : "");
+  if (t.match) {
+    const head = document.createElement("div");
+    head.className = "match-row";
+    head.appendChild(document.createElement("b"));
+    labels.forEach(L => { const b = document.createElement("b"); b.textContent = L; head.appendChild(b); });
+    grid.appendChild(head);
+    t.items.forEach((_, row) => {
+      const r = document.createElement("div");
+      r.className = "match-row";
+      const num = document.createElement("b");
+      num.textContent = row + 1;
+      r.appendChild(num);
+      labels.forEach((L, col) => {
+        const on = s.picked[row] === col;
+        let bc = "box" + (on ? " on" : "");
+        let mark = on ? "✓" : "";
+        if (done) {
+          if (t.correct[row] === col) { bc = "box right locked"; mark = "✓"; }
+          else if (on) { bc = "box wrong locked"; mark = "✕"; }
+          else bc = "box locked";
+        }
+        const bx = document.createElement("button");
+        bx.className = bc;
+        bx.textContent = mark;
+        bx.setAttribute("aria-label", "Пункт " + (row + 1) + ", відповідь " + L);
+        bx.onclick = () => pickMatch(row, col);
+        r.appendChild(bx);
+      });
+      grid.appendChild(r);
+    });
+  } else {
+    labels.forEach((L, i) => {
+      const on = s.picked.includes(i);
+      const col = document.createElement("div");
+      col.className = "answer-col";
+      const b = document.createElement("b");
+      b.textContent = L;
+      const bx = document.createElement("button");
+      let bc = "box" + (on ? " on" : "");
+      if (done) {
+        if (correctSet(t).includes(i)) bc = "box right";
+        else if (on) bc = "box wrong";
+        bc += " locked";
+      }
+      bx.className = bc;
+      bx.textContent = bc.indexOf("box wrong") === 0 ? "✕" : (on || bc.indexOf("box right") === 0) ? "✓" : "";
+      bx.setAttribute("aria-label", "Відповідь " + L);
+      bx.onclick = () => pick(i);
+      col.appendChild(b);
+      col.appendChild(bx);
+      grid.appendChild(col);
+    });
+  }
+
+  renderExplain(t);
+  paintNums();
+  save();
+}
+
+function pick(i) {
+  const t = tasks[current];
+  const s = state[current];
+  if (INSTANT_FEEDBACK && isDone(current)) return;
+  const k = s.picked.indexOf(i);
+  if (k >= 0) s.picked.splice(k, 1);
+  else if (t.multi) { if (s.picked.length < t.multi) s.picked.push(i); }
+  else s.picked = [i];
+  render();
+}
+
+function pickMatch(row, col) {
+  if (INSTANT_FEEDBACK && isDone(current)) return;
+  const p = state[current].picked;
+  p[row] = p[row] === col ? -1 : col;
+  render();
+}
+
+function go(i) {
+  current = Math.max(0, Math.min(TOTAL - 1, i));
+  render();
+  window.scrollTo({ top: 0 });
+}
+
+/* ===== КНОПКИ ===== */
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" || inTheory) return;
+  if (e.key === "ArrowRight") go(current + 1);
+  if (e.key === "ArrowLeft") go(current - 1);
+});
+$("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+window.addEventListener("scroll", updateToTop, { passive: true });
+
+$("total").textContent = TOTAL;
+buildNums();
+buildTheory();
+render();
+showTheory();   // при відкритті першою показується вкладка «Т» з теорією
+</script>
+</body>
+</html>

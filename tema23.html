@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta name="color-scheme" content="dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тема 23. Встановлення комуністичного тоталітарного режиму в Україні</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap&subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --cell: 36px; --cell-font: 16px;
+    --green: #00bc8c; --green-dark: #00a077; --border: #00bc8c; --red: #e74c3c;
+    --grey-btn: #444444; --grey-box: #303030; --active-bg: #0b5c49;
+    --text: #ffffff; --muted: #c8c8c8; --bg: #222222; --panel: #303030; --line: #444444;
+    --ok: #00bc8c; --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Lato", "Segoe UI", Arial, sans-serif; font-size: 17px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin: 4px 0 18px; }
+  .home-btn {
+    display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 9px 18px;
+    border: 1px solid var(--green); color: var(--text); background: transparent;
+    font-size: 17px; text-decoration: none; cursor: pointer; transition: background .15s;
+  }
+  .home-btn:hover { background: var(--green); }
+  .home-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); }
+  .meta b { color: var(--text); }
+
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid var(--border); background: var(--panel);
+    font: inherit; font-size: var(--cell-font); line-height: 1; color: var(--text);
+    cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .num.current { background: var(--active-bg); box-shadow: 0 0 6px 2px rgba(0,188,140,.55); border-color: var(--border); }
+  .num.correct { background: #0b5c49; }
+  .num.wrong   { background: #6b2620; border-color: var(--bad); }
+  .num.answered { background: #1d4a40; }
+  .num.theory-btn { font-weight: 700; }
+
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--line); }
+  .counter { position: relative; display: inline-block; padding: 8px 14px; background: var(--bg); color: var(--text); border: 1px solid var(--border); font-size: 17px; }
+
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; white-space: pre-line; }
+  .question em { display: block; margin-top: 12px; color: var(--muted); font-size: 16px; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 6px; cursor: pointer; max-width: 100%; }
+  .option .letter {
+    background: var(--grey-box); width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--cell-font); line-height: 1;
+  }
+  .option .txt { font-size: 18px; line-height: 1.4; padding-top: 6px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; }
+  .option.wrong .letter { background: var(--bad); color: #fff; }
+
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: var(--cell-font); width: var(--cell); text-align: center; }
+  .box {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid #555555; border-radius: 4px; background: var(--panel);
+    cursor: pointer; font-size: var(--cell-font); line-height: 1;
+    display: flex; align-items: center; justify-content: center; padding: 0; color: var(--text);
+  }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+  .option.locked, .box.locked { cursor: default; }
+  .box.right { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .box.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn { display: block; width: 212px; height: 43px; border: 0; font: inherit; font-size: 17px; color: #fff; background: var(--green); cursor: pointer; }
+  .btn:hover { background: var(--green-dark); }
+  .btn.grey { background: var(--grey-btn); color: var(--text); }
+  .btn.grey:hover { background: #555555; }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+
+  .explain { margin-top: 24px; padding: 18px 20px; border-left: 4px solid var(--border); background: var(--panel); color: var(--text); font-size: 17px; line-height: 1.55; }
+  .explain.good { border-left-color: var(--ok); }
+  .explain.bad  { border-left-color: var(--bad); }
+  .explain h4 { margin: 16px 0 4px; font-size: 17px; font-weight: 700; color: var(--green); }
+  .explain .why { margin: 0; }
+  .explain .repeat { margin: 16px 0 0; font-size: 15px; color: #9a9a9a; }
+  .explain .repeat a { color: var(--green); text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+
+  .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); }
+  .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
+  .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .theory-block ul { margin: 6px 0 0; padding-left: 22px; color: var(--muted); font-size: 18px; line-height: 1.6; }
+  .theory-block li { margin: 0 0 6px; }
+  .theory-block p + ul { margin-top: 10px; }
+  .theory-block p.after { margin-top: 12px; }
+
+  .to-top {
+    position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom));
+    width: 48px; height: 48px; padding: 0; display: flex; align-items: center; justify-content: center;
+    border: 0; border-radius: 50%; background: var(--green); color: #fff; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transform: translateY(8px);
+    transition: opacity .2s, transform .2s, visibility .2s, background .15s; z-index: 50;
+  }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; }
+  .to-top:hover { background: var(--green-dark); }
+  .to-top:focus-visible { outline: 3px solid #3498db; outline-offset: 3px; }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 12px 14px 40px; }
+    :root { --cell: 32px; --cell-font: 14px; }
+    .nums { gap: 9px; }
+    .btn { width: 100%; }
+    .left { width: 100%; }
+    .row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="home-btn" href="main.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      На головну
+    </a>
+  </div>
+
+  <div class="top-line"></div>
+
+  <div class="meta">
+    <div><span>Предмет:</span> Історія України</div>
+    <div><span>Розділ:</span> Україна в 1920–1930-х роках</div>
+    <div><span>Тема:</span> Тема 23. Встановлення комуністичного тоталітарного режиму в Україні</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">20</b></div>
+  </div>
+
+  <div class="nums" id="nums"></div>
+
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 20</span></div>
+
+  <div id="testView">
+    <p class="question" id="question"></p>
+    <ul class="options" id="options"></ul>
+
+    <p class="answers-label" id="answersLabel">Позначте відповіді:</p>
+    <div class="answer-grid" id="answerGrid"></div>
+
+    <div class="row">
+      <div class="left">
+        <button class="btn" id="skip">Пропустити</button>
+      </div>
+    </div>
+
+    <div class="explain hidden" id="explain"></div>
+  </div>
+
+  <div id="theoryView" class="hidden"></div>
+</div>
+
+<button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ===== ДАНІ ТЕСТУ ===== */
+const LETTERS = ["А", "Б", "В", "Г"];
+
+const tasks = [
+  { id: "23.2.", q: "Яка обставина не була причиною голоду 1921–1923 років?",
+    options: ["Масові селянські повстання 1921 року", "Скорочення посівів і різке зменшення збору зерна", "Невелика частка голодуючих серед отримувачів допомоги", "Криза промисловості після воєнних подій"] },
+  { id: "23.3.", q: "Якою була головна особливість продовольчого податку в УСРР?",
+    options: ["В УСРР продподаток був більшим, ніж у Росії", "Продподаток в УСРР був меншим, ніж у Росії", "Продподаток стягували лише грішми", "В УСРР податок запровадили раніше, ніж у Росії"] },
+  { id: "23.10.", q: "Яке твердження спростовує думку, що в 1920-х роках в УСРР було ліквідовано комуністичний тоталітарний режим?",
+    options: ["Збереження темпів і політики коренізації в УСРР", "Прихильність частини комуністів до розбудови незалежної КПУ", "Зростання націонал-комуністичних тенденцій серед членів КП(б)У", "Курс РКП(б) на індустріалізацію СРСР"] },
+  { id: "23.11.", q: "Яке положення передбачав договір про утворення СРСР?",
+    options: ["Рішення щодо змін конституції автономної молдавської республіки", "Визначення місцевих податків і зборів", "Розширення виборчих прав населення міст і сіл", "Оголошення війни й укладання миру"] },
+  { id: "23.21.", q: "Які суспільні групи чинили опір політиці українізації?",
+    options: ["Комуністичне керівництво, пролетаріат, російська інтелігенція, духовенство УАПЦ", "Російська інтелігенція, селянство, пролетаріат, комуністичне керівництво", "Духовенство Російської православної церкви, комуністичне керівництво, пролетаріат, російська інтелігенція", "Зросійщене міщанство, російська інтелігенція, селянство, пролетаріат, духовенство УАПЦ"] },
+  { id: "23.22.", q: "На які державні установи фактично не поширювалася політика українізації?",
+    options: ["Освітні заклади", "Органи виконавчої влади", "Судова система", "Червона армія та каральні органи"] },
+  { id: "23.29.", q: "Під яким приводом більшовики здійснювали масове вилучення церковних цінностей?",
+    options: ["Боротьба з антицерковними виступами", "Матеріальні потреби нової радянської школи", "Допомога голодуючим у 1921–1923 роках", "Відбудова господарства після війни"] },
+  { id: "23.30.", q: "Яку організацію радянська влада вважала осередком українського націоналізму в 1926 році?",
+    options: ["УАПЦ", "Товариство «Геть неписьменність»", "КП(б)У", "ТСОЗи"] },
+  { id: "23.32.", q: "Яку мету щодо освіти й виховання переслідувала більшовицька влада?",
+    options: ["Кооперація", "Індустріалізація", "Ідеологізація", "Дерусифікація"] },
+  { id: "23.33.", q: "Яку роль відіграли Г. Гринько, О. Шумський і М. Скрипник у політичному й культурному житті УСРР?",
+    options: ["Автори ідеї про СРСР як федерацію рівноправних республік", "Провідники політики українізації", "Ініціатори переходу від воєнного комунізму до НЕПу", "Видатні українські письменники"] },
+  { id: "23.34.", q: "Хто був митрополитом Української автокефальної православної церкви?",
+    options: ["Андрей Шептицький", "Йосип Сліпий", "Василь Липківський", "Петро Могила"] },
+  { id: "23.50.", q: "Які заходи були складовими політики українізації?",
+    multi: 3, labels: ["1", "2", "3", "4", "5", "6", "7"],
+    options: ["Залучення до управління українських кадрів", "Уведення українського громадянства", "Українська мова в освітніх закладах", "Створення окремого народногосподарського комплексу", "Здобуття незалежності УСРР", "Формування суто української законодавчої бази", "Видання преси й книг українською"] },
+  { id: "23.6.", q: "Яка ознака найточніше передає економічні зміни доби НЕПу в УСРР?",
+    options: ["Часткове відновлення приватного підприємництва й ринкової торгівлі", "Повна заборона грошового обігу", "Скасування будь-яких податків", "Створення колгоспів у всіх селах"] },
+  { id: "23.14.", q: "Про що свідчило введення стабільної грошової одиниці в період НЕПу?",
+    options: ["Запровадження карткової системи й ліквідація грошового обігу", "Відновлення вільної торгівлі, кредитування й оподаткування", "Суцільна колективізація та відмова від грошей", "Заборона приватних торгових операцій"] },
+  { id: "23.16.", q: "Чому більшовицьке керівництво в 1920-х роках було зацікавлене в політиці українізації?",
+    options: ["Щоб установити контроль над швидким зростанням української культури та національної інтелігенції", "Щоб відновити владу гетьмана", "Щоб створити самостійну зовнішню політику УСРР", "Щоб запровадити польську мову в освіті"] },
+  { id: "23.31.", q: "Яку кампанію проводили більшовики для навчання дорослого населення читати й писати?",
+    options: ["Ліквідації неписьменності", "Суцільної колективізації", "Пацифікації", "Розкуркулення"] },
+  { id: "23.46.", q: "Які ознаки формальної державності мала УСРР у складі Радянського Союзу?",
+    options: ["Власні державні органи й конституцію", "Незалежну від Москви армію та дипломатію", "Самостійне право виходу з будь-якого союзного закону", "Власну монархічну владу"] },
+  { id: "23.47.", q: "Який із наведених термінів характеризує нову економічну політику?",
+    options: ["Продподаток", "Розстріляне відродження", "Розкуркулення", "Великий терор"] },
+  { id: "23.48.", q: "Яка з наведених ознак відрізняла НЕП від політики воєнного комунізму?",
+    options: ["Відновлення товарно-грошових відносин", "Запровадження загальної продрозкладки", "Заборона будь-якої торгівлі", "Націоналізація всіх дрібних крамниць"] },
+  { id: "23.49.", q: "Хто з перелічених діячів належав до представників українського націонал-комунізму?",
+    options: ["Олександр Шумський", "Антон Денікін", "Павло Скоропадський", "Петро Врангель"] }
+];
+
+/* ===== ТЕОРІЯ (кнопка «Т») ===== */
+const theory = [
+  { h: "Політичне становище після воєн",
+    p: "На початку 1920-х років більша частина України залишилася під контролем більшовиків. Українська Соціалістична Радянська Республіка формально мала державні установи, але ключові рішення ухвалювало керівництво більшовицької партії в Москві.",
+    after: "<b>30 грудня 1922 р.</b> було проголошено СРСР — союз радянських республік, серед засновників якого перебувала УСРР. Конституція 1924 р. закріпила союзні органи влади. Право виходу із Союзу декларувалося, проте реального механізму незалежної політики республіки не мали." },
+  { h: "Голод 1921–1923 років",
+    p: "Причинами масового голоду на півдні України стали воєнне спустошення, посуха й надмірні хлібозаготівлі та вилучення продовольства. Держава тривалий час не визнавала всі масштаби лиха й використовувала ресурси України для допомоги іншим регіонам.",
+    after: "Допомогу голодуючим надавали громадські й міжнародні організації, зокрема Американська адміністрація допомоги (ARA). У той самий період влада проводила вилучення церковних цінностей, офіційно пояснюючи це потребами допомоги населенню." },
+  { h: "Нова економічна політика",
+    p: "У 1921 р. більшовики перейшли від «воєнного комунізму» до нової економічної політики (НЕП). Продрозкладку замінили визначеним заздалегідь продовольчим податком, відновили частину ринкового обміну, дозволили дрібне приватне підприємництво й кооперацію.",
+    after: "Велика промисловість, банки й транспорт залишалися переважно державними. НЕП дав певне господарське пожвавлення, але не означав політичного плюралізму: однопартійна диктатура зберігалася." },
+  { h: "Політика коренізації — українізація",
+    p: "Із 1923 р. влада впроваджувала коренізацію, що в УСРР дістала назву «українізація». Українська мова активніше використовувалася в школах, пресі, книговиданні, установах; зростала кількість українських кадрів в апараті влади.",
+    after: "Серед діячів політики українізації — Олександр Шумський, Микола Скрипник, Григорій Гринько. Водночас армія, каральні структури та вищі союзні органи залишалися слабо охопленими цими змінами. У 1930-х роках політику згорнули." },
+  { h: "Націонал-комунізм і суперечності політики",
+    p: "Частина українських комуністів прагнула більшої самостійності в економічній та культурній політиці УСРР. Імена Олександра Шумського, Миколи Хвильового та економіста Михайла Волобуєва пов'язані з дискусіями про майбутнє української культури й господарства.",
+    after: "Літературна дискусія 1925–1928 рр. порушувала питання культурної орієнтації України. Хвильовий закликав творчо долати провінційність і наслідування російських зразків; партійне керівництво сприйняло цю позицію як загрозу." },
+  { h: "Освіта, ліквідація неписьменності, УАПЦ",
+    p: "У 1920-х роках розгортали масову освіту дорослих, школи лікнепу, кампанію товариства «Геть неписьменність». Паралельно держава намагалася підпорядкувати виховання комуністичній ідеології.",
+    after: "У 1921 р. була створена Українська автокефальна православна церква, одним із її очільників став митрополит Василь Липківський. Її українська богослужбова традиція суперечила державному прагненню контролювати релігійне життя; згодом церква зазнала репресій." },
+  { h: "Культурний розвиток 1920-х років",
+    p: "Доба 1920-х років стала часом розквіту різноманітних мистецьких пошуків. Діяли літературні групи й журнали, театри, кіностудії. Серед помітних імен — Лесь Курбас і театр «Березіль», Микола Куліш, Микола Хвильовий, Олександр Довженко, Михайло Бойчук.",
+    after: "Українська культура пережила модернізаційний підйом, який згодом був зламаний репресіями сталінської доби. Для позначення знищеної творчої генерації вживають назву «розстріляне відродження»." },
+  { h: "Ознаки становлення тоталітаризму",
+    p: "Політична монополія комуністичної партії, підпорядкування рад, цензура, втручання в культуру та переслідування опозиції свідчили про становлення тоталітарного порядку навіть у роки відносної економічної свободи НЕПу.",
+    after: "Отже, економічні поступки 1920-х років не змінювали сутності радянської влади: централізація партійного контролю готувала перехід до форсованих перетворень кінця десятиліття." },
+  { h: "Хронологічні орієнтири",
+    list: ["<b>1921</b> — початок НЕПу.",
+           "<b>1921–1923</b> — масовий голод.",
+           "<b>1921</b> — створення УАПЦ.",
+           "<b>30 грудня 1922</b> — утворення СРСР.",
+           "<b>1923</b> — початок українізації.",
+           "<b>1924</b> — союзна конституція.",
+           "<b>1925–1928</b> — літературна дискусія."] },
+  { h: "Ключові поняття",
+    list: ["<b>НЕП</b> — нова економічна політика з обмеженим відновленням ринку.",
+           "<b>Продподаток</b> — фіксована форма вилучення частки сільськогосподарського продукту.",
+           "<b>Коренізація</b> — залучення місцевих кадрів і розвиток національних мов у республіках.",
+           "<b>Лікнеп</b> — кампанія ліквідації неписьменності.",
+           "<b>Націонал-комунізм</b> — спроби поєднати комуністичні ідеї з вимогами національної самостійності."] }
+];
+
+/* Правильні відповіді: індекси варіантів (0 = А/1, 1 = Б/2, ...). Для завдання з кількома відповідями — масив. */
+const ANSWERS = [2, 1, 3, 3, 2, 3, 2, 0, 2, 1, 2, [0, 2, 6], 0, 1, 0, 0, 0, 0, 0, 0];
+tasks.forEach((t, i) => { t.correct = ANSWERS[i]; });
+
+/* Пояснення: why — «Чому так», repeat — заголовок блоку теорії для посилання «Повторити». */
+const EXPLAIN = [
+  { why: "Причинами голоду були воєнне спустошення, посуха, надмірні хлібозаготівлі, скорочення посівів, зменшення збору зерна й криза після воєнних подій. Частка голодуючих серед отримувачів допомоги причиною голоду <b>бути не могла</b> — це наслідок, а не причина.", repeat: "Голод 1921–1923 років" },
+  { why: "Заміна продрозкладки продовольчим податком була частиною НЕПу. Особливістю УСРР було те, що <b>продподаток тут був меншим, ніж у Росії</b>.", repeat: "Нова економічна політика" },
+  { why: "Коренізація, прагнення частини комуністів до самостійної КПУ та націонал-комунізм указують на певну лібералізацію. Натомість <b>курс РКП(б) на індустріалізацію СРСР</b> означав централізацію партійного контролю та перехід до форсованих перетворень, що готували тоталітарний порядок.", repeat: "Ознаки становлення тоталітаризму" },
+  { why: "Республіки, що увійшли до СРСР, формально зберігали власні органи, проте питання війни й миру належали до компетенції союзних органів влади. Конституція 1924 р. закріпила союзні органи влади.", repeat: "Політичне становище після воєн" },
+  { why: "Опір українізації чинили <b>духовенство Російської православної церкви, комуністичне керівництво, пролетаріат і російська інтелігенція</b>. Духовенство УАПЦ, навпаки, мало українську богослужбову традицію.", repeat: "Політика коренізації — українізація" },
+  { why: "Армія, каральні структури та вищі союзні органи залишалися слабо охопленими українізацією. Тому політика <b>фактично не поширювалася на Червону армію та каральні органи</b>.", repeat: "Політика коренізації — українізація" },
+  { why: "Офіційним поясненням масового вилучення церковних цінностей були потреби <b>допомоги голодуючим</b> у 1921–1923 роках.", repeat: "Голод 1921–1923 років" },
+  { why: "Українська автокефальна православна церква, створена 1921 р., мала українську богослужбову традицію, яка суперечила прагненню держави контролювати релігійне життя. Тож владою вона розглядалася як <b>осередок українського націоналізму</b>, а згодом зазнала репресій.", repeat: "Освіта, ліквідація неписьменності, УАПЦ" },
+  { why: "Масова освіта в 1920-х роках супроводжувалася спробою підпорядкувати виховання комуністичній ідеології. Метою була <b>ідеологізація</b>.", repeat: "Освіта, ліквідація неписьменності, УАПЦ" },
+  { why: "Олександр Шумський, Микола Скрипник і Григорій Гринько належать до діячів, пов'язаних із <b>політикою українізації</b>.", repeat: "Політика коренізації — українізація" },
+  { why: "Одним із очільників Української автокефальної православної церкви був митрополит <b>Василь Липківський</b>.", repeat: "Освіта, ліквідація неписьменності, УАПЦ" },
+  { why: "Українізація полягала в залученні українських кадрів до апарату влади <b>(1)</b>, використанні української мови в освітніх закладах <b>(3)</b> та виданні преси й книг українською <b>(7)</b>. Незалежність УСРР, окреме громадянство чи народногосподарський комплекс політика не передбачала.", repeat: "Політика коренізації — українізація" },
+  { why: "У добу НЕПу було відновлено частину ринкового обміну, дозволено дрібне приватне підприємництво й кооперацію. Найточніше це передає <b>часткове відновлення приватного підприємництва й ринкової торгівлі</b>.", repeat: "Нова економічна політика" },
+  { why: "Стабільна грошова одиниця була ознакою <b>відновлення товарно-грошових відносин</b>: вільної торгівлі, кредитування й оподаткування — на відміну від воєнного комунізму.", repeat: "Нова економічна політика" },
+  { why: "Влада прагнула встановити контроль над швидким зростанням української культури та національної інтелігенції, тому вона й підтримувала <b>українізацію</b> та керувала нею.", repeat: "Політика коренізації — українізація" },
+  { why: "Масова освіта дорослих у 1920-х роках відбувалася у формі <b>лікнепу</b> — кампанії ліквідації неписьменності, зокрема у діяльності товариства «Геть неписьменність».", repeat: "Освіта, ліквідація неписьменності, УАПЦ" },
+  { why: "УСРР формально мала власні державні установи та конституцію, проте ключові рішення ухвалювало керівництво партії в Москві. Право виходу з Союзу лише декларувалося.", repeat: "Політичне становище після воєн" },
+  { why: "<b>Продподаток</b> — фіксована форма вилучення частки сільськогосподарського продукту, що замінила продрозкладку в 1921 р. Інші терміни пов'язані з наступними періодами.", repeat: "Ключові поняття" },
+  { why: "Відрізняло НЕП від воєнного комунізму <b>відновлення товарно-грошових відносин</b>: продрозкладку замінили продподатком, дозволили ринковий обмін і дрібне підприємництво.", repeat: "Нова економічна політика" },
+  { why: "До представників націонал-комунізму належали <b>Олександр Шумський</b>, Микола Хвильовий та економіст Михайло Волобуєв. Денікін, Скоропадський і Врангель — діячі інших течій.", repeat: "Націонал-комунізм і суперечності політики" }
+];
+tasks.forEach((t, i) => { t.explain = EXPLAIN[i]; });
+
+const INSTANT_FEEDBACK = true; // true — після відповіді одразу показувати правильно/неправильно
+
+const correctSet = t => Array.isArray(t.correct) ? t.correct : [t.correct];
+function isDone(i) { return state[i].picked.length === (tasks[i].multi || 1); }
+function isRight(i) {
+  const p = state[i].picked, c = correctSet(tasks[i]);
+  return p.length === c.length && c.every(x => p.includes(x));
+}
+
+const TOTAL = tasks.length;
+
+/* ===== СТАН ===== */
+let current = 0;
+let inTheory = false;
+const state = tasks.map(() => ({ picked: [] }));
+const TOPIC_ID = 23;
+const LS_KEY = "hist" + TOPIC_ID + "-progress";
+const summaryKey = n => "progress-topic-" + n;
+
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.state && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => { if (Array.isArray(s.picked)) state[i].picked = s.picked; });
+    current = Math.min(saved.current || 0, TOTAL - 1);
+  }
+} catch (e) {}
+
+function save() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, current }));
+    const answered = state.filter((_, i) => isDone(i)).length;
+    localStorage.setItem(summaryKey(TOPIC_ID), JSON.stringify({ answered, total: TOTAL }));
+  } catch (e) {}
+}
+
+const $ = id => document.getElementById(id);
+const labelsOf = t => t.labels || LETTERS;
+
+function renderExplain(t) {
+  const box = $("explain");
+  if (!(INSTANT_FEEDBACK && isDone(current) && t.explain)) {
+    box.className = "explain hidden";
+    box.innerHTML = "";
+    return;
+  }
+  const right = isRight(current);
+  const labels = labelsOf(t);
+  const ans = correctSet(t).map(i => labels[i]).join(", ");
+  box.className = "explain " + (right ? "good" : "bad");
+  box.innerHTML =
+    '<div class="score">Правильна відповідь: <b>' + ans + '</b>. Бали: ' + (right ? 1 : 0) +
+    ' з 1. Після показу відповіді змінити її вже не можна.</div>' +
+    '<h4>Чому так</h4><p class="why">' + t.explain.why + '</p>' +
+    '<p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';
+  const a = $("repeatLink");
+  a.textContent = t.explain.repeat;
+  a.onclick = e => { e.preventDefault(); showTheoryAt(t.explain.repeat); };
+}
+
+function showTheoryAt(heading) {
+  showTheory();
+  const idx = theory.findIndex(b => b.h === heading);
+  const blocks = document.querySelectorAll(".theory-block");
+  if (idx >= 0 && blocks[idx]) blocks[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ===== СІТКА НОМЕРІВ ===== */
+function buildNums() {
+  const box = $("nums");
+  box.innerHTML = "";
+  const t = document.createElement("button");
+  t.className = "num theory-btn";
+  t.id = "tBtn";
+  t.textContent = "Т";
+  t.setAttribute("aria-label", "Теорія");
+  t.onclick = showTheory;
+  box.appendChild(t);
+
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button");
+    b.className = "num";
+    b.dataset.i = i;
+    b.textContent = i + 1;
+    b.setAttribute("aria-label", "Завдання " + (i + 1));
+    b.onclick = () => go(i);
+    box.appendChild(b);
+  });
+}
+
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") {
+      b.className = "num theory-btn" + (inTheory ? " current" : "");
+      return;
+    }
+    const i = +b.dataset.i;
+    b.className = "num";
+    if (state[i].picked.length) {
+      if (INSTANT_FEEDBACK && isDone(i)) b.classList.add(isRight(i) ? "correct" : "wrong");
+      else b.classList.add("answered");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+
+/* ===== ТЕОРІЯ ===== */
+function buildTheory() {
+  const v = $("theoryView");
+  v.innerHTML = '<h2 class="theory-title">Теорія</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div");
+    d.className = "theory-block";
+    const h = document.createElement("h3");
+    h.textContent = item.h;
+    d.appendChild(h);
+    if (item.p) { const p = document.createElement("p"); p.innerHTML = item.p; d.appendChild(p); }
+    if (item.list) {
+      const ul = document.createElement("ul");
+      item.list.forEach(x => { const li = document.createElement("li"); li.innerHTML = x; ul.appendChild(li); });
+      d.appendChild(ul);
+    }
+    if (item.after) { const p = document.createElement("p"); p.className = "after"; p.innerHTML = item.after; d.appendChild(p); }
+    v.appendChild(d);
+  });
+  const end = document.createElement("div");
+  end.className = "theory-end";
+  v.appendChild(end);
+}
+
+function updateToTop() {
+  $("toTop").classList.toggle("show", inTheory && window.scrollY > 200);
+}
+
+function showTheory() {
+  inTheory = true;
+  $("testView").classList.add("hidden");
+  $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія";
+  paintNums();
+  window.scrollTo({ top: 0 });
+  updateToTop();
+}
+
+/* ===== ТЕСТ ===== */
+function render() {
+  inTheory = false;
+  updateToTop();
+  $("theoryView").classList.add("hidden");
+  $("testView").classList.remove("hidden");
+  const t = tasks[current];
+  const s = state[current];
+  const labels = labelsOf(t);
+
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+
+  const q = $("question");
+  q.textContent = "";
+  const idEl = document.createElement("b");
+  idEl.textContent = t.id + " ";
+  q.appendChild(idEl);
+  q.appendChild(document.createTextNode(t.q));
+  if (t.note) {
+    const em = document.createElement("em");
+    em.textContent = t.note;
+    q.appendChild(em);
+  }
+
+  $("answersLabel").textContent = t.multi
+    ? "Позначте відповіді (потрібно обрати " + t.multi + "):"
+    : "Позначте відповіді:";
+
+  const ul = $("options");
+  ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li");
+    const fb = INSTANT_FEEDBACK && isDone(current);
+    let cls = "option" + (s.picked.includes(i) ? " selected" : "");
+    if (fb) {
+      if (correctSet(t).includes(i)) cls += " right";
+      else if (s.picked.includes(i)) cls += " wrong";
+      cls += " locked";
+    }
+    li.className = cls;
+    li.tabIndex = 0;
+    li.innerHTML = '<span class="letter"></span><span class="txt"></span>';
+    li.querySelector(".letter").textContent = /\bright\b/.test(cls) ? "✓" : /\bwrong\b/.test(cls) ? "✕" : labels[i];
+    li.querySelector(".txt").textContent = text;
+    li.onclick = () => pick(i);
+    li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(i); } };
+    ul.appendChild(li);
+  });
+
+  const grid = $("answerGrid");
+  grid.innerHTML = "";
+  labels.forEach((L, i) => {
+    const on = s.picked.includes(i);
+    const col = document.createElement("div");
+    col.className = "answer-col";
+    const b = document.createElement("b");
+    b.textContent = L;
+    const bx = document.createElement("button");
+    let bc = "box" + (on ? " on" : "");
+    if (INSTANT_FEEDBACK && isDone(current)) {
+      if (correctSet(t).includes(i)) bc = "box right";
+      else if (on) bc = "box wrong";
+      bc += " locked";
+    }
+    bx.className = bc;
+    bx.textContent = bc.indexOf("box wrong") === 0 ? "✕" : (on || bc.indexOf("box right") === 0) ? "✓" : "";
+    bx.setAttribute("aria-label", "Відповідь " + L);
+    bx.onclick = () => pick(i);
+    col.appendChild(b);
+    col.appendChild(bx);
+    grid.appendChild(col);
+  });
+
+  renderExplain(t);
+  paintNums();
+  save();
+}
+
+function pick(i) {
+  const t = tasks[current];
+  const s = state[current];
+  if (INSTANT_FEEDBACK && isDone(current)) return;
+  const k = s.picked.indexOf(i);
+  if (k >= 0) s.picked.splice(k, 1);
+  else if (t.multi) { if (s.picked.length < t.multi) s.picked.push(i); }
+  else s.picked = [i];
+  render();
+}
+
+function go(i) {
+  current = Math.max(0, Math.min(TOTAL - 1, i));
+  render();
+  window.scrollTo({ top: 0 });
+}
+
+/* ===== КНОПКИ ===== */
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" || inTheory) return;
+  if (e.key === "ArrowRight") go(current + 1);
+  if (e.key === "ArrowLeft") go(current - 1);
+});
+$("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+window.addEventListener("scroll", updateToTop, { passive: true });
+
+$("total").textContent = TOTAL;
+buildNums();
+buildTheory();
+render();
+showTheory();   // при відкритті першою показується вкладка «Т» з теорією
+</script>
+</body>
+</html>

@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta name="color-scheme" content="dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тема 26. Україна в роки Другої світової війни</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap&subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --cell: 36px;
+    --cell-font: 16px;
+    --green: #00bc8c;
+    --green-dark: #00a077;
+    --border: #00bc8c;
+    --label: #00bc8c;
+    --red: #e74c3c;
+    --grey-btn: #444444;
+    --grey-box: #303030;
+    --active-bg: #0b5c49;
+    --text: #ffffff;
+    --muted: #c8c8c8;
+    --bg: #222222;
+    --panel: #303030;
+    --line: #444444;
+    --ok: #00bc8c;
+    --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Lato", "Segoe UI", Arial, sans-serif;
+    font-size: 17px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin: 4px 0 18px; }
+  .menu-btn {
+    width: 44px; padding: 0; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--green); background: transparent; color: var(--text); cursor: pointer;
+    transition: background .15s;
+  }
+  .menu-btn:hover { background: var(--green); }
+  .menu-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .home-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin: 0; padding: 9px 18px;
+    border: 1px solid var(--green); color: var(--text); background: transparent;
+    font-size: 17px; text-decoration: none; cursor: pointer;
+    transition: background .15s;
+  }
+  .home-btn:hover { background: var(--green); }
+  .home-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); }
+  .meta b { color: var(--text); }
+
+  /* сітка номерів завдань */
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid var(--border);
+    background: var(--panel);
+    font: inherit; font-size: var(--cell-font); line-height: 1; color: var(--text);
+    cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .num.done { border-color: var(--border); }
+  .num.seen { border-color: var(--border); }
+  .num.current {
+    background: var(--active-bg);
+    box-shadow: 0 0 6px 2px rgba(0,188,140,.55);
+    border-color: var(--border);
+  }
+  .num.correct { background: #0b5c49; }
+  .num.wrong   { background: #6b2620; border-color: var(--bad); }
+
+  /* розділювач з лічильником */
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%;
+    border-top: 1px solid var(--line);
+  }
+  .counter {
+    position: relative; display: inline-block;
+    padding: 8px 14px; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 17px;
+  }
+
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin: 0 0 6px; cursor: pointer; max-width: 100%;
+  }
+  .option .letter {
+    background: var(--grey-box);
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: var(--cell-font); line-height: 1;
+  }
+  .option .txt { font-size: 18px; line-height: 1.4; padding-top: 6px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; }
+  .option.wrong .letter { background: var(--bad); color: #fff; }
+
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: var(--cell-font); width: var(--cell); text-align: center; }
+  .box {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid #555555; border-radius: 4px; background: var(--panel);
+    cursor: pointer; font-size: var(--cell-font); line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; color: var(--text);
+  }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+  .option.locked, .box.locked { cursor: default; }
+  .box.right { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .box.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .matrix .box.on { background: var(--green); border-color: var(--green); }
+
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn {
+    display: block; width: 212px; height: 43px;
+    border: 0; font: inherit; font-size: 17px; color: #fff;
+    background: var(--green); cursor: pointer;
+  }
+  .btn:hover { background: var(--green-dark); }
+  .btn.red { background: var(--red); width: 213px; }
+  .btn.red:hover { background: #d43f2f; }
+  .btn.grey { background: var(--grey-btn); color: var(--text); }
+  .btn.grey:hover { background: #555555; }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible {
+    outline: 3px solid #3498db; outline-offset: 2px;
+  }
+
+  .explain {
+    margin-top: 24px; padding: 18px 20px;
+    border-left: 4px solid var(--border);
+    background: var(--panel); color: var(--text); font-size: 17px; line-height: 1.55;
+  }
+  .explain.good { border-left-color: var(--ok); }
+  .explain.bad  { border-left-color: var(--bad); }
+  .explain .score b { font-weight: 700; }
+  .explain h4 { margin: 16px 0 4px; font-size: 17px; font-weight: 700; color: var(--green); }
+  .explain .why { margin: 0; }
+  .explain .repeat { margin: 16px 0 0; font-size: 15px; color: #9a9a9a; }
+  .explain .repeat a { color: var(--green); text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+
+  /* теорія */
+  .num.theory-btn { font-weight: 700; }
+  .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); }
+  .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
+  .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .theory-block ul { margin: 6px 0 0; padding-left: 22px; color: var(--muted); font-size: 18px; line-height: 1.6; }
+  .theory-block li { margin: 0 0 6px; }
+  .theory-block p + ul { margin-top: 10px; }
+  .theory-block blockquote {
+    margin: 0; padding: 10px 14px; border-left: 4px solid var(--green);
+    background: var(--panel); color: var(--muted); font-size: 17px; line-height: 1.6; font-style: italic;
+  }
+  .theory-block blockquote + ul, .theory-block ul + p.after, .theory-block blockquote + p.after { margin-top: 12px; }
+  .theory-block p.after { margin-top: 12px; }
+  .question { white-space: pre-line; }
+  .question em { display: block; margin-top: 12px; color: var(--muted); font-size: 16px; }
+  .num.answered { background: #1d4a40; }
+
+  /* бічне меню зі списком тестів */
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6);
+    opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; z-index: 90;
+  }
+  .drawer-overlay.open { opacity: 1; visibility: visible; }
+  .drawer {
+    position: fixed; top: 0; left: 0; bottom: 0; width: min(360px, 88vw);
+    background: var(--bg); border-right: 1px solid var(--line);
+    padding: 18px 16px 24px; overflow-y: auto; overscroll-behavior: contain;
+    transform: translateX(-100%); visibility: hidden;
+    transition: transform .22s ease, visibility .22s; z-index: 100;
+  }
+  .drawer.open { transform: none; visibility: visible; }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .drawer-head h2 { margin: 0; font-size: 28px; font-weight: 700; }
+  .drawer-close {
+    width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); background: transparent;
+    color: var(--text); font-size: 18px; cursor: pointer;
+  }
+  .drawer-close:hover { background: var(--panel); }
+  .topic-search {
+    width: 100%; padding: 9px 10px; margin-bottom: 14px;
+    border: 0; border-radius: 3px; background: #fff; color: #222; font: inherit; font-size: 15px;
+  }
+  .topic-search::placeholder { color: #888; }
+  .topic-list { list-style: none; margin: 0; padding: 0; }
+  .topic-link {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    padding: 11px 10px; border-bottom: 1px solid #333; border-left: 3px solid transparent;
+    color: var(--green); text-decoration: none; font-size: 17px;
+  }
+  .topic-link:hover { background: var(--panel); }
+  .topic-link[aria-current="page"] { background: var(--panel); border-left-color: var(--green); }
+  .topic-link .t-name small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .topic-link .t-prog { color: var(--muted); font-size: 15px; white-space: nowrap; }
+  .topic-link .t-prog.full { color: var(--green); font-weight: 700; }
+  .topic-empty { padding: 14px 10px; color: var(--muted); }
+
+  /* кнопка «Нагору» (лише у теорії) */
+  .to-top {
+    position: fixed;
+    right: max(20px, env(safe-area-inset-right));
+    bottom: max(20px, env(safe-area-inset-bottom));
+    width: 48px; height: 48px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: 0; border-radius: 50%;
+    background: var(--green); color: #fff; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.5);
+    opacity: 0; visibility: hidden; transform: translateY(8px);
+    transition: opacity .2s, transform .2s, visibility .2s, background .15s;
+    z-index: 50;
+  }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; }
+  .to-top:hover { background: var(--green-dark); }
+  .to-top:focus-visible { outline: 3px solid #3498db; outline-offset: 3px; }
+  .result { margin-top: 18px; font-weight: 600; }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 12px 14px 40px; }
+    :root { --cell: 32px; --cell-font: 14px; }
+    .nums { gap: 9px; }
+    .btn, .btn.red { width: 100%; }
+    .left { width: 100%; }
+    .row { flex-direction: column; }
+    .right { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="home-btn" href="main.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      На головну
+    </a>
+  </div>
+
+  <div class="top-line"></div>
+
+  <div class="meta">
+    <div><span>Предмет:</span> Історія України</div>
+    <div><span>Розділ:</span> Україна в 1939–1945 роках</div>
+    <div><span>Тема:</span> Тема 26. Україна в роки Другої світової війни</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">20</b></div>
+  </div>
+
+  <div class="nums" id="nums"></div>
+
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 20</span></div>
+
+  <div id="testView">
+  <p class="question" id="question"></p>
+  <ul class="options" id="options"></ul>
+
+  <p class="answers-label" id="answersLabel">Позначте відповіді:</p>
+  <div class="answer-grid" id="answerGrid"></div>
+
+  <div class="row">
+    <div class="left">
+      <button class="btn" id="skip">Пропустити</button>
+    </div>
+  </div>
+
+  <div class="explain hidden" id="explain"></div>
+  </div>
+
+  <div id="theoryView" class="hidden"></div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Список тестів" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Теми</h2>
+    <button type="button" class="drawer-close" id="drawerClose" aria-label="Закрити список">✕</button>
+  </div>
+  <input type="search" class="topic-search" id="topicSearch" placeholder="Знайти тему" aria-label="Знайти тему" autocomplete="off">
+  <ul class="topic-list" id="topicList"></ul>
+</aside>
+
+<button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ===== ДАНІ ТЕСТУ =====
+   id — номер завдання; q — текст; note — примітка (наприклад, про ілюстрацію);
+   options — варіанти; labels — підписи варіантів (за замовчуванням А, Б, В, Г);
+   multi — скільки відповідей потрібно обрати (для завдань з кількома відповідями);
+   ordered — true, якщо важлива послідовність вибору (хронологія, відповідності);
+   hint — власний підпис над кнопками відповідей; answerText — власний текст правильної відповіді;
+   correct (необов'язково), explain (необов'язково) — правильна відповідь і пояснення. */
+const LETTERS = ["А", "Б", "В", "Г"];
+
+const tasks = [
+  { id: "26.2.",
+    q: "Який міжнародний договір визначав розподіл сфер впливу СРСР і Німеччини у Східній Європі?",
+    options: ["Пакт Молотова — Ріббентропа", "Договір «Про дружбу і кордон»", "Акт відновлення Української Держави", "План «Барбаросса»"] },
+  { id: "26.3.",
+    q: "Коли було укладено цей міжнародний договір?",
+    options: ["23 серпня 1939 року", "1 вересня 1939 року", "17 вересня 1939 року", "28 вересня 1939 року"] },
+  { id: "26.4.",
+    q: "Що стало наслідком домовленостей між СРСР та Німеччиною?",
+    options: ["Припинення антигітлерівської пропаганди у пресі СРСР", "Відкритий напад радянських військ на польські землі", "Таємне зосередження значних сил Червоної армії біля польського кордону", "Суд над польськими офіцерами після поразки Польщі"] },
+  { id: "26.6.",
+    q: "Який зміст мали радянські рішення щодо західноукраїнських земель восени 1939 року та влітку 1940 року?",
+    options: ["Уключення нових західних територій до складу УРСР", "Виведення всіх радянських військ з України", "Відновлення кордонів УНР 1918 року", "Утворення незалежної Карпатської України"] },
+  { id: "26.7.",
+    q: "Яка подія відбулася 1940 року в українському націоналістичному русі?",
+    options: ["Розкол ОУН на прихильників Андрія Мельника і Степана Бандери", "Створення Центральної Ради", "Укладення Берестейського миру", "Ліквідація УГКЦ"] },
+  { id: "26.8.",
+    q: "Який адміністративно-територіальний наслідок мало приєднання західноукраїнських земель у 1939–1940 роках?",
+    options: ["Утворення нових областей у складі УРСР", "Скасування всіх областей УРСР", "Перенесення столиці УРСР до Львова", "Створення незалежної Західноукраїнської республіки"] },
+  { id: "26.9.",
+    q: "Як радянська пропаганда називала вступ Червоної армії на землі Східної Польщі у вересні 1939 року?",
+    options: ["«Золотий вересень»", "«Великий перелом»", "«Відлига»", "«Чорний січень»"] },
+  { id: "26.10.",
+    q: "Яка дата стала початком німецько-радянської війни?",
+    options: ["22 червня 1941 року", "1 вересня 1939 року", "17 вересня 1939 року", "9 травня 1945 року"] },
+  { id: "26.11.",
+    q: "Що передбачав радянський наказ «Ні кроку назад!»?",
+    options: ["Посилення дисципліни, створення штрафних частин і загороджувальних загонів", "Перехід до НЕПу", "Негайне розформування Червоної армії", "Створення українського парламенту"] },
+  { id: "26.12.",
+    q: "Яку головну мету мав нацистський план «Ост» щодо окупованих територій Східної Європи?",
+    options: ["Колонізацію земель та поневолення і витіснення місцевого населення", "Створення незалежної демократичної України", "Збереження довоєнного суспільного устрою", "Відновлення влади Української Центральної Ради"] },
+  { id: "26.13.",
+    q: "Де відбувалися масові розстріли цивільного населення під час нацистської окупації Києва?",
+    options: ["На Сирці", "На Лук’янівському цвинтарі", "На Хрещатику", "У Бабиному Яру"] },
+  { id: "26.14.",
+    q: "Який із наведених видів діяльності можна вважати колабораціонізмом?",
+    options: ["Праця на промисловому підприємстві", "Вчителювання у школі", "Робота в громадському господарстві", "Служба в охоронних поліцейських формуваннях окупантів"] },
+  { id: "26.17.",
+    q: "Якою була мета діяльності похідних груп ОУН?",
+    options: ["Мали сформувати прихильне ставлення до нацистського режиму", "Діяли лише в Західній і Правобережній Україні", "Створювалися представниками ОУН(м) та ОУН(б)", "Проголосили Акт відновлення державності саме у Львові"] },
+  { id: "26.21.",
+    q: "Представників якого українського руху нацистська влада вважала особливо небезпечними?",
+    options: ["Прибічники відновлення радянської влади в Україні", "Борці за створення незалежної УСРР", "Прихильники співпраці з окупаційним режимом", "Борці за відновлення незалежності України"] },
+  { id: "26.23.",
+    q: "Яке твердження правильно характеризує нацистський окупаційний режим в Україні?",
+    options: ["Окупанти заборонили участь місцевих жителів у самоврядуванні", "Остарбайтери були добровільними працівниками за планом «Ост»", "Радянських військовополонених утримували в концентраційних таборах", "Першим українцем зі званням «Праведник народів світу» став митрополит Андрей Шептицький"] },
+  { id: "26.24.",
+    q: "З якими історичними подіями пов’язана Волинська трагедія 1943 року?",
+    options: ["Розстріли польських військовополонених органами НКВС", "Оточення великого угруповання радянських військ", "Ліквідація партизанського загону Сидора Ковпака", "Масове насильство проти мирного польського й українського населення"] },
+  { id: "26.25.",
+    q: "Яка битва започаткувала вигнання нацистських військ із території України?",
+    options: ["Битва під Москвою", "Битва за Дніпро", "Курська битва", "Сталінградська битва"] },
+  { id: "26.31.",
+    q: "Чому протягом 1943 року значно зросла чисельність радянського партизанського руху?",
+    options: ["Початок успішних наступів Червоної армії після Сталінградської битви", "Активізація УПА в західних областях", "Поліпшення матеріальної бази партизанів", "Зростання продовольчого забезпечення українського населення"] },
+  { id: "26.44.",
+    q: "Установіть відповідність між діячами українського руху Опору та фактами їхньої діяльності.\n\n1) Льотчик-ас, тричі Герой Радянського Союзу\n2) Командир УПА, голова Проводу ОУН з 1943 року\n3) Діяч ОУН, сподівався на підтримку Німеччини\n4) Командир партизанського загону, Герой Радянського Союзу",
+    matrix: true, multi: 4, cols: ["1", "2", "3", "4"],
+    labels: ["А", "Б", "В", "Г", "Д"],
+    answerText: "1–В, 2–А, 3–Б, 4–Г",
+    options: ["Роман Шухевич", "Андрій Мельник", "Іван Кожедуб", "Василь Порик", "Тарас Бульба-Боровець"] },
+  { id: "26.50.",
+    q: "Які важливі воєнні події відбулися на території України протягом 1944 року?",
+    multi: 3,
+    labels: ["1", "2", "3", "4", "5", "6", "7"],
+    options: ["Вигнання нацистів із Донбасу",
+              "Корсунь-Шевченківська наступальна операція",
+              "Битва за Дніпро",
+              "Депортація кримських татар до Середньої Азії",
+              "Львівсько-Сандомирська наступальна операція",
+              "Створення Українського штабу партизанського руху",
+              "Перейменування чотирьох фронтів на Українські"] }
+];
+
+/* ===== ТЕОРІЯ (кнопка «Т») =====
+   Блок: { h: заголовок, p: абзац, list: [пункти], quote: цитата-джерело, after: абзац після списку }.
+   Між блоками автоматично малюється лінія. Дозволено <b>...</b>. */
+const theory = [
+  { h: "Початок Другої світової війни і пакт 1939 року",
+    p: "<b>23 серпня 1939 р.</b> СРСР і нацистська Німеччина уклали <b>пакт Молотова–Ріббентропа</b>. Таємний протокол розмежовував сфери впливу у Східній Європі. <b>1 вересня</b> Німеччина напала на Польщу, а <b>17 вересня</b> Червона армія ввійшла до її східних районів.",
+    after: "У 1939 р. західноукраїнські території, які раніше перебували під Польщею, включили до УРСР. У 1940 р. до УРСР приєднали Північну Буковину й частину Бессарабії. Радянізація супроводжувалася націоналізацією, перетвореннями освіти та репресіями й депортаціями." },
+  { h: "Німецько-радянська війна",
+    p: "<b>22 червня 1941 р.</b> Німеччина та її союзники напали на СРСР. Німецький наступ спричинив величезні людські втрати, оточення радянських військ, відступ із Києва й Одеси та оборону Севастополя. До літа 1942 р. майже вся територія України опинилася під окупацією.",
+    after: "Окупаційний режим використовував природні ресурси й працю населення, знищував політичних противників і реалізовував расову політику. Територія України була поділена між різними адміністративними структурами." },
+  { h: "Нацистська окупаційна політика",
+    p: "Більша частина земель входила до <b>райхскомісаріату «Україна»</b> з центром у Рівному, на чолі з Еріхом Кохом. Галичина стала окремим дистриктом Генеральної губернії, частину південних земель контролювала румунська адміністрація.",
+    after: "Нацисти запроваджували примусову працю, масовий терор, вивезення остарбайтерів і пограбування господарства. <b>Голокост</b> — систематичне переслідування й убивство євреїв — став одним із найтяжчих злочинів окупаційного режиму. Бабин Яр у Києві є важливим місцем пам’яті жертв." },
+  { h: "Український національний рух під окупацією",
+    p: "<b>30 червня 1941 р.</b> діячі ОУН(б) проголосили у Львові <b>Акт відновлення Української Держави</b>. Німецьке керівництво не прийняло проголошеної самостійності, а частину організаторів, зокрема Ярослава Стецька та Степана Бандеру, заарештувало.",
+    after: "Діяли різні течії націоналістичного руху та похідні групи ОУН, що намагалися організовувати місцеве політичне й культурне життя. Німецька окупаційна влада переслідувала незалежницькі організації." },
+  { h: "Рух Опору",
+    p: "Опір окупантам чинили радянські партизани, підпільники, Українська повстанська армія та інші групи. Із радянським партизанським рухом пов’язані <b>Сидір Ковпак</b> і <b>Олексій Федоров</b>. УПА сформувалася в роки війни, а з 1943 р. її головнокомандувачем був <b>Роман Шухевич</b>.",
+    after: "Рух Опору був неоднорідним: його учасники мали різні політичні цілі й не завжди були союзниками. Поняття «колабораціонізм» означає добровільну співпрацю з окупантами; його не слід ототожнювати з усім цивільним життям в умовах окупації." },
+  { h: "Події 1943–1944 років",
+    p: "Після перелому у війні радянські війська розгорнули наступ на території України. У <b>1943 р.</b> важливими стали бої за Донбас, битва за Дніпро та визволення Києва 6 листопада. У <b>1944 р.</b> тривали Корсунь-Шевченківська, Кримська, Львівсько-Сандомирська та інші наступальні операції.",
+    after: "<b>28 жовтня 1944 р.</b> прийнятою в українській історіографії датою вважають завершення вигнання нацистських окупантів із території України. У травні 1944 р. сталінська влада насильно депортувала кримських татар та інші народи Криму." },
+  { h: "Волинська трагедія та людські втрати",
+    p: "На Волині й у Галичині 1943–1944 рр. відбувалися масові польсько-українські міжетнічні насильства, які принесли тяжкі втрати мирному населенню. Події називають Волинською трагедією; їх оцінки залишаються предметом історичних досліджень та діалогу пам’яті.",
+    after: "Україна зазнала надзвичайних втрат: загибелі військових і цивільних, руйнування міст і сіл, знищення єврейських громад, масових переміщень населення. Друга світова війна в Європі завершилася у травні 1945 р." },
+  { h: "Підсумки війни для України",
+    p: "Війна змінила політичну карту Східної Європи, масштаби руйнувань і становище українського населення. УРСР залишилася частиною СРСР, попри внесок її громадян у перемогу над нацизмом та міжнародне визнання її участі в Антигітлерівській коаліції.",
+    after: "Варто розрізняти хронологію: початок Другої світової — 1 вересня 1939 р.; початок німецько-радянської війни — 22 червня 1941 р.; завершення вигнання нацистських окупантів із України — 28 жовтня 1944 р." },
+  { h: "Хронологічні орієнтири",
+    list: ["<b>23 серпня 1939</b> — пакт Молотова–Ріббентропа.",
+           "<b>1 вересня 1939</b> — початок Другої світової війни.",
+           "<b>17 вересня 1939</b> — вторгнення СРСР у Польщу.",
+           "<b>22 червня 1941</b> — напад Німеччини на СРСР.",
+           "<b>30 червня 1941</b> — акт ОУН(б) у Львові.",
+           "<b>1943</b> — битва за Дніпро, визволення Києва.",
+           "<b>Травень 1944</b> — депортація кримських татар.",
+           "<b>28 жовтня 1944</b> — завершення вигнання окупантів з України."] },
+  { h: "Ключові поняття",
+    list: ["<b>Радянізація</b> — запровадження радянської політичної та економічної системи.",
+           "<b>Райхскомісаріат</b> — нацистська окупаційна адміністративна одиниця.",
+           "<b>Остарбайтери</b> — люди, насильно вивезені на працю до Німеччини.",
+           "<b>Голокост</b> — нацистський геноцид євреїв.",
+           "<b>Колабораціонізм</b> — добровільна співпраця з окупаційною владою."] }
+];
+
+/* Правильні відповіді: індекси варіантів (0 = А/1, 1 = Б/2, 2 = В/3, 3 = Г/4 ...).
+   Для завдання з кількома відповідями — масив індексів (для ordered — у правильному порядку). */
+const ANSWERS = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 3, 3, 2, 3, 2, 3, 2, 0, [2, 0, 1, 3], [1, 3, 4]];
+tasks.forEach((t, i) => { t.correct = ANSWERS[i]; });
+
+/* Пояснення, що з'являються після відповіді: why — «Чому так», repeat — заголовок блоку теорії для посилання «Повторити». */
+const EXPLAIN = [
+  { why: "Розподіл сфер впливу СРСР і Німеччини у Східній Європі визначав таємний протокол до <b>пакту Молотова–Ріббентропа</b>.", repeat: "Початок Другої світової війни і пакт 1939 року" },
+  { why: "Пакт Молотова–Ріббентропа уклали <b>23 серпня 1939 р.</b> 1 вересня — напад Німеччини на Польщу, 17 вересня — вступ Червоної армії до східних районів Польщі.", repeat: "Хронологічні орієнтири" },
+  { why: "Домовленості про розподіл сфер впливу відкрили шлях до вторгнення Червоної армії до східних районів Польщі 17 вересня 1939 р. Судового процесу над польськими офіцерами після поразки Польщі не було.", repeat: "Початок Другої світової війни і пакт 1939 року" },
+  { why: "Восени 1939 р. західноукраїнські землі, що раніше належали Польщі, включили до складу УРСР, а 1940 р. приєднали Північну Буковину й частину Бессарабії.", repeat: "Початок Другої світової війни і пакт 1939 року" },
+  { why: "1940 р. ОУН розкололася на прихильників <b>Андрія Мельника (ОУН(м))</b> і <b>Степана Бандери (ОУН(б))</b>. Центральна Рада і Берестейський мир належать до 1917–1918 рр.", repeat: "Український національний рух під окупацією" },
+  { why: "Приєднання західних земель призвело до утворення <b>нових областей у складі УРСР</b>. УРСР залишалася частиною СРСР, а столицею — Київ.", repeat: "Початок Другої світової війни і пакт 1939 року" },
+  { why: "Радянська пропаганда подавала вступ Червоної армії до Східної Польщі у вересні 1939 р. як «<b>Золотий вересень</b>» — «визволення» західних українців і білорусів.", repeat: "Початок Другої світової війни і пакт 1939 року" },
+  { why: "Німецько-радянська війна розпочалася <b>22 червня 1941 р.</b> — нападом Німеччини та її союзників на СРСР. 1 вересня 1939 р. — початок Другої світової війни.", repeat: "Німецько-радянська війна" },
+  { why: "Наказ «Ні кроку назад!» (1942 р.) посилював дисципліну в Червоній армії: створювалися штрафні частини й загороджувальні загони.", repeat: "Німецько-радянська війна" },
+  { why: "План «Ост» передбачав <b>колонізацію</b> східних земель, поневолення й витіснення місцевого населення. Про створення незалежної України чи відновлення Центральної Ради мови не було.", repeat: "Нацистська окупаційна політика" },
+  { why: "Бабин Яр у Києві — місце масових розстрілів цивільного населення, передусім євреїв, і важливе місце пам’яті жертв Голокосту.", repeat: "Нацистська окупаційна політика" },
+  { why: "<b>Колабораціонізм</b> — добровільна співпраця з окупантами, зокрема служба в їхніх охоронних поліцейських формуваннях. Працю на підприємстві чи вчителювання не можна ототожнювати з колабораціонізмом: це цивільне життя в умовах окупації.", repeat: "Рух Опору" },
+  { why: "Похідні групи створювали і ОУН(м), і ОУН(б) <b>(В)</b>. Вони не формували прихильне ставлення до нацизму <b>(А)</b>, діяли не лише на заході й Правобережжі <b>(Б)</b>, а Акт відновлення Української Держави проголосили діячі ОУН(б) у Львові 30 червня 1941 р. <b>(Г)</b>. Групи намагалися організовувати місцеве політичне й культурне життя.", repeat: "Український національний рух під окупацією" },
+  { why: "Нацистська влада переслідувала незалежницькі організації, тому особливо небезпечними вважала <b>борців за відновлення незалежності України</b>: Акт 30 червня 1941 р. німецьке керівництво не прийняло, а Стецька й Бандеру заарештували.", repeat: "Український національний рух під окупацією" },
+  { why: "Радянських військовополонених утримували в таборах нацистського режиму <b>(В)</b>. Окупанти не забороняли участі місцевих жителів у допоміжному самоврядуванні <b>(А)</b>, остарбайтерів вивозили примусово <b>(Б)</b>, а Андрея Шептицького визнано Праведником народів світу пізніше й не першим серед українців <b>(Г)</b>.", repeat: "Нацистська окупаційна політика" },
+  { why: "Волинська трагедія — масове насильство проти мирного польського й українського населення на Волині й у Галичині 1943–1944 рр.", repeat: "Волинська трагедія та людські втрати" },
+  { why: "<b>Курська битва</b> (літо 1943 р.) закріпила перелом у війні й відкрила радянський наступ, що привів до визволення Лівобережної України. Битва під Москвою (1941–1942 рр.) і Сталінградська битва (1942–1943 рр.) відбувалися поза територією України, а битва за Дніпро була вже наслідком наступу.", repeat: "Події 1943–1944 років" },
+  { why: "Після Сталінградської битви почалися <b>успішні наступи Червоної армії</b>, і 1943 р. чисельність радянського партизанського руху значно зросла.", repeat: "Рух Опору" },
+  { why: "Іван Кожедуб — льотчик-ас, тричі Герой Радянського Союзу <b>(1–В)</b>; Роман Шухевич — командир УПА, голова Проводу ОУН з 1943 р. <b>(2–А)</b>; Андрій Мельник — діяч ОУН, сподівався на підтримку Німеччини <b>(3–Б)</b>; Василь Порик — командир партизанського загону, Герой Радянського Союзу <b>(4–Г)</b>. Тарас Бульба-Боровець <b>(Д)</b> — зайвий варіант.", repeat: "Рух Опору" },
+  { why: "1944 р. відбулися Корсунь-Шевченківська <b>(2)</b> і Львівсько-Сандомирська <b>(5)</b> операції та депортація кримських татар у травні <b>(4)</b>. Вигнання нацистів із Донбасу, битва за Дніпро, перейменування фронтів на Українські належать до 1943 р., а Український штаб партизанського руху створено 1942 р.", repeat: "Події 1943–1944 років" }
+];
+tasks.forEach((t, i) => { t.explain = EXPLAIN[i]; });
+
+function renderExplain(t) {
+  const box = $("explain");
+  if (!(INSTANT_FEEDBACK && isDone(current) && t.explain)) {
+    box.className = "explain hidden";
+    box.innerHTML = "";
+    return;
+  }
+  const right = isRight(current);
+  const labels = labelsOf(t);
+  const ans = t.answerText || correctSet(t).map(i => labels[i]).join(t.ordered ? " → " : ", ");
+  box.className = "explain " + (right ? "good" : "bad");
+  box.innerHTML =
+    '<div class="score">Правильна відповідь: <b>' + ans + '</b>. Бали: ' + (right ? 1 : 0) +
+    ' з 1. Після показу відповіді змінити її вже не можна.</div>' +
+    '<h4>Чому так</h4><p class="why">' + t.explain.why + '</p>' +
+    '<p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';
+  const a = $("repeatLink");
+  a.textContent = t.explain.repeat;
+  a.onclick = e => { e.preventDefault(); showTheoryAt(t.explain.repeat); };
+}
+
+function showTheoryAt(heading) {
+  showTheory();
+  const idx = theory.findIndex(b => b.h === heading);
+  const blocks = document.querySelectorAll ? document.querySelectorAll(".theory-block") : [];
+  if (idx >= 0 && blocks[idx]) blocks[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+const INSTANT_FEEDBACK = true; // true — після відповіді одразу показувати правильно/неправильно
+
+const correctSet = t => Array.isArray(t.correct) ? t.correct : [t.correct];
+function isDone(i) {
+  const t = tasks[i], p = state[i].picked, n = p.length;
+  if (t.matrix) return n === t.cols.length && p.every(x => x !== null && x !== undefined);
+  return n === (t.multi || 1);
+}
+function isRight(i) {
+  const t = tasks[i], p = state[i].picked, c = correctSet(t);
+  if (t.ordered || t.matrix) return p.length === c.length && c.every((x, k) => p[k] === x);
+  return p.length === c.length && c.every(x => p.includes(x));
+}
+
+const TOTAL = tasks.length;
+
+/* ===== СТАН ===== */
+let current = 0;
+let inTheory = false;
+const state = tasks.map(() => ({ picked: [] }));
+const TOPIC_ID = 26; // номер теми цієї сторінки
+const LS_KEY = "hist" + TOPIC_ID + "-progress";
+const summaryKey = n => "progress-topic-" + n;
+
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.state && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => { if (Array.isArray(s.picked)) state[i].picked = s.picked; });
+    current = Math.min(saved.current || 0, TOTAL - 1);
+  }
+} catch (e) {}
+
+function save() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, current }));
+    // короткий підсумок для меню: скільки завдань уже виконано
+    const answered = state.filter((_, i) => isDone(i)).length;
+    localStorage.setItem(summaryKey(TOPIC_ID), JSON.stringify({ answered, total: TOTAL }));
+  } catch (e) {}
+}
+
+const $ = id => document.getElementById(id);
+const labelsOf = t => t.labels || LETTERS;
+
+/* ===== СІТКА НОМЕРІВ ===== */
+function buildNums() {
+  const box = $("nums");
+  box.innerHTML = "";
+  const t = document.createElement("button");
+  t.className = "num theory-btn";
+  t.id = "tBtn";
+  t.textContent = "Т";
+  t.setAttribute("aria-label", "Теорія");
+  t.onclick = showTheory;
+  box.appendChild(t);
+
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button");
+    b.className = "num";
+    b.dataset.i = i;
+    b.textContent = i + 1;
+    b.setAttribute("aria-label", "Завдання " + (i + 1));
+    b.onclick = () => go(i);
+    box.appendChild(b);
+  });
+}
+
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") {
+      b.className = "num theory-btn" + (inTheory ? " current" : "");
+      return;
+    }
+    const i = +b.dataset.i;
+    b.className = "num";
+    if (state[i].picked.length) {
+      if (INSTANT_FEEDBACK && isDone(i)) b.classList.add(isRight(i) ? "correct" : "wrong");
+      else b.classList.add("answered");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+
+/* ===== ТЕОРІЯ ===== */
+function buildTheory() {
+  const v = $("theoryView");
+  v.innerHTML = '<h2 class="theory-title">Теорія</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div");
+    d.className = "theory-block";
+    const h = document.createElement("h3");
+    h.textContent = item.h;
+    d.appendChild(h);
+    if (item.p) { const p = document.createElement("p"); p.innerHTML = item.p; d.appendChild(p); }
+    if (item.quote) { const q = document.createElement("blockquote"); q.textContent = item.quote; d.appendChild(q); }
+    if (item.list) {
+      const ul = document.createElement("ul");
+      item.list.forEach(x => { const li = document.createElement("li"); li.innerHTML = x; ul.appendChild(li); });
+      d.appendChild(ul);
+    }
+    if (item.after) { const p = document.createElement("p"); p.className = "after"; p.innerHTML = item.after; d.appendChild(p); }
+    v.appendChild(d);
+  });
+  const end = document.createElement("div");
+  end.className = "theory-end";
+  v.appendChild(end);
+}
+
+function updateToTop() {
+  const show = inTheory && window.scrollY > 200;
+  $("toTop").classList.toggle("show", show);
+}
+
+function showTheory() {
+  inTheory = true;
+  $("testView").classList.add("hidden");
+  $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія";
+  paintNums();
+  window.scrollTo({ top: 0 });
+  updateToTop();
+}
+
+/* ===== ТЕСТ ===== */
+function render() {
+  inTheory = false;
+  updateToTop();
+  $("theoryView").classList.add("hidden");
+  $("testView").classList.remove("hidden");
+  const t = tasks[current];
+  const s = state[current];
+  const labels = labelsOf(t);
+  const done = INSTANT_FEEDBACK && isDone(current);
+
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+
+  const q = $("question");
+  q.textContent = "";
+  const idEl = document.createElement("b");
+  idEl.textContent = t.id + " ";
+  q.appendChild(idEl);
+  q.appendChild(document.createTextNode(t.q));
+  if (t.note) {
+    const em = document.createElement("em");
+    em.textContent = t.note;
+    q.appendChild(em);
+  }
+
+  $("answersLabel").textContent = t.hint || (t.multi
+    ? "Позначте відповіді (потрібно обрати " + t.multi + "):"
+    : "Позначте відповіді:");
+
+  const ul = $("options");
+  ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li");
+    const pos = t.ordered ? s.picked.indexOf(i) : -1;
+    let cls = t.matrix ? "option locked" : "option" + (s.picked.includes(i) ? " selected" : "");
+    if (done && !t.matrix) {
+      if (t.ordered) {
+        if (pos >= 0) cls += correctSet(t)[pos] === i ? " right" : " wrong";
+      } else {
+        if (correctSet(t).includes(i)) cls += " right";
+        else if (s.picked.includes(i)) cls += " wrong";
+      }
+      cls += " locked";
+    }
+    li.className = cls;
+    li.tabIndex = t.matrix ? -1 : 0;
+    li.innerHTML = '<span class="letter"></span><span class="txt"></span>';
+    li.querySelector(".letter").textContent = /\bright\b/.test(cls) ? "✓" : /\bwrong\b/.test(cls) ? "✕" : labels[i];
+    li.querySelector(".txt").textContent = (pos >= 0 ? "[" + (pos + 1) + "] " : "") + text;
+    if (!t.matrix) {
+      li.onclick = () => pick(i);
+      li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(i); } };
+    }
+    ul.appendChild(li);
+  });
+
+  const grid = $("answerGrid");
+  grid.innerHTML = "";
+  grid.className = "answer-grid" + (t.matrix ? " matrix" : "");
+  (t.matrix ? [] : labels).forEach((L, i) => {
+    const on = s.picked.includes(i);
+    const pos = s.picked.indexOf(i);
+    const col = document.createElement("div");
+    col.className = "answer-col";
+    const b = document.createElement("b");
+    b.textContent = L;
+    const bx = document.createElement("button");
+    let bc = "box" + (on ? " on" : "");
+    let mark = on ? (t.ordered ? String(pos + 1) : "✓") : "";
+    if (done) {
+      let ok, bad;
+      if (t.ordered) { ok = on && correctSet(t)[pos] === i; bad = on && !ok; }
+      else { ok = correctSet(t).includes(i); bad = !ok && on; }
+      if (ok) { bc = "box right"; mark = "✓"; }
+      else if (bad) { bc = "box wrong"; mark = "✕"; }
+      bc += " locked";
+    }
+    bx.className = bc;
+    bx.textContent = mark;
+    bx.setAttribute("aria-label", "Відповідь " + L);
+    bx.onclick = () => pick(i);
+    col.appendChild(b);
+    col.appendChild(bx);
+    grid.appendChild(col);
+  });
+
+  if (t.matrix) {
+    const c = correctSet(t);
+    t.cols.forEach((cl, ci) => {
+      const col = document.createElement("div");
+      col.className = "answer-col";
+      const b = document.createElement("b");
+      b.textContent = cl;
+      col.appendChild(b);
+      labels.forEach((L, ri) => {
+        const on = s.picked[ci] === ri;
+        let bc = "box" + (on ? " on" : "");
+        let mark = L;
+        if (done) {
+          if (ri === c[ci]) { bc = "box right"; mark = "✓"; }
+          else if (on) { bc = "box wrong"; mark = "✕"; }
+          bc += " locked";
+        }
+        const bx = document.createElement("button");
+        bx.className = bc;
+        bx.textContent = mark;
+        bx.setAttribute("aria-label", "Для " + cl + " — " + L);
+        bx.onclick = () => pickCell(ci, ri);
+        col.appendChild(bx);
+      });
+      grid.appendChild(col);
+    });
+  }
+
+  renderExplain(t);
+
+  paintNums();
+  save();
+}
+
+function pickCell(ci, ri) {
+  const s = state[current];
+  if (INSTANT_FEEDBACK && isDone(current)) return; // відповідь зафіксовано
+  const p = s.picked;
+  if (p[ci] === ri) p[ci] = null;
+  else {
+    while (p.length <= ci) p.push(null);
+    p[ci] = ri;
+  }
+  while (p.length && (p[p.length - 1] === null || p[p.length - 1] === undefined)) p.pop();
+  render();
+}
+
+function pick(i) {
+  const t = tasks[current];
+  const s = state[current];
+  if (INSTANT_FEEDBACK && isDone(current)) return; // відповідь зафіксовано
+  const k = s.picked.indexOf(i);
+  if (k >= 0) s.picked.splice(k, 1);
+  else if (t.multi) { if (s.picked.length < t.multi) s.picked.push(i); }
+  else s.picked = [i];
+  render();
+}
+
+function go(i) {
+  current = Math.max(0, Math.min(TOTAL - 1, i));
+  render();
+  window.scrollTo({ top: 0 });
+}
+
+/* ===== КНОПКИ ===== */
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (inTheory || $("drawer").classList.contains("open")) return;
+  if (e.key === "ArrowRight") go(current + 1);
+  if (e.key === "ArrowLeft") go(current - 1);
+});
+$("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+window.addEventListener("scroll", updateToTop, { passive: true });
+
+$("total").textContent = TOTAL;
+buildNums();
+buildTheory();
+render();      // готуємо вигляд тесту (з урахуванням збереженого прогресу)
+showTheory();   // при відкритті першою показується вкладка «Т» з теорією
+</script>
+</body>
+</html>

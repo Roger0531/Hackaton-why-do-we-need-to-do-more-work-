@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta name="color-scheme" content="dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тема 1. Вступ до історії України</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&amp;display=swap&amp;subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --cell: 36px; --cell-font: 16px; --green: #00bc8c; --green-dark: #00a077;
+    --border: #00bc8c; --label: #00bc8c; --red: #e74c3c; --grey-btn: #444444;
+    --grey-box: #303030; --active-bg: #0b5c49; --text: #ffffff; --muted: #c8c8c8;
+    --bg: #222222; --panel: #303030; --line: #444444; --ok: #00bc8c; --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Lato", "Segoe UI", Arial, sans-serif; font-size: 17px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin: 4px 0 18px; }
+  .home-btn { display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 9px 18px; border: 1px solid var(--green); color: var(--text); background: transparent; font-size: 17px; text-decoration: none; cursor: pointer; transition: background .15s; }
+  .home-btn:hover { background: var(--green); }
+  .home-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); } .meta b { color: var(--text); }
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num { width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); border: 1px solid var(--border); background: var(--panel); font: inherit; font-size: var(--cell-font); line-height: 1; color: var(--text); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+  .num.done, .num.seen { border-color: var(--border); }
+  .num.current { background: var(--active-bg); box-shadow: 0 0 6px 2px rgba(0,188,140,.55); border-color: var(--border); }
+  .num.correct { background: #0b5c49; } .num.wrong { background: #6b2620; border-color: var(--bad); }
+  .num.answered { background: #1d4a40; }
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--line); }
+  .counter { position: relative; display: inline-block; padding: 8px 14px; background: var(--bg); color: var(--text); border: 1px solid var(--border); font-size: 17px; }
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; white-space: pre-line; }
+  .question em { display: block; margin-top: 12px; color: var(--muted); font-size: 16px; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 6px; cursor: pointer; max-width: 100%; }
+  .option .letter { background: var(--grey-box); width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--cell-font); line-height: 1; }
+  .option .txt { font-size: 18px; line-height: 1.4; padding-top: 6px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; } .option.wrong .letter { background: var(--bad); color: #fff; }
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: var(--cell-font); width: var(--cell); text-align: center; }
+  .box { width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); border: 1px solid #555555; border-radius: 4px; background: var(--panel); cursor: pointer; font-size: var(--cell-font); line-height: 1; display: flex; align-items: center; justify-content: center; padding: 0; color: var(--text); }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+  .option.locked, .box.locked { cursor: default; }
+  .box.right { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .box.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .matrix .box.on { background: var(--green); border-color: var(--green); }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn { display: block; width: 212px; height: 43px; border: 0; font: inherit; font-size: 17px; color: #fff; background: var(--green); cursor: pointer; }
+  .btn:hover { background: var(--green-dark); }
+  .btn.red { background: var(--red); width: 213px; } .btn.red:hover { background: #d43f2f; }
+  .btn.grey { background: var(--grey-btn); color: var(--text); } .btn.grey:hover { background: #555555; }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .explain { margin-top: 24px; padding: 18px 20px; border-left: 4px solid var(--border); background: var(--panel); color: var(--text); font-size: 17px; line-height: 1.55; }
+  .explain.good { border-left-color: var(--ok); } .explain.bad { border-left-color: var(--bad); }
+  .explain .score b { font-weight: 700; }
+  .explain h4 { margin: 16px 0 4px; font-size: 17px; font-weight: 700; color: var(--green); }
+  .explain .why { margin: 0; }
+  .explain .repeat { margin: 16px 0 0; font-size: 15px; color: #9a9a9a; }
+  .explain .repeat a { color: var(--green); text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+  .num.theory-btn { font-weight: 700; }
+  .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); }
+  .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
+  .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .theory-block ul { margin: 6px 0 0; padding-left: 22px; color: var(--muted); font-size: 18px; line-height: 1.6; }
+  .theory-block li { margin: 0 0 6px; } .theory-block p + ul { margin-top: 10px; }
+  .theory-block blockquote { margin: 0; padding: 10px 14px; border-left: 4px solid var(--green); background: var(--panel); color: var(--muted); font-size: 17px; line-height: 1.6; font-style: italic; }
+  .theory-block blockquote + ul, .theory-block ul + p.after, .theory-block blockquote + p.after { margin-top: 12px; }
+  .theory-block p.after { margin-top: 12px; }
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; z-index: 90; }
+  .drawer-overlay.open { opacity: 1; visibility: visible; }
+  .drawer { position: fixed; top: 0; left: 0; bottom: 0; width: min(360px, 88vw); background: var(--bg); border-right: 1px solid var(--line); padding: 18px 16px 24px; overflow-y: auto; overscroll-behavior: contain; transform: translateX(-100%); visibility: hidden; transition: transform .22s ease, visibility .22s; z-index: 100; }
+  .drawer.open { transform: none; visibility: visible; }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .drawer-head h2 { margin: 0; font-size: 28px; font-weight: 700; }
+  .drawer-close { width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); background: transparent; color: var(--text); font-size: 18px; cursor: pointer; }
+  .drawer-close:hover { background: var(--panel); }
+  .topic-search { width: 100%; padding: 9px 10px; margin-bottom: 14px; border: 0; border-radius: 3px; background: #fff; color: #222; font: inherit; font-size: 15px; }
+  .topic-search::placeholder { color: #888; } .topic-list { list-style: none; margin: 0; padding: 0; }
+  .to-top { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); width: 48px; height: 48px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 50%; background: var(--green); color: #fff; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .2s, transform .2s, visibility .2s, background .15s; z-index: 50; }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; }
+  .to-top:hover { background: var(--green-dark); }
+  .to-top:focus-visible { outline: 3px solid #3498db; outline-offset: 3px; }
+  @media (max-width: 560px) { .wrap { padding: 12px 14px 40px; } :root { --cell: 32px; --cell-font: 14px; } .nums { gap: 9px; } .btn, .btn.red { width: 100%; } .left { width: 100%; } .row { flex-direction: column; } .right { width: 100%; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="home-btn" href="main.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      На головну
+    </a>
+  </div>
+  <div class="top-line"></div>
+  <div class="meta">
+    <div><span>Предмет:</span> Історія України</div>
+    <div><span>Розділ:</span> Вступ до історії України</div>
+    <div><span>Тема:</span> Тема 1. Вступ до історії України</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">3</b></div>
+  </div>
+  <p style="color:var(--muted);line-height:1.5">У підручнику до Теми 1 є лише 3 тестові завдання — наведено всі.</p>
+  <div class="nums" id="nums"></div>
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 3</span></div>
+  <div id="testView">
+    <p class="question" id="question"></p>
+    <ul class="options" id="options"></ul>
+    <p class="answers-label" id="answersLabel">Позначте відповіді:</p>
+    <div class="answer-grid" id="answerGrid"></div>
+    <div class="row"><div class="left"><button class="btn" id="skip">Пропустити</button></div></div>
+    <div class="explain hidden" id="explain" aria-live="polite"></div>
+  </div>
+  <div id="theoryView" class="hidden"></div>
+</div>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Список тестів" aria-hidden="true">
+  <div class="drawer-head"><h2>Теми</h2><button type="button" class="drawer-close" id="drawerClose" aria-label="Закрити список">✕</button></div>
+  <input type="search" class="topic-search" id="topicSearch" placeholder="Знайти тему" aria-label="Знайти тему" autocomplete="off">
+  <ul class="topic-list" id="topicList"></ul>
+</aside>
+<button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+<script>
+const LETTERS = ["А", "Б", "В", "Г", "Д"];
+const tasks = [
+  {
+    "id": "1.1.",
+    "q": "Увідповідніть період історії з хронологічними межами.\n\n1) Модерна доба\n2) Середньовіччя\n3) Новітня доба\n4) Стародавня історія",
+    "options": [
+      "VII–XV ст.",
+      "ХХ — початок ХХІ ст.",
+      "XVI–XVIII ст.",
+      "від 1 млн років тому до VI ст.",
+      "ХІХ ст."
+    ],
+    "correct": [
+      4,
+      0,
+      1,
+      3
+    ],
+    "answerText": "1Д 2А 3Б 4Г",
+    "explain": {
+      "why": "Модерна доба — ХІХ ст. (1Д); Середньовіччя — VII–XV ст. (2А); Новітня доба — ХХ — початок ХХІ ст. (3Б); Стародавня історія — від 1 млн років тому до VI ст. (4Г). Варіант В відповідає ранньомодерній добі.",
+      "repeat": "Періодизація історії України"
+    },
+    "matrix": true,
+    "multi": 4,
+    "cols": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "labels": [
+      "А",
+      "Б",
+      "В",
+      "Г",
+      "Д"
+    ],
+    "hint": "Позначте відповідність: для кожного номера оберіть одну літеру."
+  },
+  {
+    "id": "1.2.",
+    "q": "Увідповідніть події чи явища з періодами історії України.\n\n1) Українські землі у складі Російської та Австрійської імперій\n2) Перебування українських земель у складі Великого князівства Литовського\n3) Формування перших держав\n4) Українська козацька держава",
+    "options": [
+      "Стародавня історія",
+      "Середньовіччя",
+      "Ранньомодерна доба",
+      "Модерна доба",
+      "Новітня історія"
+    ],
+    "correct": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "answerText": "1Г 2Б 3А 4В",
+    "explain": {
+      "why": "Українські землі у складі Російської та Австрійської імперій — модерна доба (1Г); у складі Великого князівства Литовського — Середньовіччя (2Б); формування перших держав — стародавня історія (3А); Українська козацька держава — ранньомодерна доба (4В).",
+      "repeat": "Періодизація історії України"
+    },
+    "matrix": true,
+    "multi": 4,
+    "cols": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "labels": [
+      "А",
+      "Б",
+      "В",
+      "Г",
+      "Д"
+    ],
+    "hint": "Позначте відповідність: для кожного номера оберіть одну літеру."
+  },
+  {
+    "id": "1.3.",
+    "q": "Увідповідніть поняття з їхніми визначеннями.\n\n1) Історія\n2) Хронологія\n3) Археологія\n4) Цивілізація",
+    "options": [
+      "наука, що вивчає минуле людства",
+      "людська спільнота, яка протягом певного періоду має стійкі особливі риси в соціально-політичній організації, економіці та культурі, спільні духовні цінності",
+      "сліди життя і людської діяльності в минулому, переважно в письмовому вигляді, пам’ятках мистецтва, усній традиції, мові, звичаях і праві",
+      "наука, що вивчає первісні, стародавні та середньовічні матеріальні пам’ятки",
+      "послідовність подій у часі"
+    ],
+    "correct": [
+      0,
+      4,
+      3,
+      1
+    ],
+    "answerText": "1А 2Д 3Г 4Б",
+    "explain": {
+      "why": "Історія вивчає минуле людства (1А); хронологія — послідовність подій у часі (2Д); археологія вивчає матеріальні пам’ятки (3Г); цивілізація — людська спільнота зі стійкими особливими рисами та спільними духовними цінностями (4Б). Варіант В визначає історичні джерела.",
+      "repeat": "Поняття та терміни"
+    },
+    "matrix": true,
+    "multi": 4,
+    "cols": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "labels": [
+      "А",
+      "Б",
+      "В",
+      "Г",
+      "Д"
+    ],
+    "hint": "Позначте відповідність: для кожного номера оберіть одну літеру."
+  }
+];
+const theory = [
+  {
+    "h": "Зміст програми",
+    "p": "Факти. Історія України як наука. Періодизація історії України. Джерела з історії України.",
+    "after": "Розпізнавати на картосхемі територіальні межі України. Характеризувати основні джерела історії України. Визначати основні періоди історії України."
+  },
+  {
+    "h": "Поняття та терміни",
+    "list": [
+      "Історія — наука, що вивчає минуле людства на основі усних, писемних свідчень, матеріальних пам’яток.",
+      "Хронологія — послідовність подій у часі.",
+      "Історичні джерела — сліди життя і людської діяльності в минулому, переважно в письмовому вигляді, пам’ятках мистецтва, усній традиції, мові, звичаях і праві.",
+      "Археологія — наука, що вивчає первісні, стародавні та середньовічні матеріальні пам’ятки (стоянки, поселення, поховання, знаряддя праці, зброю, посуд тощо).",
+      "Цивілізація — людська спільнота, яка протягом певного періоду має стійкі особливі риси в соціально-політичній організації, економіці та культурі, спільні духовні цінності та ідеали, ментальність."
+    ],
+    "after": "Історія України — це наука, що вивчає розвиток людського суспільства на території України та його закономірності."
+  },
+  {
+    "h": "Джерела з історії України",
+    "list": [
+      "Усні (міфи, легенди, казки, народні пісні тощо).",
+      "Писемні (літописи, документи, щоденники, мемуари тощо).",
+      "Речові (залишки жител, знаряддя праці, посуд, одяг тощо).",
+      "Антропологічні (залишки людських поховань).",
+      "Мовні, які відображають процес розвитку мови.",
+      "Етнографічні (побут і звичаї народу).",
+      "Фоно- й фотодокументи."
+    ]
+  },
+  {
+    "h": "Періодизація історії України",
+    "list": [
+      "I. Стародавня історія (від 1 млн років тому до VI ст.). Доба появи людини на території України, еволюції від кам’яного до раннього залізного віку, трипільської цивілізації, формування перших держав, Великої грецької цивілізації та Великого розселення слов’ян.",
+      "II. Середньовіччя (VII–XV ст.). Утворення Київської Русі (Русі-України), Галицько-Волинської держави. Перебування українських земель у складі Великого князівства Литовського, Угорщини, Молдавського князівства, Московського князівства, Кримського ханства.",
+      "III. Ранньомодерна доба, або Ранній новий час (XVI–XVIII ст.). Українські землі в складі Речі Посполитої. Українська козацька держава та її ліквідація.",
+      "IV. Модерна доба, або Новий час (ХІХ ст.). Українські землі у складі Російської та Австрійської (Австро-Угорської) імперій.",
+      "V. Новітня доба (ХХ — початок ХХІ ст.). Україна в Першій світовій війні, Українська революція і боротьба за незалежність. Радянська Україна. Україна в Другій світовій війні. Незалежна Україна."
+    ]
+  }
+];
+
+const INSTANT_FEEDBACK = true;
+const TOTAL = tasks.length;
+const TOPIC_ID = 1;
+const LS_KEY = "hist" + TOPIC_ID + "-progress";
+const summaryKey = n => "progress-topic-" + n;
+let current = 0;
+let inTheory = false;
+const state = tasks.map(() => ({ picked: [] }));
+const $ = id => document.getElementById(id);
+const labelsOf = t => t.labels || LETTERS;
+const correctSet = t => Array.isArray(t.correct) ? t.correct : [t.correct];
+function isDone(i) {
+  const t = tasks[i], p = state[i].picked;
+  if (t.matrix) return p.length === t.cols.length && Array.from(p).every(x => Number.isInteger(x) && x >= 0 && x < t.options.length);
+  return p.length === (t.multi || 1);
+}
+function isRight(i) {
+  const t = tasks[i], p = state[i].picked, c = correctSet(t);
+  if (t.ordered || t.matrix) return p.length === c.length && c.every((x, k) => p[k] === x);
+  return p.length === c.length && c.every(x => p.includes(x));
+}
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && Array.isArray(saved.state) && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => {
+      if (s && Array.isArray(s.picked) && s.picked.length <= tasks[i].cols.length) {
+        state[i].picked = s.picked.map(x => Number.isInteger(x) && x >= 0 && x < tasks[i].options.length ? x : null);
+      }
+    });
+    current = Number.isInteger(saved.current) ? Math.max(0, Math.min(saved.current, TOTAL - 1)) : 0;
+  }
+} catch (e) {}
+function save() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, current }));
+    const answered = state.filter((_, i) => isDone(i)).length;
+    localStorage.setItem(summaryKey(TOPIC_ID), JSON.stringify({ answered, total: TOTAL }));
+  } catch (e) {}
+}
+function buildNums() {
+  const box = $("nums"); box.innerHTML = "";
+  const t = document.createElement("button");
+  t.className = "num theory-btn"; t.id = "tBtn"; t.textContent = "Т";
+  t.setAttribute("aria-label", "Теорія"); t.onclick = showTheory; box.appendChild(t);
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button"); b.className = "num";
+    b.dataset.i = i; b.textContent = i + 1; b.setAttribute("aria-label", "Завдання " + (i + 1));
+    b.onclick = () => go(i); box.appendChild(b);
+  });
+}
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") { b.className = "num theory-btn" + (inTheory ? " current" : ""); return; }
+    const i = +b.dataset.i; b.className = "num";
+    if (state[i].picked.length) {
+      if (INSTANT_FEEDBACK && isDone(i)) b.classList.add(isRight(i) ? "correct" : "wrong");
+      else b.classList.add("answered");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+function buildTheory() {
+  const v = $("theoryView"); v.innerHTML = '<h2 class="theory-title">Теорія до теми 1</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div"); d.className = "theory-block";
+    const h = document.createElement("h3"); h.textContent = item.h; d.appendChild(h);
+    if (item.p) { const p = document.createElement("p"); p.innerHTML = item.p; d.appendChild(p); }
+    if (item.quote) { const q = document.createElement("blockquote"); q.textContent = item.quote; d.appendChild(q); }
+    if (item.list) {
+      const ul = document.createElement("ul");
+      item.list.forEach(x => { const li = document.createElement("li"); li.innerHTML = x; ul.appendChild(li); }); d.appendChild(ul);
+    }
+    if (item.after) { const p = document.createElement("p"); p.className = "after"; p.innerHTML = item.after; d.appendChild(p); }
+    v.appendChild(d);
+  });
+  const end = document.createElement("div"); end.className = "theory-end"; v.appendChild(end);
+}
+function updateToTop() { $("toTop").classList.toggle("show", inTheory && window.scrollY > 200); }
+function showTheory() {
+  inTheory = true; $("testView").classList.add("hidden"); $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія"; paintNums(); window.scrollTo({ top: 0 }); updateToTop();
+}
+function showTheoryAt(heading) {
+  showTheory(); const idx = theory.findIndex(b => b.h === heading);
+  const blocks = document.querySelectorAll(".theory-block");
+  if (idx >= 0 && blocks[idx]) blocks[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function renderExplain(t) {
+  const box = $("explain");
+  if (!(INSTANT_FEEDBACK && isDone(current) && t.explain)) { box.className = "explain hidden"; box.innerHTML = ""; return; }
+  const right = isRight(current);
+  const ans = t.answerText || correctSet(t).map(i => labelsOf(t)[i]).join(", ");
+  box.className = "explain " + (right ? "good" : "bad");
+  box.innerHTML = '<div class="score">Правильна відповідь: <b>' + ans + '</b>. Бали: ' + (right ? 1 : 0) +
+    ' з 1. Після показу відповіді змінити її вже не можна.</div>' +
+    '<h4>Чому так</h4><p class="why">' + t.explain.why + '</p>' +
+    '<p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';
+  const a = $("repeatLink"); a.textContent = t.explain.repeat;
+  a.onclick = e => { e.preventDefault(); showTheoryAt(t.explain.repeat); };
+}
+function render() {
+  inTheory = false; updateToTop(); $("theoryView").classList.add("hidden"); $("testView").classList.remove("hidden");
+  const t = tasks[current], s = state[current], labels = labelsOf(t);
+  const done = INSTANT_FEEDBACK && isDone(current);
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+  const q = $("question"); q.textContent = "";
+  const idEl = document.createElement("b"); idEl.textContent = t.id + " "; q.appendChild(idEl);
+  q.appendChild(document.createTextNode(t.q));
+  if (t.note) { const em = document.createElement("em"); em.textContent = t.note; q.appendChild(em); }
+  $("answersLabel").textContent = t.hint;
+  const ul = $("options"); ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li"); li.className = "option locked";
+    li.innerHTML = '<span class="letter"></span><span class="txt"></span>';
+    li.querySelector(".letter").textContent = labels[i]; li.querySelector(".txt").textContent = text; ul.appendChild(li);
+  });
+  const grid = $("answerGrid"); grid.innerHTML = ""; grid.className = "answer-grid matrix";
+  const c = correctSet(t);
+  t.cols.forEach((cl, ci) => {
+    const col = document.createElement("div"); col.className = "answer-col";
+    const b = document.createElement("b"); b.textContent = cl; col.appendChild(b);
+    labels.forEach((L, ri) => {
+      const on = s.picked[ci] === ri;
+      let bc = "box" + (on ? " on" : ""), mark = L;
+      if (done) {
+        if (ri === c[ci]) { bc = "box right"; mark = "✓"; }
+        else if (on) { bc = "box wrong"; mark = "✕"; }
+        bc += " locked";
+      }
+      const bx = document.createElement("button"); bx.type = "button"; bx.className = bc; bx.textContent = mark;
+      bx.setAttribute("aria-label", "Для " + cl + " — " + L);
+      bx.setAttribute("aria-pressed", String(on)); bx.setAttribute("aria-disabled", String(done));
+      bx.onclick = () => pickCell(ci, ri); col.appendChild(bx);
+    });
+    grid.appendChild(col);
+  });
+  renderExplain(t); paintNums(); save();
+}
+function pickCell(ci, ri) {
+  const s = state[current]; if (INSTANT_FEEDBACK && isDone(current)) return;
+  const p = s.picked;
+  if (p[ci] === ri) p[ci] = null;
+  else { while (p.length <= ci) p.push(null); p[ci] = ri; }
+  while (p.length && (p[p.length - 1] === null || p[p.length - 1] === undefined)) p.pop();
+  render();
+}
+function go(i) { current = Math.max(0, Math.min(TOTAL - 1, i)); render(); window.scrollTo({ top: 0 }); }
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.isContentEditable) return;
+  if (inTheory || $("drawer").classList.contains("open")) return;
+  if (e.key === "ArrowRight") { e.preventDefault(); go(current + 1); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); go(current - 1); }
+});
+$("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+window.addEventListener("scroll", updateToTop, { passive: true });
+$("total").textContent = TOTAL;
+buildNums(); buildTheory(); render(); showTheory();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="uk"><head>
+<meta name="color-scheme" content="dark"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тема 9. Козацька Україна наприкінці 50–80-х рр. XVII ст. (Руїна)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&amp;display=swap&amp;subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --cell: 36px; --cell-font: 16px; --green: #00bc8c; --green-dark: #00a077;
+    --border: #00bc8c; --label: #00bc8c; --red: #e74c3c; --grey-btn: #444444;
+    --grey-box: #303030; --active-bg: #0b5c49; --text: #ffffff; --muted: #c8c8c8;
+    --bg: #222222; --panel: #303030; --line: #444444; --ok: #00bc8c; --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Lato", "Segoe UI", Arial, sans-serif; font-size: 17px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin: 4px 0 18px; }
+  .menu-btn { width: 44px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--green); background: transparent; color: var(--text); cursor: pointer; transition: background .15s; }
+  .menu-btn:hover { background: var(--green); }
+  .menu-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .home-btn { display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 9px 18px; border: 1px solid var(--green); color: var(--text); background: transparent; font-size: 17px; text-decoration: none; cursor: pointer; transition: background .15s; }
+  .home-btn:hover { background: var(--green); }
+  .home-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); } .meta b { color: var(--text); }
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num { width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); border: 1px solid var(--border); background: var(--panel); font: inherit; font-size: var(--cell-font); line-height: 1; color: var(--text); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+  .num.done { border-color: var(--border); } .num.seen { border-color: var(--border); }
+  .num.current { background: var(--active-bg); box-shadow: 0 0 6px 2px rgba(0,188,140,.55); border-color: var(--border); }
+  .num.correct { background: #0b5c49; } .num.wrong { background: #6b2620; border-color: var(--bad); }
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--line); }
+  .counter { position: relative; display: inline-block; padding: 8px 14px; background: var(--bg); color: var(--text); border: 1px solid var(--border); font-size: 17px; }
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 6px; cursor: pointer; max-width: 100%; }
+  .option .letter { background: var(--grey-box); width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--cell-font); line-height: 1; }
+  .option .txt { font-size: 18px; line-height: 1.4; padding-top: 6px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; } .option.wrong .letter { background: var(--bad); color: #fff; }
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: var(--cell-font); width: var(--cell); text-align: center; }
+  .box { width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); border: 1px solid #555555; border-radius: 4px; background: var(--panel); cursor: pointer; font-size: var(--cell-font); line-height: 1; display: flex; align-items: center; justify-content: center; padding: 0; color: var(--text); }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+  .option.locked, .box.locked { cursor: default; }
+  .box.right { background: var(--ok); border-color: var(--ok); color: #fff; } .box.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .matrix .box.on { background: var(--green); border-color: var(--green); }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn { display: block; width: 212px; height: 43px; border: 0; font: inherit; font-size: 17px; color: #fff; background: var(--green); cursor: pointer; }
+  .btn:hover { background: var(--green-dark); } .btn.red { background: var(--red); width: 213px; } .btn.red:hover { background: #d43f2f; }
+  .btn.grey { background: var(--grey-btn); color: var(--text); } .btn.grey:hover { background: #555555; }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .explain { margin-top: 24px; padding: 18px 20px; border-left: 4px solid var(--border); background: var(--panel); color: var(--text); font-size: 17px; line-height: 1.55; }
+  .explain.good { border-left-color: var(--ok); } .explain.bad { border-left-color: var(--bad); } .explain .score b { font-weight: 700; }
+  .explain h4 { margin: 16px 0 4px; font-size: 17px; font-weight: 700; color: var(--green); } .explain .why { margin: 0; }
+  .explain .repeat { margin: 16px 0 0; font-size: 15px; color: #9a9a9a; } .explain .repeat a { color: var(--green); text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+  .num.theory-btn { font-weight: 700; } .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); } .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); } .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .theory-block ul { margin: 6px 0 0; padding-left: 22px; color: var(--muted); font-size: 18px; line-height: 1.6; } .theory-block li { margin: 0 0 6px; } .theory-block p + ul { margin-top: 10px; }
+  .theory-block blockquote { margin: 0; padding: 10px 14px; border-left: 4px solid var(--green); background: var(--panel); color: var(--muted); font-size: 17px; line-height: 1.6; font-style: italic; }
+  .theory-block blockquote + ul, .theory-block ul + p.after, .theory-block blockquote + p.after { margin-top: 12px; } .theory-block p.after { margin-top: 12px; }
+  .question { white-space: pre-line; } .question em { display: block; margin-top: 12px; color: var(--muted); font-size: 16px; } .num.answered { background: #1d4a40; }
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; z-index: 90; }
+  .drawer-overlay.open { opacity: 1; visibility: visible; }
+  .drawer { position: fixed; top: 0; left: 0; bottom: 0; width: min(360px, 88vw); background: var(--bg); border-right: 1px solid var(--line); padding: 18px 16px 24px; overflow-y: auto; overscroll-behavior: contain; transform: translateX(-100%); visibility: hidden; transition: transform .22s ease, visibility .22s; z-index: 100; }
+  .drawer.open { transform: none; visibility: visible; } .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .drawer-head h2 { margin: 0; font-size: 28px; font-weight: 700; }
+  .drawer-close { width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); background: transparent; color: var(--text); font-size: 18px; cursor: pointer; } .drawer-close:hover { background: var(--panel); }
+  .topic-search { width: 100%; padding: 9px 10px; margin-bottom: 14px; border: 0; border-radius: 3px; background: #fff; color: #222; font: inherit; font-size: 15px; } .topic-search::placeholder { color: #888; }
+  .topic-list { list-style: none; margin: 0; padding: 0; }
+  .topic-link { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 11px 10px; border-bottom: 1px solid #333; border-left: 3px solid transparent; color: var(--green); text-decoration: none; font-size: 17px; }
+  .topic-link:hover { background: var(--panel); } .topic-link[aria-current="page"] { background: var(--panel); border-left-color: var(--green); }
+  .topic-link .t-name small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; } .topic-link .t-prog { color: var(--muted); font-size: 15px; white-space: nowrap; } .topic-link .t-prog.full { color: var(--green); font-weight: 700; } .topic-empty { padding: 14px 10px; color: var(--muted); }
+  .to-top { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); width: 48px; height: 48px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 50%; background: var(--green); color: #fff; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .2s, transform .2s, visibility .2s, background .15s; z-index: 50; }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; } .to-top:hover { background: var(--green-dark); } .to-top:focus-visible { outline: 3px solid #3498db; outline-offset: 3px; } .result { margin-top: 18px; font-weight: 600; }
+  @media (max-width: 560px) { .wrap { padding: 12px 14px 40px; } :root { --cell: 32px; --cell-font: 14px; } .nums { gap: 9px; } .btn, .btn.red { width: 100%; } .left { width: 100%; } .row { flex-direction: column; } .right { width: 100%; } }
+</style></head><body>
+<div class="wrap">
+  <div class="topbar"><a class="home-btn" href="main.html">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>На головну
+  </a></div><div class="top-line"></div>
+  <div class="meta">
+    <div><span>Предмет:</span> Історія України</div>
+    <div><span>Розділ:</span> Козацька Україна. Руїна</div>
+    <div><span>Тема:</span> Тема 9. Козацька Україна наприкінці 50–80-х рр. XVII ст. (Руїна)</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">20</b></div>
+  </div>
+  <div class="nums" id="nums"></div>
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 20</span></div>
+  <div id="testView">
+    <p class="question" id="question"></p><ul class="options" id="options"></ul>
+    <p class="answers-label" id="answersLabel">Позначте відповіді:</p><div class="answer-grid" id="answerGrid"></div>
+    <div class="row"><div class="left"><button class="btn" id="skip">Пропустити</button></div></div>
+    <div class="explain hidden" id="explain"></div>
+  </div>
+  <div id="theoryView" class="hidden"></div>
+</div>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Список тестів" aria-hidden="true">
+  <div class="drawer-head"><h2>Теми</h2><button type="button" class="drawer-close" id="drawerClose" aria-label="Закрити список">✕</button></div>
+  <input type="search" class="topic-search" id="topicSearch" placeholder="Знайти тему" aria-label="Знайти тему" autocomplete="off"><ul class="topic-list" id="topicList"></ul>
+</aside>
+<button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+<script>const LETTERS = ["А", "Б", "В", "Г"];
+const tasks = [
+  {
+    "id": "9.1.",
+    "q": "Що не було причиною Руїни?",
+    "options": [
+      "розкол української еліти в зовнішньополітичній орієнтації",
+      "втручання сусідів у внутрішні справи",
+      "відсутність загальнонаціонального лідера",
+      "підтримка рядовим козацтвом будь-якого уряду"
+    ]
+  },
+  {
+    "id": "9.2.",
+    "q": "Чиїх дій стосується цитата: «...вся Річ Посполита народів польського, Великого князівства Литовського, Руського та провінцій, що до них належать, відновлюється в повноті так, як було перед війною»?",
+    "options": [
+      "Петра Дорошенка, 1669 р.",
+      "Івана Виговського, 1658 р.",
+      "Юрія Хмельницького, 1659 р.",
+      "Івана Самойловича, 1674 р."
+    ]
+  },
+  {
+    "id": "9.3.",
+    "q": "Хто командував козацьким військом у Конотопській битві?",
+    "options": [
+      "Іван Виговський",
+      "Юрій Хмельницький",
+      "Петро Дорошенко",
+      "Мартин Пушкар"
+    ]
+  },
+  {
+    "id": "9.4.",
+    "q": "Яке твердження характеризує наслідки Конотопської битви?",
+    "options": [
+      "«Цвіт московської кінноти, що відбув щасливі походи 1654 і 1655 років, загинув за один день... У жалібній одежі вийшов цар Олексій Михайлович до народу й жах охопив Москву»",
+      "«Ось недавно вчинили договір з поляками на нашу згубу; розірвали надвоє...»",
+      "«Турецький султан... послав під Чигирин...»",
+      "«Від шведського короля... їхнім вольностям нічого не загрожує»"
+    ]
+  },
+  {
+    "id": "9.5.",
+    "q": "Що стало наслідком подій: «...він під Чудновом... напав на росіян та козаків... Хмельницький не раз виходив на битву з ляхами і татарами, проте нічого не домігся... був змушений запросити миру»?",
+    "options": [
+      "укладення Андрусівського перемир'я",
+      "укладення Слободищенської угоди",
+      "створення федерації Польщі, Литви і Великого князівства Руського",
+      "перемога козацько-татарських військ під Конотопом"
+    ]
+  },
+  {
+    "id": "9.6.",
+    "q": "Що передувало Конотопській битві?",
+    "options": [
+      "укладення Переяславських статей",
+      "розкол Гетьманщини на Ліво- і Правобережну",
+      "повстання Якова Барабаша і Мартина Пушкаря",
+      "підпорядкування Київської православної митрополії Московському патріарху"
+    ]
+  },
+  {
+    "id": "9.7.",
+    "q": "Який договір уклав автор цитати: «Коли Божою волею був я змушений взяти цей печальний уряд і держав його близько десяти років, не в чому іншому був мій замір, а тільки в тому, щоб примножити вольності Запорозького Війська та вберегти безпеку і цілість отчизни»?",
+    "options": [
+      "Андрусівське перемир'я 1667 р.",
+      "Корсунську угоду 1669 р.",
+      "Гадяцький договір 1658 р.",
+      "Слободищенську угоду 1660 р."
+    ]
+  },
+  {
+    "id": "9.8.",
+    "q": "Батурин став гетьманською столицею за правління",
+    "options": [
+      "Івана Брюховецького",
+      "Дем'яна Многогрішного",
+      "Івана Самойловича",
+      "Юрія Хмельницького"
+    ]
+  },
+  {
+    "id": "9.9.",
+    "q": "За яким договором Османська імперія отримала Південну Київщину, Поділля і Брацлавщину?",
+    "options": [
+      "Андрусівським перемир'ям",
+      "Вічним миром",
+      "Слободищенською угодою",
+      "Бахчисарайським договором"
+    ]
+  },
+  {
+    "id": "9.10.",
+    "q": "Як завершилося гетьманування особи, про яку йдеться в джерелі: «...Дорошенка заслав у вічну неволю, Чигирин з усією цьогобічною Україною втратив, допустив пролитися християнській крові...»?",
+    "options": [
+      "був убитий козаками",
+      "був засланий до Сибіру",
+      "зрікся булави і виїхав до Польщі",
+      "здався московському воєводі й оселився поблизу Москви"
+    ]
+  },
+  {
+    "id": "9.11.",
+    "q": "Слободищенська угода була видозміненим варіантом",
+    "options": [
+      "Бахчисарайського договору",
+      "Бучацького договору",
+      "Гадяцького договору",
+      "Андрусівського перемир'я"
+    ]
+  },
+  {
+    "id": "9.12.",
+    "q": "Що сталося того самого року з укладенням Вічного миру?",
+    "options": [
+      "завдяки підкупу константинопольського патріарха Київська митрополія перейшла в підпорядкування Московського патріархату",
+      "за участі Івана Самойловича відбувся Другий кримський похід",
+      "внаслідок Чигиринських походів столиця Гетьманщини була спустошена",
+      "Петро Дорошенко зрікся булави"
+    ]
+  },
+  {
+    "id": "9.13.",
+    "q": "Кого з гетьманів було заслано до Сибіру?",
+    "options": [
+      "Івана Брюховецького та Івана Самойловича",
+      "Дем'яна Многогрішного та Івана Самойловича",
+      "Дем'яна Многогрішного та Юрія Хмельницького",
+      "Івана Брюховецького та Юрія Хмельницького"
+    ]
+  },
+  {
+    "id": "9.14.",
+    "q": "Про які вольності йдеться в джерелі: «Нас селитися прикликали... в диких степах на татарських шляхах... Вони веліли не відбирати від нас наших вольностей»? (Слобожанщина)",
+    "options": [
+      "звільнення від сплати податків і право самоврядування",
+      "відтермінування служби в армії",
+      "право безмитної торгівлі",
+      "право на пільгові урядові кредити"
+    ]
+  },
+  {
+    "id": "9.15.",
+    "q": "Полки Слобожанщини підпорядковувались",
+    "options": [
+      "безпосередньо московському цареві",
+      "гетьманові Лівобережжя",
+      "гетьманові Правобережжя",
+      "білгородському воєводі"
+    ]
+  },
+  {
+    "id": "9.16.",
+    "q": "За правління якого гетьмана було укладено договір: «Договорилися ми... що всієї Малої Росії цього боку Дніпра... містам і землям... залишатися на стороні їхньої царської величності на вічні часи... Київ має залишатися також на стороні їхньої царської величності»?",
+    "options": [
+      "Івана Брюховецького",
+      "Петра Дорошенка",
+      "Дем'яна Многогрішного",
+      "Івана Самойловича"
+    ]
+  },
+  {
+    "id": "9.17.",
+    "q": "Розташуйте події в хронологічній послідовності.",
+    "options": [
+      "Гадяцький договір: «Гімназії, колегії, школи і друкарні... буде вільно відкривати»",
+      "Чорна рада: Брюховецький вирвав у Сомка бунчук і булаву",
+      "Конотопська битва: росіяни були розбиті Виговським",
+      "Андрусівське перемир'я на 13 років"
+    ],
+    "ordered": true,
+    "multi": 4,
+    "answerText": "А → В → Б → Г",
+    "hint": "Позначте події у хронологічному порядку (потрібно обрати 4):"
+  },
+  {
+    "id": "9.18.",
+    "q": "Установіть послідовність підписання московсько-українських статей.",
+    "options": [
+      "Глухівські статті",
+      "Московські статті",
+      "Конотопські статті",
+      "Переяславські статті"
+    ],
+    "ordered": true,
+    "multi": 4,
+    "answerText": "Г → Б → А → В",
+    "hint": "Позначте події у хронологічному порядку (потрібно обрати 4):"
+  },
+  {
+    "id": "9.19.",
+    "q": "Розташуйте події в хронологічній послідовності.",
+    "options": [
+      "Великий згін",
+      "Чорна рада",
+      "Чуднівська кампанія",
+      "об'єднання Гетьманщини під владою П. Дорошенка"
+    ],
+    "ordered": true,
+    "multi": 4,
+    "answerText": "В → Б → Г → А",
+    "hint": "Позначте події у хронологічному порядку (потрібно обрати 4):"
+  },
+  {
+    "id": "9.20.",
+    "q": "Увідповідніть ім'я історичного діяча з його характеристикою.\n\n1) Юрій Немирич\n2) Іван Самойлович\n3) Іван Брюховецький\n4) Іван Сірко",
+    "options": [
+      "«...якщо ми маємо зруйнувати Чигирин або віддати його ворогові, то радше заздалегідь сказати всьому народові, що він цареві непотрібний!»",
+      "автор Гадяцької угоди, що передбачала повне скасування Переяславських угод: «з Польщею нас єднає освіта, а від Москви відбиває її невігластво»",
+      "«...гетман верного войска вашого царського величества... холоп и найнижчий подножок пресвітлого престола...»",
+      "«це був справний і щасливий вождь, який... воював за Крим і погромлював у диких полях...»"
+    ],
+    "matrix": true,
+    "multi": 4,
+    "cols": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "labels": [
+      "А",
+      "Б",
+      "В",
+      "Г"
+    ],
+    "answerText": "1Б 2А 3В 4Г",
+    "hint": "Позначте відповідність: для кожного номера оберіть одну літеру."
+  }
+];
+const theory = [
+  {
+    "h": "Зміст програми",
+    "p": "Факти. Гетьманщина після смерті Б. Хмельницького. Адміністративно-територіальний устрій і політичне становище Лівобережної та Правобережної України. Запорозька Січ у складі Гетьманщини. Слобідська Україна. Руїна. Укладення гетьманськими урядами угод з державами-сусідами. Персоналії: Іван Виговський, Юрій Немирич, Юрій Хмельницький, Іван Брюховецький, Петро Дорошенко, Дем'ян Многогрішний, Іван Самойлович, Іван Сірко, Павло Тетеря."
+  },
+  {
+    "h": "Дати",
+    "list": [
+      "1658 р. — Гадяцький договір.",
+      "1659 р. — Конотопська битва.",
+      "1660 р. — Слободищенська угода.",
+      "1667 р. — Андрусівське перемир'я.",
+      "1669 р. — Корсунська угода, визнання Гетьманщиною протекторату Османської імперії.",
+      "1681 р. — Бахчисарайський мирний договір.",
+      "1686 р. — «Вічний мир» між Московським царством і Річчю Посполитою, підпорядкування Київської митрополії Московському патріархатові."
+    ]
+  },
+  {
+    "h": "Поняття та терміни",
+    "list": [
+      "Руїна — період 60–80-х років XVII ст., який характеризувався поділом України, внутрішньою боротьбою козацької старшини за владу та іноземним вторгненням в Україну.",
+      "«Великий згін» — примусове переселення мешканців Правобережжя на Лівобережну Україну, організоване гетьманом І. Самойловичем у 1678–1679 рр.",
+      "Чигиринські походи — військові походи турецько-татарської армії на Чигирин із метою загарбання території Правобережної України (1677, 1678).",
+      "Чорна рада — рада, на якій брали участь рядові козаки та селяни («чернь»); 1663 р. обрала Брюховецького.",
+      "Слобідська Україна (Слобожанщина) — територія на північному сході, колонізована українцями (1630–1680-ті), що перебувала під владою Московського царства з особливим статусом слобідських полків."
+    ]
+  },
+  {
+    "h": "Гетьманування Івана Виговського (1657–1659)",
+    "list": [
+      "Наступником Хмельницького мав стати його молодший син Юрій, але через неповноліття юнака старшина вибрала Івана Виговського — колишнього генерального писаря, освіченого шляхтича, дипломата.",
+      "Політика: був обережним у відносинах із Москвою; активізував зв'язки з Кримом, Османською імперією, Швецією, домовився про перемир'я з Польщею; роздавав землі козацькій старшині і приборкував антигетьманську опозицію. 1658 р. Москва підбурила повстання полтавського полковника Мартина Пушкаря і кошового отамана Якова Барабаша, до придушення якого довелося залучити кримських татар.",
+      "Гадяцький договір (1658) з Річчю Посполитою, укладений Виговським, мав стати альтернативою союзу з Московським царством. Автор — Юрій Немирич: «З Польщею нас єднає освіта, а від Москви відбиває її невігластво».",
+      "Умови: Гетьманщина як Велике князівство Руське входила до Речі Посполитої як рівноправна держава (федерація трьох суб'єктів: Польщі, Литви і Великого князівства Руського); гетьман обирався довічно козацтвом, шляхтою і духівництвом та затверджувався королем; гетьман очолював виконавчу владу та збройні сили (30 тис. реєстру та 10 тис. найманців); вища законодавча влада мала належати Національним зборам; незалежна фінансова, податкова і судова системи; козакам гарантувалися права; скасування унії, православні урівнювалися в правах із католиками, православні митрополит і єпископи отримували місця в сенаті; Києво-Могилянська колегія набувала статусу академії й урівнювалась у правах з Краківським університетом; було заплановано ще одну академію, а також гімназії та школи; свобода друку і слова. Польські феодали отримували право повертатися до України.",
+      "Значення: яскрава пам'ятка державної та правової думки, але договір не реалізований: сейм ухвалив його у скороченому вигляді; значна частина старшини і рядового козацтва не підтримала.",
+      "Московсько-українська війна 1658–1659: після облоги Конотопа спільне козацько-татарське військо Виговського 28 червня 1659 р. вщент розбило московську армію (князі Трубецькой, Ромодановський) під Конотопом. Проте гетьман не зумів скористатися перемогою; через промосковську старшину московська армія захопила Лівобережжя. Жовтень 1659: Виговський зрікся булави і виїхав до Польщі; 1664 р. страчений."
+    ]
+  },
+  {
+    "h": "Гетьманування Юрія Хмельницького (1659–1663)",
+    "list": [
+      "Наймолодший син Богдана; слабкий політик, маріонетка. Під тиском московських військ підписав Переяславські статті (1659) — фальсифікований варіант Березневих: московські війська у великих містах (Переяслав, Ніжин, Брацлав, Умань, Чернігів); козакам заборонили вести війни і зовнішні зносини без дозволу царя; обрання гетьмана — тільки з ухвали царя.",
+      "Чуднівська кампанія (1660): московська армія (В. Шереметьєв) зазнала поразки від Польщі під Чудновом; Ю. Хмельницький змінив орієнтацію на Польщу і підписав Слободищенську угоду (1660) — повернення до Речі Посполитої на основі Гадяцького договору, проте лише як автономія. Правобережна Україна повернулася під владу Польщі; лівобережні полки (Я. Сомко, В. Золотаренко) залишились при союзі з Москвою. Поділ Гетьманщини на Правобережну і Лівобережну. Січні 1663 р. Юрій зрікся булави і постригся в ченці."
+    ]
+  },
+  {
+    "h": "Руїна",
+    "list": [
+      "Причини: відсутність загальнонаціонального лідера, який би продовжив справу Хмельницького; розкол еліти — частина орієнтувалася на Москву, частина на Польщу, особисті інтереси; рядове козацтво і селянство відмовлялися підкорятися будь-якому уряду; втручання і агресія Речі Посполитої, Московії, Османської імперії та Кримського ханства."
+    ]
+  },
+  {
+    "h": "Правобережна Україна",
+    "list": [
+      "Павло Тетеря (бл. 1620–1671): гетьман Правобережної України (1663–1665); хрещеник Хмельницького; був «королівським гетьманом, а не козацьким»; підтримав похід Яна Казимира на Лівобережжя (1663–1664), який не мав успіху.",
+      "Петро Дорошенко (1627–1698): гетьман Правобережної України (1665–1676); народився в Чигирині; створив 20-тисячний корпус сердюків-піхотинців; запровадив митну лінію, карбував монету; 1668 р. об'єднав Ліво- і Правобережжя та був проголошений гетьманом усієї України; не зумівши переконати Польщу дотримуватися Гадяцького договору, уклав із Османською імперією Корсунську угоду (1669) — визнав зверхність султана, без сплати податків; допомога у відвоюванні від Польщі Галичини, Волині, Київщини; православна церква автономна. Бучацький договір 1672 р. — Польща віддала Османській імперії Поділля, Брацлавщину і Південну Київщину. 1676 р. Дорошенко склав булаву перед І. Сірком і переселився в московські володіння; помер 1698 р. під Москвою."
+    ]
+  },
+  {
+    "h": "Лівобережна Україна",
+    "list": [
+      "Іван Брюховецький (1663–1668): обраний на «чорній раді» (1663), конкурентів Я. Сомка і В. Золотаренка стратили; першим із гетьманів відвідав Москву й одружився з княжною; уклав Батуринські статті (1663) і Московські статті (1665): вибори гетьмана тільки з дозволу царя; збір податків покладався на царських урядників; київський митрополит підпорядковувався Московському патріархату; московські залоги в містах. Побоюючись втратити гетьманство, оголосив про вихід з-під влади Москви й перехід під турецький протекторат; був убитий козаками (1668).",
+      "Андрусівське перемир'я (1667): між Московським царством і Річчю Посполитою на 13,5 року, завершило війну 1654–1667; поділ Гетьманщини по Дніпру: Правобережжя (крім Києва) залишилося за Польщею, Лівобережжя і Київ тимчасово — за Московією; Запорозька Січ — під спільним контролем.",
+      "Дем'ян Многогрішний (1669–1672): чернігівський полковник; Глухівські статті (1669): московські воєводи лишалися тільки в п'яти містах (Київ, Чернігів, Переяслав, Ніжин, Острог); реєстр — 30 тис.; право наймати компанійське військо; податки збирала козацька старшина; столиця перенесена до Батурина; вів таємні переговори з Дорошенком. 1672 р. заарештований, засланий до Сибіру.",
+      "Іван Самойлович (1672–1687): син священика; обраний після арешту Многогрішного; Конотопські статті (1672): заборона зовнішніх зносин без дозволу царя; гетьман не мав права карати старшину без згоди старшинської ради; розпущені компанійські війська. 1674 р. здійснив похід на Правобережжя; «Великий згін» (1678–1679) — переселення з Правобережжя на Лівобережжя для підриву економіки. Брав участь в обороні Чигирина.",
+      "Чигиринські походи (1677–1678): Османська імперія, яка прагнула зберегти контроль над Правобережжям, поставила гетьманом Юрія Хмельницького; 1677 р. облога Чигирина 90-тисячним військом: не вдалася, до міста підійшли україно-московські війська Ромодановського; 1678 р. 200-тисячне військо захопило Чигирин, зруйноване. Результат — остаточне спустошення Правобережжя.",
+      "Бахчисарайський мир (1681): Османська імперія отримала Південну Київщину, Брацлавщину і Поділля; кордон між державами по Дніпру; Запорозька Січ і Дике поле — нейтральні; вільне полювання і рибальство.",
+      "«Вічний мир» (1686): між Московським царством і Річчю Посполитою; кордон по Дніпру; Київ із околицями — Москві; Запорожжя — Москві; за Київ Польща отримала викуп; сторони домовилися про спільну боротьбу проти Османської імперії та Кримського ханства. Підпорядкування Київської митрополії Московському патріархату (1686): обраний 1685 митрополит Гедеон (Четвертинський) присягнув Московському патріарху.",
+      "Кримські походи (1687, 1689) за Самойловича/Голіцина: невдалі; відповідальність за поразку 1687 р. поклали на Самойловича — його заарештовано й заслано до Сибіру."
+    ]
+  },
+  {
+    "h": "Запорозька Січ. Слобожанщина",
+    "list": [
+      "Запорозька Січ (Чортомлицька) у період 1667–1686 перебувала під спільним контролем Московського царства та Речі Посполитої; брала участь в антигетьманських виступах; Іван Сірко — кошовий отаман, народний герой, переможець у боротьбі проти татар і турків.",
+      "Слобідська Україна: заселена українцями від 1630-х років; слобожанські полки: Сумський, Охтирський, Харківський, Ізюмський, Острогозький; підпорядковувалися білгородському воєводі; слобожани мали певні вольності — звільнення від податків, право безмитної торгівлі, самоврядування; заселяли Бєлгородську лінію. Центр — Харків (1654).",
+      "Привілейований стан — козацька старшина, шляхта, духівництво; населення: козаки, селяни, міщани."
+    ]
+  },
+  {
+    "h": "Культура",
+    "list": [
+      "Козацьке бароко (мистецький стиль XVII–XVIII ст.): контрастність, експресія, динамізм, театральність; козацькі літописи (Самовидця, Грабянки, Величка); Києво-Могилянська академія; шкільна драма; гравюра; портрет Б. Хмельницького (гравюра В. Гондіуса, 1651 — єдиний прижиттєвий). Архітектура: Покровська церква у Харкові (1689), Благовіщенська, Свято-Троїцький Іонинський монастир у Києві."
+    ]
+  }
+];
+const ANSWERS = [3, 1, 0, 0, 1, 2, 1, 1, 3, 1, 2, 0, 1, 0, 3, 3, [0, 2, 1, 3], [3, 1, 0, 2], [2, 1, 3, 0], [1, 0, 2, 3]];
+tasks.forEach((t,i)=>{t.correct=ANSWERS[i];});
+const EXPLAIN = [
+  {
+    "why": "У теорії причинами Руїни названо розкол еліти, втручання сусідів, відсутність спільного лідера та непокору частини населення урядам. Підтримка будь-якого уряду не була причиною.",
+    "repeat": "Руїна"
+  },
+  {
+    "why": "Цитата стосується Гадяцького договору 1658 р., укладеного за гетьманування Івана Виговського. Проєкт передбачав федерацію Польщі, Литви й Великого князівства Руського.",
+    "repeat": "Гетьманування Івана Виговського (1657–1659)"
+  },
+  {
+    "why": "Козацьким військом у Конотопській битві 1659 р. командував Іван Виговський.",
+    "repeat": "Гетьманування Івана Виговського (1657–1659)"
+  },
+  {
+    "why": "За наданим ключем правильний уривок — А: він описує поразку московської кінноти під Конотопом. Виговський, однак, не зміг закріпити політичні результати перемоги.",
+    "repeat": "Гетьманування Івана Виговського (1657–1659)"
+  },
+  {
+    "why": "Після Чуднівської кампанії 1660 р. Юрій Хмельницький підписав Слободищенську угоду та змінив зовнішньополітичну орієнтацію на Річ Посполиту.",
+    "repeat": "Гетьманування Юрія Хмельницького (1659–1663)"
+  },
+  {
+    "why": "Повстання Мартина Пушкаря і Якова Барабаша відбулося 1658 р., до Конотопської битви 1659 р.",
+    "repeat": "Гетьманування Івана Виговського (1657–1659)"
+  },
+  {
+    "why": "За наданим ключем автор цитати — Петро Дорошенко. Він уклав Корсунську угоду 1669 р. та визнав протекторат Османської імперії.",
+    "repeat": "Правобережна Україна"
+  },
+  {
+    "why": "У матеріалі перенесення гетьманської столиці до Батурина пов’язане з правлінням Дем’яна Многогрішного.",
+    "repeat": "Лівобережна Україна"
+  },
+  {
+    "why": "За наданим ключем відповідь — Бахчисарайський договір 1681 р. У теорії наведено відповідні територіальні умови.",
+    "repeat": "Лівобережна Україна"
+  },
+  {
+    "why": "За наданим ключем йдеться про Івана Самойловича, а не про згаданого в уривку Дорошенка. Самойловича усунули 1687 р. та заслали до Сибіру.",
+    "repeat": "Лівобережна Україна"
+  },
+  {
+    "why": "Слободищенська угода 1660 р. спиралася на Гадяцький договір, але не передбачала рівноправного Великого князівства Руського, лише автономію.",
+    "repeat": "Гетьманування Юрія Хмельницького (1659–1663)"
+  },
+  {
+    "why": "За матеріалом і Вічний мир, і підпорядкування Київської митрополії Московському патріархату датовано 1686 р. Формулювання варіанта А збережено за вашим текстом.",
+    "repeat": "Лівобережна Україна"
+  },
+  {
+    "why": "Дем’яна Многогрішного заслали до Сибіру після арешту 1672 р., Івана Самойловича — після усунення 1687 р.",
+    "repeat": "Лівобережна Україна"
+  },
+  {
+    "why": "За ключем відповідь — А: звільнення від податків і самоврядування. У теорії серед вольностей слобожан також зазначено право безмитної торгівлі.",
+    "repeat": "Запорозька Січ. Слобожанщина"
+  },
+  {
+    "why": "Слобідські полки підпорядковувалися білгородському воєводі, а не гетьманам Лівобережжя чи Правобережжя.",
+    "repeat": "Запорозька Січ. Слобожанщина"
+  },
+  {
+    "why": "Йдеться про Вічний мир 1686 р., укладений під час гетьманування Івана Самойловича (1672–1687).",
+    "repeat": "Лівобережна Україна"
+  },
+  {
+    "why": "Гадяцький договір (1658) → Конотопська битва (1659) → Чорна рада (1663) → Андрусівське перемир’я (1667).",
+    "repeat": "Дати"
+  },
+  {
+    "why": "Переяславські статті (1659) → Московські статті (1665) → Глухівські статті (1669) → Конотопські статті (1672).",
+    "repeat": "Лівобережна Україна"
+  },
+  {
+    "why": "Чуднівська кампанія (1660) → Чорна рада (1663) → об’єднання Гетьманщини під владою Дорошенка (1668) → Великий згін (1678–1679).",
+    "repeat": "Поняття та терміни"
+  },
+  {
+    "why": "За наданим ключем: Юрій Немирич — автор Гадяцької угоди (1Б); Іван Самойлович — висловлювання про Чигирин (2А); Іван Брюховецький — звернення до царя (3В); Іван Сірко — характеристика військового вождя (4Г).",
+    "repeat": "Гетьманування Івана Виговського (1657–1659)"
+  }
+];
+tasks.forEach((t,i)=>{t.explain=EXPLAIN[i];});
+function renderExplain(t) {
+  const box = $("explain");
+  if (!(INSTANT_FEEDBACK && isDone(current) && t.explain)) {
+    box.className = "explain hidden"; box.innerHTML = ""; return;
+  }
+  const right = isRight(current), labels = labelsOf(t);
+  const ans = t.answerText || correctSet(t).map(i => labels[i]).join(t.ordered ? " → " : ", ");
+  box.className = "explain " + (right ? "good" : "bad");
+  box.innerHTML = '<div class="score">Правильна відповідь: <b>' + ans + '</b>. Бали: ' + (right ? 1 : 0) +
+    ' з 1. Після показу відповіді змінити її вже не можна.</div>' +
+    '<h4>Чому так</h4><p class="why">' + t.explain.why + '</p>' +
+    '<p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';
+  const a = $("repeatLink"); a.textContent = t.explain.repeat;
+  a.onclick = e => { e.preventDefault(); showTheoryAt(t.explain.repeat); };
+}
+function showTheoryAt(heading) {
+  showTheory(); const idx = theory.findIndex(b => b.h === heading);
+  const blocks = document.querySelectorAll ? document.querySelectorAll(".theory-block") : [];
+  if (idx >= 0 && blocks[idx]) blocks[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+const INSTANT_FEEDBACK = true;
+const correctSet = t => Array.isArray(t.correct) ? t.correct : [t.correct];
+function isDone(i) {
+  const t = tasks[i], p = state[i].picked, n = p.length;
+  if (t.matrix) return n === t.cols.length && p.every(x => x !== null && x !== undefined);
+  return n === (t.multi || 1);
+}
+function isRight(i) {
+  const t = tasks[i], p = state[i].picked, c = correctSet(t);
+  if (t.ordered || t.matrix) return p.length === c.length && c.every((x, k) => p[k] === x);
+  return p.length === c.length && c.every(x => p.includes(x));
+}
+const TOTAL = tasks.length;
+let current = 0;
+let inTheory = false;
+const state = tasks.map(() => ({ picked: [] }));
+const TOPIC_ID = 9;
+const LS_KEY = "hist" + TOPIC_ID + "-progress";
+const summaryKey = n => "progress-topic-" + n;
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.state && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => { if (Array.isArray(s.picked)) state[i].picked = s.picked; });
+    current = Math.min(saved.current || 0, TOTAL - 1);
+  }
+} catch (e) {}
+function save() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, current }));
+    const answered = state.filter((_, i) => isDone(i)).length;
+    localStorage.setItem(summaryKey(TOPIC_ID), JSON.stringify({ answered, total: TOTAL }));
+  } catch (e) {}
+}
+const $ = id => document.getElementById(id);
+const labelsOf = t => t.labels || LETTERS;
+function buildNums() {
+  const box = $("nums"); box.innerHTML = "";
+  const t = document.createElement("button"); t.className = "num theory-btn"; t.id = "tBtn";
+  t.textContent = "Т"; t.setAttribute("aria-label", "Теорія"); t.onclick = showTheory; box.appendChild(t);
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button"); b.className = "num"; b.dataset.i = i;
+    b.textContent = i + 1; b.setAttribute("aria-label", "Завдання " + (i + 1)); b.onclick = () => go(i); box.appendChild(b);
+  });
+}
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") { b.className = "num theory-btn" + (inTheory ? " current" : ""); return; }
+    const i = +b.dataset.i; b.className = "num";
+    if (state[i].picked.length) {
+      if (INSTANT_FEEDBACK && isDone(i)) b.classList.add(isRight(i) ? "correct" : "wrong");
+      else b.classList.add("answered");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+function buildTheory() {
+  const v = $("theoryView"); v.innerHTML = '<h2 class="theory-title">Теорія до теми 9</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div"); d.className = "theory-block";
+    const h = document.createElement("h3"); h.textContent = item.h; d.appendChild(h);
+    if (item.p) { const p = document.createElement("p"); p.innerHTML = item.p; d.appendChild(p); }
+    if (item.quote) { const q = document.createElement("blockquote"); q.textContent = item.quote; d.appendChild(q); }
+    if (item.list) {
+      const ul = document.createElement("ul");
+      item.list.forEach(x => { const li = document.createElement("li"); li.innerHTML = x; ul.appendChild(li); }); d.appendChild(ul);
+    }
+    if (item.after) { const p = document.createElement("p"); p.className = "after"; p.innerHTML = item.after; d.appendChild(p); }
+    v.appendChild(d);
+  });
+  const end = document.createElement("div"); end.className = "theory-end"; v.appendChild(end);
+}
+function updateToTop() {
+  const show = inTheory && window.scrollY > 200; $("toTop").classList.toggle("show", show);
+}
+function showTheory() {
+  inTheory = true; $("testView").classList.add("hidden"); $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія"; paintNums(); window.scrollTo({ top: 0 }); updateToTop();
+}
+function render() {
+  inTheory = false; updateToTop(); $("theoryView").classList.add("hidden"); $("testView").classList.remove("hidden");
+  const t = tasks[current], s = state[current], labels = labelsOf(t), done = INSTANT_FEEDBACK && isDone(current);
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+  const q = $("question"); q.textContent = "";
+  const idEl = document.createElement("b"); idEl.textContent = t.id + " "; q.appendChild(idEl); q.appendChild(document.createTextNode(t.q));
+  if (t.note) { const em = document.createElement("em"); em.textContent = t.note; q.appendChild(em); }
+  $("answersLabel").textContent = t.hint || (t.multi ? "Позначте відповіді (потрібно обрати " + t.multi + "):" : "Позначте відповіді:");
+  const ul = $("options"); ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li"), pos = t.ordered ? s.picked.indexOf(i) : -1;
+    let cls = t.matrix ? "option locked" : "option" + (s.picked.includes(i) ? " selected" : "");
+    if (done && !t.matrix) {
+      if (t.ordered) { if (pos >= 0) cls += correctSet(t)[pos] === i ? " right" : " wrong"; }
+      else { if (correctSet(t).includes(i)) cls += " right"; else if (s.picked.includes(i)) cls += " wrong"; }
+      cls += " locked";
+    }
+    li.className = cls; li.tabIndex = t.matrix ? -1 : 0;
+    li.innerHTML = '<span class="letter"></span><span class="txt"></span>';
+    li.querySelector(".letter").textContent = /\bright\b/.test(cls) ? "✓" : /\bwrong\b/.test(cls) ? "✕" : labels[i];
+    li.querySelector(".txt").textContent = (pos >= 0 ? "[" + (pos + 1) + "] " : "") + text;
+    if (!t.matrix) {
+      li.onclick = () => pick(i);
+      li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(i); } };
+    }
+    ul.appendChild(li);
+  });
+  const grid = $("answerGrid"); grid.innerHTML = ""; grid.className = "answer-grid" + (t.matrix ? " matrix" : "");
+  (t.matrix ? [] : labels).forEach((L, i) => {
+    const on = s.picked.includes(i), pos = s.picked.indexOf(i);
+    const col = document.createElement("div"); col.className = "answer-col";
+    const b = document.createElement("b"); b.textContent = L;
+    const bx = document.createElement("button");
+    let bc = "box" + (on ? " on" : ""), mark = on ? (t.ordered ? String(pos + 1) : "✓") : "";
+    if (done) {
+      let ok, bad;
+      if (t.ordered) { ok = on && correctSet(t)[pos] === i; bad = on && !ok; }
+      else { ok = correctSet(t).includes(i); bad = !ok && on; }
+      if (ok) { bc = "box right"; mark = "✓"; } else if (bad) { bc = "box wrong"; mark = "✕"; }
+      bc += " locked";
+    }
+    bx.className = bc; bx.textContent = mark; bx.setAttribute("aria-label", "Відповідь " + L); bx.onclick = () => pick(i);
+    col.appendChild(b); col.appendChild(bx); grid.appendChild(col);
+  });
+  if (t.matrix) {
+    const c = correctSet(t);
+    t.cols.forEach((cl, ci) => {
+      const col = document.createElement("div"); col.className = "answer-col";
+      const b = document.createElement("b"); b.textContent = cl; col.appendChild(b);
+      labels.forEach((L, ri) => {
+        const on = s.picked[ci] === ri; let bc = "box" + (on ? " on" : ""), mark = L;
+        if (done) {
+          if (ri === c[ci]) { bc = "box right"; mark = "✓"; } else if (on) { bc = "box wrong"; mark = "✕"; }
+          bc += " locked";
+        }
+        const bx = document.createElement("button"); bx.className = bc; bx.textContent = mark;
+        bx.setAttribute("aria-label", "Для " + cl + " — " + L); bx.onclick = () => pickCell(ci, ri); col.appendChild(bx);
+      }); grid.appendChild(col);
+    });
+  }
+  renderExplain(t); paintNums(); save();
+}
+function pickCell(ci, ri) {
+  const s = state[current]; if (INSTANT_FEEDBACK && isDone(current)) return;
+  const p = s.picked;
+  if (p[ci] === ri) p[ci] = null;
+  else { while (p.length <= ci) p.push(null); p[ci] = ri; }
+  while (p.length && (p[p.length - 1] === null || p[p.length - 1] === undefined)) p.pop(); render();
+}
+function pick(i) {
+  const t = tasks[current], s = state[current]; if (INSTANT_FEEDBACK && isDone(current)) return;
+  const k = s.picked.indexOf(i);
+  if (k >= 0) s.picked.splice(k, 1);
+  else if (t.multi) { if (s.picked.length < t.multi) s.picked.push(i); }
+  else s.picked = [i]; render();
+}
+function go(i) { current = Math.max(0, Math.min(TOTAL - 1, i)); render(); window.scrollTo({ top: 0 }); }
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (inTheory || $("drawer").classList.contains("open")) return;
+  if (e.key === "ArrowRight") go(current + 1); if (e.key === "ArrowLeft") go(current - 1);
+});
+$("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+window.addEventListener("scroll", updateToTop, { passive: true });
+$("total").textContent = TOTAL;
+buildNums(); buildTheory(); render(); showTheory();
+</script></body></html>

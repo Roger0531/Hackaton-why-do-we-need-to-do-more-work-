@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="uk"><head>
+<meta name="color-scheme" content="dark"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тема 8. Національно-визвольна війна українського народу середини XVII ст.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&amp;display=swap&amp;subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --cell: 36px; --cell-font: 16px; --green: #00bc8c; --green-dark: #00a077;
+    --border: #00bc8c; --label: #00bc8c; --red: #e74c3c; --grey-btn: #444444;
+    --grey-box: #303030; --active-bg: #0b5c49; --text: #ffffff; --muted: #c8c8c8;
+    --bg: #222222; --panel: #303030; --line: #444444; --ok: #00bc8c; --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Lato", "Segoe UI", Arial, sans-serif; font-size: 17px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin: 4px 0 18px; }
+  .menu-btn { width: 44px; padding: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--green); background: transparent; color: var(--text); cursor: pointer; transition: background .15s; }
+  .menu-btn:hover { background: var(--green); }
+  .menu-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .home-btn { display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 9px 18px; border: 1px solid var(--green); color: var(--text); background: transparent; font-size: 17px; text-decoration: none; cursor: pointer; transition: background .15s; }
+  .home-btn:hover { background: var(--green); }
+  .home-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); } .meta b { color: var(--text); }
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num { width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); border: 1px solid var(--border); background: var(--panel); font: inherit; font-size: var(--cell-font); line-height: 1; color: var(--text); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+  .num.done { border-color: var(--border); } .num.seen { border-color: var(--border); }
+  .num.current { background: var(--active-bg); box-shadow: 0 0 6px 2px rgba(0,188,140,.55); border-color: var(--border); }
+  .num.correct { background: #0b5c49; } .num.wrong { background: #6b2620; border-color: var(--bad); }
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--line); }
+  .counter { position: relative; display: inline-block; padding: 8px 14px; background: var(--bg); color: var(--text); border: 1px solid var(--border); font-size: 17px; }
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 6px; cursor: pointer; max-width: 100%; }
+  .option .letter { background: var(--grey-box); width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--cell-font); line-height: 1; }
+  .option .txt { font-size: 18px; line-height: 1.4; padding-top: 6px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; } .option.wrong .letter { background: var(--bad); color: #fff; }
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: var(--cell-font); width: var(--cell); text-align: center; }
+  .box { width: var(--cell); height: var(--cell); flex: 0 0 var(--cell); border: 1px solid #555555; border-radius: 4px; background: var(--panel); cursor: pointer; font-size: var(--cell-font); line-height: 1; display: flex; align-items: center; justify-content: center; padding: 0; color: var(--text); }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+  .option.locked, .box.locked { cursor: default; }
+  .box.right { background: var(--ok); border-color: var(--ok); color: #fff; } .box.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .matrix .box.on { background: var(--green); border-color: var(--green); }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn { display: block; width: 212px; height: 43px; border: 0; font: inherit; font-size: 17px; color: #fff; background: var(--green); cursor: pointer; }
+  .btn:hover { background: var(--green-dark); } .btn.red { background: var(--red); width: 213px; } .btn.red:hover { background: #d43f2f; }
+  .btn.grey { background: var(--grey-btn); color: var(--text); } .btn.grey:hover { background: #555555; }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .explain { margin-top: 24px; padding: 18px 20px; border-left: 4px solid var(--border); background: var(--panel); color: var(--text); font-size: 17px; line-height: 1.55; }
+  .explain.good { border-left-color: var(--ok); } .explain.bad { border-left-color: var(--bad); } .explain .score b { font-weight: 700; }
+  .explain h4 { margin: 16px 0 4px; font-size: 17px; font-weight: 700; color: var(--green); } .explain .why { margin: 0; }
+  .explain .repeat { margin: 16px 0 0; font-size: 15px; color: #9a9a9a; } .explain .repeat a { color: var(--green); text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+  .num.theory-btn { font-weight: 700; } .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); } .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); } .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .theory-block ul { margin: 6px 0 0; padding-left: 22px; color: var(--muted); font-size: 18px; line-height: 1.6; } .theory-block li { margin: 0 0 6px; } .theory-block p + ul { margin-top: 10px; }
+  .theory-block blockquote { margin: 0; padding: 10px 14px; border-left: 4px solid var(--green); background: var(--panel); color: var(--muted); font-size: 17px; line-height: 1.6; font-style: italic; }
+  .theory-block blockquote + ul, .theory-block ul + p.after, .theory-block blockquote + p.after { margin-top: 12px; } .theory-block p.after { margin-top: 12px; }
+  .question { white-space: pre-line; } .question em { display: block; margin-top: 12px; color: var(--muted); font-size: 16px; } .num.answered { background: #1d4a40; }
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; z-index: 90; }
+  .drawer-overlay.open { opacity: 1; visibility: visible; }
+  .drawer { position: fixed; top: 0; left: 0; bottom: 0; width: min(360px, 88vw); background: var(--bg); border-right: 1px solid var(--line); padding: 18px 16px 24px; overflow-y: auto; overscroll-behavior: contain; transform: translateX(-100%); visibility: hidden; transition: transform .22s ease, visibility .22s; z-index: 100; }
+  .drawer.open { transform: none; visibility: visible; } .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .drawer-head h2 { margin: 0; font-size: 28px; font-weight: 700; }
+  .drawer-close { width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); background: transparent; color: var(--text); font-size: 18px; cursor: pointer; } .drawer-close:hover { background: var(--panel); }
+  .topic-search { width: 100%; padding: 9px 10px; margin-bottom: 14px; border: 0; border-radius: 3px; background: #fff; color: #222; font: inherit; font-size: 15px; } .topic-search::placeholder { color: #888; }
+  .topic-list { list-style: none; margin: 0; padding: 0; }
+  .topic-link { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 11px 10px; border-bottom: 1px solid #333; border-left: 3px solid transparent; color: var(--green); text-decoration: none; font-size: 17px; }
+  .topic-link:hover { background: var(--panel); } .topic-link[aria-current="page"] { background: var(--panel); border-left-color: var(--green); }
+  .topic-link .t-name small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; } .topic-link .t-prog { color: var(--muted); font-size: 15px; white-space: nowrap; } .topic-link .t-prog.full { color: var(--green); font-weight: 700; } .topic-empty { padding: 14px 10px; color: var(--muted); }
+  .to-top { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); width: 48px; height: 48px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 50%; background: var(--green); color: #fff; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .2s, transform .2s, visibility .2s, background .15s; z-index: 50; }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; } .to-top:hover { background: var(--green-dark); } .to-top:focus-visible { outline: 3px solid #3498db; outline-offset: 3px; } .result { margin-top: 18px; font-weight: 600; }
+  @media (max-width: 560px) { .wrap { padding: 12px 14px 40px; } :root { --cell: 32px; --cell-font: 14px; } .nums { gap: 9px; } .btn, .btn.red { width: 100%; } .left { width: 100%; } .row { flex-direction: column; } .right { width: 100%; } }
+</style></head><body>
+<div class="wrap">
+  <div class="topbar"><a class="home-btn" href="main.html">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>На головну
+  </a></div><div class="top-line"></div>
+  <div class="meta">
+    <div><span>Предмет:</span> Історія України</div>
+    <div><span>Розділ:</span> Національно-визвольна війна. Гетьманщина</div>
+    <div><span>Тема:</span> Тема 8. Національно-визвольна війна українського народу середини XVII ст.</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">20</b></div>
+  </div>
+  <div class="nums" id="nums"></div>
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 20</span></div>
+  <div id="testView">
+    <p class="question" id="question"></p><ul class="options" id="options"></ul>
+    <p class="answers-label" id="answersLabel">Позначте відповіді:</p><div class="answer-grid" id="answerGrid"></div>
+    <div class="row"><div class="left"><button class="btn" id="skip">Пропустити</button></div></div>
+    <div class="explain hidden" id="explain"></div>
+  </div>
+  <div id="theoryView" class="hidden"></div>
+</div>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Список тестів" aria-hidden="true">
+  <div class="drawer-head"><h2>Теми</h2><button type="button" class="drawer-close" id="drawerClose" aria-label="Закрити список">✕</button></div>
+  <input type="search" class="topic-search" id="topicSearch" placeholder="Знайти тему" aria-label="Знайти тему" autocomplete="off"><ul class="topic-list" id="topicList"></ul>
+</aside>
+<button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+<script>const LETTERS = ["А", "Б", "В", "Г"];
+const tasks = [
+  {
+    "id": "8.1.",
+    "q": "Причинами Національно-визвольної війни були",
+    "options": [
+      "соціально-економічні та культурно-релігійні утиски українського народу з боку Польщі",
+      "бажання Б. Хмельницького посісти королівський трон у Польщі",
+      "інтриги московського царя, який хотів руками козаків послабити Річ Посполиту",
+      "соціально-економічні утиски польського народу з боку українського козацтва"
+    ]
+  },
+  {
+    "id": "8.2.",
+    "q": "«Уся перша війна почалася через Чаплинського, який, незважаючи на те, що я мав привілей короля, відібрав у мене хутір та ще й мені погрожував смертю...» У джерелі йдеться про",
+    "options": [
+      "причини Національно-визвольної війни",
+      "привід до Національно-визвольної війни",
+      "перший етап Національно-визвольної війни",
+      "наслідки Національно-визвольної війни"
+    ]
+  },
+  {
+    "id": "8.3.",
+    "q": "Що з названого не характеризує події 1648–1649 рр.?",
+    "options": [
+      "у битві під Корсунем козаки здобули впевнену перемогу й захопили в полон коронного гетьмана Миколая Потоцького",
+      "Зборівський договір був укладений під тиском Кримського ханства",
+      "облога Львова козаками завершилася виплатою чималого викупу",
+      "під Зборовом у козацьке оточення потрапила польська армія під командуванням короля Владислава IV"
+    ]
+  },
+  {
+    "id": "8.4.",
+    "q": "Правитель якої держави писав: «Ми... зволіли вас, гетьмана Богдана Хмельницького і все Військо Запорозьке... прийняти під нашу царську високу руку...»?",
+    "options": [
+      "Кримського ханства",
+      "Османської імперії",
+      "Молдавського князівства",
+      "Московської держави"
+    ]
+  },
+  {
+    "id": "8.5.",
+    "q": "Укажіть особу, якій присвячено ці рядки: «...терпляче вмовляв Богдана Хмельницького не шкодити вітчизні — Речі Посполитій... нагадуючи про вірність королю, якого сам гетьман обрав собі за володаря».",
+    "options": [
+      "Івана Богуна",
+      "Іслам-Гірея",
+      "Адама Кисіля",
+      "Василя Бутурліна"
+    ]
+  },
+  {
+    "id": "8.6.",
+    "q": "Укажіть правильне твердження.",
+    "options": [
+      "офіційною назвою Гетьманщини було Військо Запорозьке Низове",
+      "Запорозька Січ підпорядковувалася Переяславському полковнику",
+      "полкова старшина призначалася безпосередньо гетьманом",
+      "молдавські походи мали на меті розширення території Гетьманщини"
+    ]
+  },
+  {
+    "id": "8.7.",
+    "q": "Це місто стояло на окраїні козацьких земель і було недосяжним для поляків, проте зручним для зв'язків з Лівобережжям; поблизу розташовувався родовий маєток Хмельницького, який перед війною обіймав тут посаду сотника. Місто стало столицею Гетьманщини. Про яке місто йдеться?",
+    "options": [
+      "Київ",
+      "Чигирин",
+      "Корсунь",
+      "Глухів"
+    ]
+  },
+  {
+    "id": "8.8.",
+    "q": "Яка держава стала союзником Б. Хмельницького у війні проти Польщі 1648 р.?",
+    "options": [
+      "Московське царство",
+      "Кримське ханство",
+      "Османська імперія",
+      "Трансільванія"
+    ]
+  },
+  {
+    "id": "8.9.",
+    "q": "Про які пакти згадує московський посол: «хлопи з Війська Запорозького відповідно до пактів почали були приходити в панські і шляхетські маєтки в доми свої...»?",
+    "options": [
+      "Зборівський договір",
+      "Переяславський договір",
+      "«Березневі статті»",
+      "Віленське перемир'я"
+    ]
+  },
+  {
+    "id": "8.10.",
+    "q": "Що було наслідком Берестецької битви?",
+    "options": [
+      "укладення Зборівського договору",
+      "укладення Білоцерківського договору",
+      "скасування Білоцерківського договору",
+      "укладення «Березневих статей»"
+    ]
+  },
+  {
+    "id": "8.11.",
+    "q": "Укажіть правильне твердження.",
+    "options": [
+      "Зборівський договір офіційно визнав існування Гетьманщини",
+      "битва під Берестечком стала блискучою перемогою козацько-татарської армії",
+      "Білоцерківський договір підтвердив основні положення Зборівського миру",
+      "облога Збаража козаками завершилася капітуляцією міста"
+    ]
+  },
+  {
+    "id": "8.12.",
+    "q": "Епізод якої битви зображено в джерелі: «В одному місці серед болота скупчилося триста козаків і хоробро оборонялися проти всього польського війська»?",
+    "options": [
+      "Жовтоводської",
+      "Пилявецької",
+      "Зборівської",
+      "Берестецької"
+    ]
+  },
+  {
+    "id": "8.13.",
+    "q": "Яке твердження хибне?",
+    "options": [
+      "протестантські держави підтримали Богдана Хмельницького в боротьбі проти католицької Польщі",
+      "Османська імперія уклала з Хмельницьким військово-політичний союз",
+      "Гетьманщина розраховувала на династичний союз із Молдавським князівством, щоби увійти в коло європейських монархій",
+      "після загибелі Тимоша Хмельницького Трансільванія підтримала Молдавію проти Гетьманщини"
+    ]
+  },
+  {
+    "id": "8.14.",
+    "q": "До антипольської коаліції 1655 р. входили такі країни",
+    "options": [
+      "Венеція, Бранденбург, Трансільванія, Московське царство",
+      "Османська імперія, Кримське ханство, Московське царство, Венеція",
+      "Швеція, Трансільванія, Кримське ханство, Османська імперія",
+      "Швеція, Трансільванія, Молдавія, Волощина"
+    ]
+  },
+  {
+    "id": "8.15.",
+    "q": "Яке твердження не стосується Віленського перемир'я?",
+    "options": [
+      "було укладено Річчю Посполитою і Московською державою",
+      "його передумовою стала агресія Швеції проти Речі Посполитої",
+      "Москва погодилася на укладення перемир'я з Польщею в обмін на корону Речі Посполитої для Богдана Хмельницького",
+      "було укладено без відома та участі української сторони"
+    ]
+  },
+  {
+    "id": "8.16.",
+    "q": "Розташуйте події в хронологічній послідовності.",
+    "options": [
+      "початок Молдавських походів української армії",
+      "похід козацької армії на територію Білорусі",
+      "урочистий в'їзд Богдана Хмельницького до Києва",
+      "похід козацької армії А. Ждановича на Річ Посполиту в союзі з Трансільванією та Швецією"
+    ],
+    "ordered": true,
+    "multi": 4,
+    "answerText": "В → Б → А → Г",
+    "hint": "Позначте події у хронологічному порядку (потрібно обрати 4):"
+  },
+  {
+    "id": "8.17.",
+    "q": "Розташуйте події в хронологічній послідовності.",
+    "options": [
+      "Віленське перемир'я",
+      "битва під Корсунем",
+      "битва під Батогом",
+      "Зборівський договір"
+    ],
+    "ordered": true,
+    "multi": 4,
+    "answerText": "Б → Г → В → А",
+    "hint": "Позначте події у хронологічному порядку (потрібно обрати 4):"
+  },
+  {
+    "id": "8.18.",
+    "q": "Увідповідніть договір з його змістом.\n\n1) «Як великий государ наш гетьмана Богдана Хмельницького і все його Військо Запорозьке пожалує..., щоб Війська Запорозького було 60000»\n2) «Число Війська Запорозького має сягати сорока тисяч... Чигирин має назавжди лишитися при булаві Війська Запорозького»\n3) «Козаки можуть проживати лише в Київському воєводстві... Ні Брацлавське, ні Чернігівське воєводство козаків не матимуть»\n4) «Реєстровим же козакам, число яких Річ Посполита визначила тільки 6 тисяч... ми будемо ставити старшого комісара»",
+    "options": [
+      "«Ординація Війська Запорозького»",
+      "Зборівський договір",
+      "Білоцерківський договір",
+      "«Березневі статті»",
+      "Віленське перемир'я"
+    ],
+    "matrix": true,
+    "multi": 4,
+    "cols": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "labels": [
+      "А",
+      "Б",
+      "В",
+      "Г",
+      "Д"
+    ],
+    "answerText": "1Г 2Б 3В 4А",
+    "hint": "Позначте відповідність: для кожного номера оберіть одну літеру."
+  },
+  {
+    "id": "8.19.",
+    "q": "Укажіть умови Білоцерківського договору. (оберіть три)",
+    "options": [
+      "влада гетьмана поширювалася тільки на Київщину",
+      "влада гетьмана поширювалася на Київщину, Чернігівщину, Брацлавщину",
+      "козацький реєстр скорочувався до 20 тис. осіб",
+      "козацький реєстр зростав до 40 тис. осіб",
+      "на території Гетьманщини могли мешкати тільки українці",
+      "польська шляхта поверталася до своїх маєтків, селяни — до шляхти",
+      "православна церква на території Гетьманщини заборонялася"
+    ],
+    "multi": 3,
+    "labels": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ]
+  },
+  {
+    "id": "8.20.",
+    "q": "Укажіть умови «Березневих статей». (оберіть три)",
+    "options": [
+      "козаки зберігають усі права та вольності",
+      "козацьке військо обирає гетьмана і повідомляє царя",
+      "збережено міське самоврядування",
+      "Київський митрополит підпорядковувався Московському патріарху",
+      "Гетьманщина має право на зовнішні відносини з Польщею та Османською імперією",
+      "у найбільших містах та на кордонах Гетьманщини з Річчю Посполитою розміщені московські війська",
+      "реєстр 20 тис. козаків"
+    ],
+    "multi": 3,
+    "labels": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ]
+  }
+];
+const theory = [
+  {
+    "h": "Зміст програми",
+    "p": "Факти. Національно-визвольна війна. Зміни в суспільно-політичному житті. Утворення української козацької держави — Війська Запорозького. Внутрішня та зовнішньополітична діяльність уряду Б. Хмельницького. Відносини Війська Запорозького з Польщею, Кримським ханством, Молдовою, Московією, Швецією та Трансільванією. Персоналії: Богдан Хмельницький, Іван Богун, Адам Кисіль."
+  },
+  {
+    "h": "Дати",
+    "list": [
+      "1648 р. — Жовтоводська, Корсунська та Пилявецька битви.",
+      "1649 р. — Зборівська битва. Укладення Зборівського договору.",
+      "1651 р. — Берестецька битва. Укладення Білоцерківського договору.",
+      "1654 р. — Переяславська рада; українсько-московський договір («Березневі статті»).",
+      "1656 р. — московсько-польське Віленське перемир'я."
+    ]
+  },
+  {
+    "h": "Поняття та терміни",
+    "list": [
+      "Національно-визвольна війна — війна українського народу проти польського панування під проводом Богдана Хмельницького.",
+      "Військо Запорозьке, або Гетьманщина — козацька держава, що виникла внаслідок Національно-визвольної війни.",
+      "Покозачення — перехід селян і міщанства до козацтва, відмова від виконання повинностей, непокора місцевій владі і поміщикам.",
+      "Протекторат — форма залежності, за якої сильніша держава захищає слабшу в обмін на певні послуги."
+    ]
+  },
+  {
+    "h": "Причини і передумови війни",
+    "list": [
+      "Посилився економічний визиск: товарне виробництво хліба спричинило збільшення панщини до 5–6 днів на тиждень, зросли податки; «Ординація Війська Запорозького» суттєво обмежила права реєстровців, водночас козацтво вимагало визнати свою рівноправність зі шляхтою; попри «Пункти для заспокоєння», тривали утиски православ'я, братств та братських шкіл, православним заборонялося обіймати адміністративні посади; сваволя шляхти підривала державу; Річ Посполита була послаблена, європейські держави були зайняті своїми проблемами.",
+      "Характер війни: антифеодальний, національно-визвольний під релігійними лозунгами. Рушійні сили — козацтво, селянство, міщани, дрібна шляхта, православне духівництво; керівна роль належала українській козацькій старшині. Мета — звільнити Україну від влади Речі Посполитої, сформувати власну українську державу.",
+      "Привід: у січні 1648 р. сотник Богдан Хмельницький із прибічниками здобув Запорозьку Січ, де козацька рада обрала його гетьманом. Богдан (Зиновій) Хмельницький — із дрібної шляхти, освіта в єзуїтському колегіумі, служба в козацькому війську, турецький полон, військовий писар; хутір Суботів біля Чигирина. 1646 р. польський шляхтич Чаплинський напав на хутір, відібрав майно, побив сина; судитися не вдалося — Хмельницький утік на Запорожжя.",
+      "Хмельницький уклав військово-політичний союз із Кримським ханством (хан Іслам-Гірей III): орда допомагала козакам у обмін на здобич. Універсали закликали піднятися проти магнатів."
+    ]
+  },
+  {
+    "h": "Перший період війни (1648–1649)",
+    "list": [
+      "Жовті Води (квітень–травень 1648): перша перемога козацько-татарського війська над польським загоном С. Потоцького; Корсунь (травень 1648): розгром коронної армії, у полон потрапили гетьмани М. Потоцький та М. Калиновський; Пилявці (11–13 вересня 1648): розгром польської армії; «Ми під Пилявцями довідалися, що це вже не ті ляхи...»; облога Львова (вереснь–жовтень, викуп), Замостя (перемир'я, листопад 1648). Масовий характер війни: каральні акції, повстанські загони М. Кривоноса, поширення повстання на Лівобережжя і Білорусь.",
+      "23 грудня 1648 р. Хмельницький урочисто в'їхав до Києва; патріарх Паїсій і митрополит С. Косів зустріли його; гетьман заявив про намір «відірвати від ляхів усю Русь».",
+      "Зборівська кампанія (1649): облога Збаража; Зборівська битва (серпень 1649): польське військо на чолі з королем Яном Казимиром опинилося в оточенні; через зраду кримського хана Хмельницький змушений був піти на поступки.",
+      "Зборівський договір (1649): влада гетьмана поширювалася на Київське, Чернігівське, Брацлавське воєводства; державні посади в Гетьманщині обіймали тільки українці; козацький реєстр — 40 тис.; повстанцям повна амністія; євреї та єзуїти мали залишити Україну; питання про скасування унії розглянути на найближчому сеймі. Значення: створив умови для формування української державності, але не задовольнив ні козаків, ні поляків.",
+      "Адам Кисіль (1600–1653) — брацлавський і київський воєвода, православний шляхтич, провідник компромісів; дипломат, що вів переговори з Хмельницьким.",
+      "Берестецька битва (28–30 червня 1651): козаки зазнали поразки через зраду татарського хана й паніку; втратили понад 30 тис. воїнів; Іван Богун (? — 1664) — вінницький і кальницький полковник, урятував частину оточеного війська.",
+      "Білоцерківський договір (1651): влада гетьмана поширювалася тільки на Київщину; козацький реєстр скоротився до 20 тис.; польська шляхта поверталася до маєтків, селяни — до шляхти; Хмельницький мав розірвати союз із Кримом і позбавлявся права дипломатичних відносин; амністія.",
+      "Битва під Батогом (червень 1652): козаки розгромили польську армію (М. Калиновський). Жванець (жовтень–грудень 1653): Хмельницького знову зрадили татари; угода хана з королем.",
+      "Молдавські походи (1650–1653): метою було зробити Молдавію союзником і забезпечити легітимність династії шлюбом сина Тимоша з Розандою, дочкою господаря Василя Лупу; Тиміш Хмельницький загинув восени 1653 р."
+    ]
+  },
+  {
+    "h": "Державний устрій Гетьманщини",
+    "list": [
+      "Державна влада: гетьман (вища воєнна, адміністративна, судова влада; обирався козаками; універсали); Генеральна (Військова) рада — загальні збори війська, вища влада, з часом її роль зменшувалася; Старшинська рада — полковники і генеральна старшина; Генеральна військова канцелярія — вища адміністративна установа, очолював генеральний писар (Іван Виговський); генеральний обозний (артилерія), генеральний суддя, генеральний підскарбій (збирання податків), генеральні осавули, хорунжий, бунчужний. Столиця — Чигирин.",
+      "Територіально-адміністративний поділ: полки (за Зборівським договором — 16) і сотні, курені; полковник здійснював військову, судову, адміністративну владу; великі міста зберігали магдебурзьке право; Запорозька Січ була автономною. Армія: 100–300 тис. осіб, основа — піхота з мушкетами.",
+      "Соціальна структура: козацтво, шляхта, духівництво, міщанство, селянство; близько половини дорослого чоловічого населення стали козаками; селяни отримали особисту свободу, проте виконували повинності на користь війська; старшина перетворювалася на земельних магнатів; міста відігравали незначну роль.",
+      "Економіка: війна спустошила Правобережжя, населення скоротилося на 30 % через епідемії, голод, втечі на Слобожанщину; занепад сільського господарства, ремесел, торгівлі."
+    ]
+  },
+  {
+    "h": "Зовнішня політика Б. Хмельницького",
+    "list": [
+      "Союзи з Кримом (ненадійні); Османська імперія пропонувала протекторат; Венеція підтримала козаків; протестантські держави (Англія, Голландія, Швеція) співчутливо; Трансільванія (Дьєрдь II Ракоці) — союз проти Польщі (1656); Молдавія і Волощина; православні патріархи благословили гетьмана; Москва вагалася — зрештою погодилася прийняти Україну під протекторат."
+    ]
+  },
+  {
+    "h": "Переяславська рада і «Березневі статті» (1654)",
+    "list": [
+      "Причини зближення: страх перед союзом Москви й Польщі; єдність віри; Москва прагнула розширити території; недостатність військової допомоги від інших союзників; загроза татар. 1653 р. Земський собор у Москві ухвалив прийняти Україну; посольство боярина В. Бутурліна.",
+      "8 січня 1654 р. Переяславська рада ухвалила перехід під протекторат московського царя; частина старшини (І. Богун, І. Сірко) не присягнула; московські посли відмовилися присягати від імені царя; не було укладено офіційного правового акту.",
+      "«Березневі статті» (1654): визнавалося верховенство московського царя; козаки зберігали права та вольності, реєстр — 60 тис.; козацьке військо самостійно обирало гетьмана й сповіщало про це царя; збереження міського самоврядування й судової системи; гетьман не мав права зовнішніх відносин з Польщею та Османською імперією без згоди царя (обмежені); московські воєводи — лише у Києві; цар зобов'язався вступити у війну з Польщею. Договір дозволив Україні зберегти державність, дав союзника, звільнив від релігійних утисків. Назва «Україна» у значенні держави.",
+      "Різні тлумачення: за оцінками істориків — договір про протекторат; Україна сприймала як тимчасове явище, Москва — як перший крок до повного об'єднання."
+    ]
+  },
+  {
+    "h": "Віленське перемир'я (1656) і смерть Хмельницького",
+    "list": [
+      "1654–1655 воєнні дії проти Польщі за участі московських військ. 1655 р. Швеція (Карл X Густав) напала на Польщу; Москва уклала Віленське перемир'я з Польщею (1656) без участі України — антипольський союз фактично втратив силу; цар отримав можливість бути обраним польським королем.",
+      "Хмельницький шукав нових союзників; 1656–1657 козацькі полки (А. Жданович) разом з Ракоці і Швецією взяли Краків, Варшаву, але потім поразка. 27 липня 1657 р. Богдан Хмельницький помер, не залишивши гідного спадкоємця."
+    ]
+  },
+  {
+    "h": "Значення діяльності Хмельницького",
+    "list": [
+      "Відродив Українську державу; створив боєздатну армію, був одним з успішних полководців; відбулася перебудова економічних відносин (вільна праця); налагодив дипломатичну службу і зробив Гетьманщину рівноправним гравцем на європейській арені; довів, що боротьба за визволення має ґрунтуватися на узгодженні інтересів різних верств."
+    ]
+  }
+];
+const ANSWERS = [0, 1, 3, 3, 2, 2, 1, 1, 0, 1, 0, 3, 1, 3, 2, [2, 1, 0, 3], [1, 3, 2, 0], [3, 1, 2, 0], [0, 2, 5], [0, 1, 2]];
+tasks.forEach((t,i)=>{t.correct=ANSWERS[i];});
+const EXPLAIN = [
+  {
+    "why": "У матеріалі причинами війни названо соціально-економічні утиски, обмеження козацьких прав і переслідування православ’я. Особистий конфлікт гетьмана був приводом, а не сукупністю причин.",
+    "repeat": "Причини і передумови війни"
+  },
+  {
+    "why": "Напад Чаплинського на хутір Хмельницького став особистим приводом до виступу. Загальні причини війни були соціальними, національними та релігійними.",
+    "repeat": "Причини і передумови війни"
+  },
+  {
+    "why": "Під Зборовом польське військо очолював Ян Казимир, а не Владислав IV. Інші наведені твердження відповідають матеріалу.",
+    "repeat": "Перший період війни (1648–1649)"
+  },
+  {
+    "why": "Уривок стосується прийняття Війська Запорозького під протекторат московського царя.",
+    "repeat": "Переяславська рада і «Березневі статті» (1654)"
+  },
+  {
+    "why": "Адам Кисіль був православним шляхтичем і дипломатом, який вів переговори з Хмельницьким та шукав компромісу.",
+    "repeat": "Перший період війни (1648–1649)"
+  },
+  {
+    "why": "За наданим ключем правильне твердження — призначення полкової старшини гетьманом. Офіційна назва держави — Військо Запорозьке; Січ зберігала автономію; молдавські походи мали союзницьку й династичну мету.",
+    "repeat": "Державний устрій Гетьманщини"
+  },
+  {
+    "why": "Столицею Гетьманщини став Чигирин. Поблизу розташовувався хутір Суботів — маєток Хмельницького.",
+    "repeat": "Державний устрій Гетьманщини"
+  },
+  {
+    "why": "1648 р. Хмельницький уклав військово-політичний союз із Кримським ханством на чолі з Іслам-Гіреєм III.",
+    "repeat": "Причини і передумови війни"
+  },
+  {
+    "why": "За наданим ключем йдеться про Зборівський договір 1649 р. Формулювання уривка й ключ збережено за вашим матеріалом.",
+    "repeat": "Перший період війни (1648–1649)"
+  },
+  {
+    "why": "Після поразки під Берестечком 1651 р. було укладено Білоцерківський договір, який обмежив територію влади гетьмана та скоротив реєстр.",
+    "repeat": "Перший період війни (1648–1649)"
+  },
+  {
+    "why": "Зборівський договір визнавав владу гетьмана в трьох воєводствах і створював умови для української державності. Берестечко було поразкою, а Білоцерківський договір звужував попередні умови.",
+    "repeat": "Перший період війни (1648–1649)"
+  },
+  {
+    "why": "За наданим ключем уривок описує оборону козаків під час Берестецької битви 1651 р.",
+    "repeat": "Перший період війни (1648–1649)"
+  },
+  {
+    "why": "За наданим ключем хибний варіант — Б. У теорії зазначено, що Османська імперія пропонувала протекторат; військово-політичний союз 1648 р. укладено з Кримським ханством.",
+    "repeat": "Зовнішня політика Б. Хмельницького"
+  },
+  {
+    "why": "За наданим ключем правильний перелік — Швеція, Трансільванія, Молдавія, Волощина. Дату у формулюванні питання збережено за вашим матеріалом.",
+    "repeat": "Зовнішня політика Б. Хмельницького"
+  },
+  {
+    "why": "У матеріалі можливість бути обраним польським королем пов’язана з московським царем, а не з Богданом Хмельницьким. Перемир’я уклали Москва й Польща без участі України.",
+    "repeat": "Віленське перемир'я (1656) і смерть Хмельницького"
+  },
+  {
+    "why": "За наданим ключем послідовність: урочистий в’їзд до Києва → похід на територію Білорусі → початок Молдавських походів → похід Ждановича. Формулювання подій і порядок збережено без змін.",
+    "repeat": "Перший період війни (1648–1649)"
+  },
+  {
+    "why": "Корсунь (1648) → Зборівський договір (1649) → Батіг (1652) → Віленське перемир’я (1656).",
+    "repeat": "Дати"
+  },
+  {
+    "why": "60 тисяч козаків — Березневі статті (1Г); 40 тисяч і Чигирин при булаві — Зборівський договір (2Б); лише Київське воєводство — Білоцерківський договір (3В); 6 тисяч і призначений комісар — Ординація (4А).",
+    "repeat": "Переяславська рада і «Березневі статті» (1654)"
+  },
+  {
+    "why": "Білоцерківський договір обмежував владу гетьмана Київщиною (1), скорочував реєстр до 20 тисяч (3), передбачав повернення шляхти до маєтків і селян до шляхти (6).",
+    "repeat": "Перший період війни (1648–1649)"
+  },
+  {
+    "why": "Березневі статті зберігали козацькі права й вольності (1), виборність гетьмана з повідомленням царя (2) та міське самоврядування (3). За матеріалом реєстр становив 60 тисяч.",
+    "repeat": "Переяславська рада і «Березневі статті» (1654)"
+  }
+];
+tasks.forEach((t,i)=>{t.explain=EXPLAIN[i];});
+function renderExplain(t) {
+  const box = $("explain");
+  if (!(INSTANT_FEEDBACK && isDone(current) && t.explain)) {
+    box.className = "explain hidden"; box.innerHTML = ""; return;
+  }
+  const right = isRight(current), labels = labelsOf(t);
+  const ans = t.answerText || correctSet(t).map(i => labels[i]).join(t.ordered ? " → " : ", ");
+  box.className = "explain " + (right ? "good" : "bad");
+  box.innerHTML = '<div class="score">Правильна відповідь: <b>' + ans + '</b>. Бали: ' + (right ? 1 : 0) +
+    ' з 1. Після показу відповіді змінити її вже не можна.</div>' +
+    '<h4>Чому так</h4><p class="why">' + t.explain.why + '</p>' +
+    '<p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';
+  const a = $("repeatLink"); a.textContent = t.explain.repeat;
+  a.onclick = e => { e.preventDefault(); showTheoryAt(t.explain.repeat); };
+}
+function showTheoryAt(heading) {
+  showTheory(); const idx = theory.findIndex(b => b.h === heading);
+  const blocks = document.querySelectorAll ? document.querySelectorAll(".theory-block") : [];
+  if (idx >= 0 && blocks[idx]) blocks[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+const INSTANT_FEEDBACK = true;
+const correctSet = t => Array.isArray(t.correct) ? t.correct : [t.correct];
+function isDone(i) {
+  const t = tasks[i], p = state[i].picked, n = p.length;
+  if (t.matrix) return n === t.cols.length && p.every(x => x !== null && x !== undefined);
+  return n === (t.multi || 1);
+}
+function isRight(i) {
+  const t = tasks[i], p = state[i].picked, c = correctSet(t);
+  if (t.ordered || t.matrix) return p.length === c.length && c.every((x, k) => p[k] === x);
+  return p.length === c.length && c.every(x => p.includes(x));
+}
+const TOTAL = tasks.length;
+let current = 0;
+let inTheory = false;
+const state = tasks.map(() => ({ picked: [] }));
+const TOPIC_ID = 8;
+const LS_KEY = "hist" + TOPIC_ID + "-progress";
+const summaryKey = n => "progress-topic-" + n;
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.state && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => { if (Array.isArray(s.picked)) state[i].picked = s.picked; });
+    current = Math.min(saved.current || 0, TOTAL - 1);
+  }
+} catch (e) {}
+function save() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, current }));
+    const answered = state.filter((_, i) => isDone(i)).length;
+    localStorage.setItem(summaryKey(TOPIC_ID), JSON.stringify({ answered, total: TOTAL }));
+  } catch (e) {}
+}
+const $ = id => document.getElementById(id);
+const labelsOf = t => t.labels || LETTERS;
+function buildNums() {
+  const box = $("nums"); box.innerHTML = "";
+  const t = document.createElement("button"); t.className = "num theory-btn"; t.id = "tBtn";
+  t.textContent = "Т"; t.setAttribute("aria-label", "Теорія"); t.onclick = showTheory; box.appendChild(t);
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button"); b.className = "num"; b.dataset.i = i;
+    b.textContent = i + 1; b.setAttribute("aria-label", "Завдання " + (i + 1)); b.onclick = () => go(i); box.appendChild(b);
+  });
+}
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") { b.className = "num theory-btn" + (inTheory ? " current" : ""); return; }
+    const i = +b.dataset.i; b.className = "num";
+    if (state[i].picked.length) {
+      if (INSTANT_FEEDBACK && isDone(i)) b.classList.add(isRight(i) ? "correct" : "wrong");
+      else b.classList.add("answered");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+function buildTheory() {
+  const v = $("theoryView"); v.innerHTML = '<h2 class="theory-title">Теорія до теми 8</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div"); d.className = "theory-block";
+    const h = document.createElement("h3"); h.textContent = item.h; d.appendChild(h);
+    if (item.p) { const p = document.createElement("p"); p.innerHTML = item.p; d.appendChild(p); }
+    if (item.quote) { const q = document.createElement("blockquote"); q.textContent = item.quote; d.appendChild(q); }
+    if (item.list) {
+      const ul = document.createElement("ul");
+      item.list.forEach(x => { const li = document.createElement("li"); li.innerHTML = x; ul.appendChild(li); }); d.appendChild(ul);
+    }
+    if (item.after) { const p = document.createElement("p"); p.className = "after"; p.innerHTML = item.after; d.appendChild(p); }
+    v.appendChild(d);
+  });
+  const end = document.createElement("div"); end.className = "theory-end"; v.appendChild(end);
+}
+function updateToTop() {
+  const show = inTheory && window.scrollY > 200; $("toTop").classList.toggle("show", show);
+}
+function showTheory() {
+  inTheory = true; $("testView").classList.add("hidden"); $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія"; paintNums(); window.scrollTo({ top: 0 }); updateToTop();
+}
+function render() {
+  inTheory = false; updateToTop(); $("theoryView").classList.add("hidden"); $("testView").classList.remove("hidden");
+  const t = tasks[current], s = state[current], labels = labelsOf(t), done = INSTANT_FEEDBACK && isDone(current);
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+  const q = $("question"); q.textContent = "";
+  const idEl = document.createElement("b"); idEl.textContent = t.id + " "; q.appendChild(idEl); q.appendChild(document.createTextNode(t.q));
+  if (t.note) { const em = document.createElement("em"); em.textContent = t.note; q.appendChild(em); }
+  $("answersLabel").textContent = t.hint || (t.multi ? "Позначте відповіді (потрібно обрати " + t.multi + "):" : "Позначте відповіді:");
+  const ul = $("options"); ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li"), pos = t.ordered ? s.picked.indexOf(i) : -1;
+    let cls = t.matrix ? "option locked" : "option" + (s.picked.includes(i) ? " selected" : "");
+    if (done && !t.matrix) {
+      if (t.ordered) { if (pos >= 0) cls += correctSet(t)[pos] === i ? " right" : " wrong"; }
+      else { if (correctSet(t).includes(i)) cls += " right"; else if (s.picked.includes(i)) cls += " wrong"; }
+      cls += " locked";
+    }
+    li.className = cls; li.tabIndex = t.matrix ? -1 : 0;
+    li.innerHTML = '<span class="letter"></span><span class="txt"></span>';
+    li.querySelector(".letter").textContent = /\bright\b/.test(cls) ? "✓" : /\bwrong\b/.test(cls) ? "✕" : labels[i];
+    li.querySelector(".txt").textContent = (pos >= 0 ? "[" + (pos + 1) + "] " : "") + text;
+    if (!t.matrix) {
+      li.onclick = () => pick(i);
+      li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(i); } };
+    }
+    ul.appendChild(li);
+  });
+  const grid = $("answerGrid"); grid.innerHTML = ""; grid.className = "answer-grid" + (t.matrix ? " matrix" : "");
+  (t.matrix ? [] : labels).forEach((L, i) => {
+    const on = s.picked.includes(i), pos = s.picked.indexOf(i);
+    const col = document.createElement("div"); col.className = "answer-col";
+    const b = document.createElement("b"); b.textContent = L;
+    const bx = document.createElement("button");
+    let bc = "box" + (on ? " on" : ""), mark = on ? (t.ordered ? String(pos + 1) : "✓") : "";
+    if (done) {
+      let ok, bad;
+      if (t.ordered) { ok = on && correctSet(t)[pos] === i; bad = on && !ok; }
+      else { ok = correctSet(t).includes(i); bad = !ok && on; }
+      if (ok) { bc = "box right"; mark = "✓"; } else if (bad) { bc = "box wrong"; mark = "✕"; }
+      bc += " locked";
+    }
+    bx.className = bc; bx.textContent = mark; bx.setAttribute("aria-label", "Відповідь " + L); bx.onclick = () => pick(i);
+    col.appendChild(b); col.appendChild(bx); grid.appendChild(col);
+  });
+  if (t.matrix) {
+    const c = correctSet(t);
+    t.cols.forEach((cl, ci) => {
+      const col = document.createElement("div"); col.className = "answer-col";
+      const b = document.createElement("b"); b.textContent = cl; col.appendChild(b);
+      labels.forEach((L, ri) => {
+        const on = s.picked[ci] === ri; let bc = "box" + (on ? " on" : ""), mark = L;
+        if (done) {
+          if (ri === c[ci]) { bc = "box right"; mark = "✓"; } else if (on) { bc = "box wrong"; mark = "✕"; }
+          bc += " locked";
+        }
+        const bx = document.createElement("button"); bx.className = bc; bx.textContent = mark;
+        bx.setAttribute("aria-label", "Для " + cl + " — " + L); bx.onclick = () => pickCell(ci, ri); col.appendChild(bx);
+      }); grid.appendChild(col);
+    });
+  }
+  renderExplain(t); paintNums(); save();
+}
+function pickCell(ci, ri) {
+  const s = state[current]; if (INSTANT_FEEDBACK && isDone(current)) return;
+  const p = s.picked;
+  if (p[ci] === ri) p[ci] = null;
+  else { while (p.length <= ci) p.push(null); p[ci] = ri; }
+  while (p.length && (p[p.length - 1] === null || p[p.length - 1] === undefined)) p.pop(); render();
+}
+function pick(i) {
+  const t = tasks[current], s = state[current]; if (INSTANT_FEEDBACK && isDone(current)) return;
+  const k = s.picked.indexOf(i);
+  if (k >= 0) s.picked.splice(k, 1);
+  else if (t.multi) { if (s.picked.length < t.multi) s.picked.push(i); }
+  else s.picked = [i]; render();
+}
+function go(i) { current = Math.max(0, Math.min(TOTAL - 1, i)); render(); window.scrollTo({ top: 0 }); }
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (inTheory || $("drawer").classList.contains("open")) return;
+  if (e.key === "ArrowRight") go(current + 1); if (e.key === "ArrowLeft") go(current - 1);
+});
+$("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+window.addEventListener("scroll", updateToTop, { passive: true });
+$("total").textContent = TOTAL;
+buildNums(); buildTheory(); render(); showTheory();
+</script></body></html>

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta name="color-scheme" content="dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тема 27. Україна в перші повоєнні роки (1945 — початок 1950-х років)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap&subset=latin-ext" rel="stylesheet">
+<style>
+  :root {
+    --cell: 36px;
+    --cell-font: 16px;
+    --green: #00bc8c;
+    --green-dark: #00a077;
+    --border: #00bc8c;
+    --label: #00bc8c;
+    --red: #e74c3c;
+    --grey-btn: #444444;
+    --grey-box: #303030;
+    --active-bg: #0b5c49;
+    --text: #ffffff;
+    --muted: #c8c8c8;
+    --bg: #222222;
+    --panel: #303030;
+    --line: #444444;
+    --ok: #00bc8c;
+    --bad: #e74c3c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Lato", "Segoe UI", Arial, sans-serif;
+    font-size: 17px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px 24px 60px; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin: 4px 0 18px; }
+  .menu-btn {
+    width: 44px; padding: 0; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--green); background: transparent; color: var(--text); cursor: pointer;
+    transition: background .15s;
+  }
+  .menu-btn:hover { background: var(--green); }
+  .menu-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .home-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin: 0; padding: 9px 18px;
+    border: 1px solid var(--green); color: var(--text); background: transparent;
+    font-size: 17px; text-decoration: none; cursor: pointer;
+    transition: background .15s;
+  }
+  .home-btn:hover { background: var(--green); }
+  .home-btn:focus-visible { outline: 3px solid #3498db; outline-offset: 2px; }
+  .top-line { border-top: 2px solid #444444; margin-bottom: 12px; }
+
+  .meta div { line-height: 1.75; font-size: 18px; }
+  .meta span { color: var(--muted); }
+  .meta b { color: var(--text); }
+
+  /* сітка номерів завдань */
+  .nums { display: flex; flex-wrap: wrap; gap: 13px 13px; margin: 26px 0 22px; }
+  .num {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid var(--border);
+    background: var(--panel);
+    font: inherit; font-size: var(--cell-font); line-height: 1; color: var(--text);
+    cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .num.done { border-color: var(--border); }
+  .num.seen { border-color: var(--border); }
+  .num.current {
+    background: var(--active-bg);
+    box-shadow: 0 0 6px 2px rgba(0,188,140,.55);
+    border-color: var(--border);
+  }
+  .num.correct { background: #0b5c49; }
+  .num.wrong   { background: #6b2620; border-color: var(--bad); }
+
+  /* розділювач з лічильником */
+  .divider { position: relative; text-align: right; margin: 30px 0 40px; height: 40px; }
+  .divider::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%;
+    border-top: 1px solid var(--line);
+  }
+  .counter {
+    position: relative; display: inline-block;
+    padding: 8px 14px; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 17px;
+  }
+
+  .question { font-size: 18px; margin: 0 0 22px; line-height: 1.5; }
+  .options { margin: 0 0 30px; padding: 0; list-style: none; }
+  .option {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin: 0 0 6px; cursor: pointer; max-width: 100%;
+  }
+  .option .letter {
+    background: var(--grey-box);
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: var(--cell-font); line-height: 1;
+  }
+  .option .txt { font-size: 18px; line-height: 1.4; padding-top: 6px; }
+  .option.selected .letter { background: var(--active-bg); box-shadow: inset 0 0 0 1px var(--border); }
+  .option.right .letter { background: var(--ok); color: #fff; }
+  .option.wrong .letter { background: var(--bad); color: #fff; }
+
+  .answers-label { font-size: 18px; margin: 0 0 10px; }
+  .answer-grid { display: flex; gap: 7px; margin-bottom: 26px; }
+  .answer-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .answer-col b { font-size: var(--cell-font); width: var(--cell); text-align: center; }
+  .box {
+    width: var(--cell); height: var(--cell); flex: 0 0 var(--cell);
+    border: 1px solid #555555; border-radius: 4px; background: var(--panel);
+    cursor: pointer; font-size: var(--cell-font); line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; color: var(--text);
+  }
+  .box.on { background: var(--active-bg); border-color: var(--border); color: #fff; }
+  .option.locked, .box.locked { cursor: default; }
+  .box.right { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .box.wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .matrix .box.on { background: var(--green); border-color: var(--green); }
+
+  .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+  .btn {
+    display: block; width: 212px; height: 43px;
+    border: 0; font: inherit; font-size: 17px; color: #fff;
+    background: var(--green); cursor: pointer;
+  }
+  .btn:hover { background: var(--green-dark); }
+  .btn.red { background: var(--red); width: 213px; }
+  .btn.red:hover { background: #d43f2f; }
+  .btn.grey { background: var(--grey-btn); color: var(--text); }
+  .btn.grey:hover { background: #555555; }
+  .left { display: flex; flex-direction: column; gap: 20px; }
+  .btn:focus-visible, .num:focus-visible, .box:focus-visible, .option:focus-visible {
+    outline: 3px solid #3498db; outline-offset: 2px;
+  }
+
+  .explain {
+    margin-top: 24px; padding: 18px 20px;
+    border-left: 4px solid var(--border);
+    background: var(--panel); color: var(--text); font-size: 17px; line-height: 1.55;
+  }
+  .explain.good { border-left-color: var(--ok); }
+  .explain.bad  { border-left-color: var(--bad); }
+  .explain .score b { font-weight: 700; }
+  .explain h4 { margin: 16px 0 4px; font-size: 17px; font-weight: 700; color: var(--green); }
+  .explain .why { margin: 0; }
+  .explain .repeat { margin: 16px 0 0; font-size: 15px; color: #9a9a9a; }
+  .explain .repeat a { color: var(--green); text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+
+  /* теорія */
+  .num.theory-btn { font-weight: 700; }
+  .theory-title { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+  .theory-block { padding: 18px 0; border-top: 1px solid var(--line); }
+  .theory-block:first-of-type { border-top: 0; }
+  .theory-block h3 { margin: 0 0 8px; font-size: 18px; color: var(--green); font-weight: 700; }
+  .theory-block p { margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
+  .theory-block b { color: var(--text); font-weight: 700; }
+  .theory-end { border-top: 1px solid var(--line); }
+  .theory-block ul { margin: 6px 0 0; padding-left: 22px; color: var(--muted); font-size: 18px; line-height: 1.6; }
+  .theory-block li { margin: 0 0 6px; }
+  .theory-block p + ul { margin-top: 10px; }
+  .theory-block blockquote {
+    margin: 0; padding: 10px 14px; border-left: 4px solid var(--green);
+    background: var(--panel); color: var(--muted); font-size: 17px; line-height: 1.6; font-style: italic;
+  }
+  .theory-block blockquote + ul, .theory-block ul + p.after, .theory-block blockquote + p.after { margin-top: 12px; }
+  .theory-block p.after { margin-top: 12px; }
+  .question { white-space: pre-line; }
+  .question em { display: block; margin-top: 12px; color: var(--muted); font-size: 16px; }
+  .num.answered { background: #1d4a40; }
+
+  /* бічне меню зі списком тестів */
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6);
+    opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; z-index: 90;
+  }
+  .drawer-overlay.open { opacity: 1; visibility: visible; }
+  .drawer {
+    position: fixed; top: 0; left: 0; bottom: 0; width: min(360px, 88vw);
+    background: var(--bg); border-right: 1px solid var(--line);
+    padding: 18px 16px 24px; overflow-y: auto; overscroll-behavior: contain;
+    transform: translateX(-100%); visibility: hidden;
+    transition: transform .22s ease, visibility .22s; z-index: 100;
+  }
+  .drawer.open { transform: none; visibility: visible; }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .drawer-head h2 { margin: 0; font-size: 28px; font-weight: 700; }
+  .drawer-close {
+    width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); background: transparent;
+    color: var(--text); font-size: 18px; cursor: pointer;
+  }
+  .drawer-close:hover { background: var(--panel); }
+  .topic-search {
+    width: 100%; padding: 9px 10px; margin-bottom: 14px;
+    border: 0; border-radius: 3px; background: #fff; color: #222; font: inherit; font-size: 15px;
+  }
+  .topic-search::placeholder { color: #888; }
+  .topic-list { list-style: none; margin: 0; padding: 0; }
+  .topic-link {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    padding: 11px 10px; border-bottom: 1px solid #333; border-left: 3px solid transparent;
+    color: var(--green); text-decoration: none; font-size: 17px;
+  }
+  .topic-link:hover { background: var(--panel); }
+  .topic-link[aria-current="page"] { background: var(--panel); border-left-color: var(--green); }
+  .topic-link .t-name small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .topic-link .t-prog { color: var(--muted); font-size: 15px; white-space: nowrap; }
+  .topic-link .t-prog.full { color: var(--green); font-weight: 700; }
+  .topic-empty { padding: 14px 10px; color: var(--muted); }
+
+  /* кнопка «Нагору» (лише у теорії) */
+  .to-top {
+    position: fixed;
+    right: max(20px, env(safe-area-inset-right));
+    bottom: max(20px, env(safe-area-inset-bottom));
+    width: 48px; height: 48px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: 0; border-radius: 50%;
+    background: var(--green); color: #fff; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.5);
+    opacity: 0; visibility: hidden; transform: translateY(8px);
+    transition: opacity .2s, transform .2s, visibility .2s, background .15s;
+    z-index: 50;
+  }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; }
+  .to-top:hover { background: var(--green-dark); }
+  .to-top:focus-visible { outline: 3px solid #3498db; outline-offset: 3px; }
+  .result { margin-top: 18px; font-weight: 600; }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 12px 14px 40px; }
+    :root { --cell: 32px; --cell-font: 14px; }
+    .nums { gap: 9px; }
+    .btn, .btn.red { width: 100%; }
+    .left { width: 100%; }
+    .row { flex-direction: column; }
+    .right { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="home-btn" href="main.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      На головну
+    </a>
+  </div>
+
+  <div class="top-line"></div>
+
+  <div class="meta">
+    <div><span>Предмет:</span> Історія України</div>
+    <div><span>Розділ:</span> Україна в повоєнний період</div>
+    <div><span>Тема:</span> Тема 27. Україна в перші повоєнні роки (1945 — початок 1950-х років)</div>
+    <div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">20</b></div>
+  </div>
+
+  <div class="nums" id="nums"></div>
+
+  <div class="divider"><span class="counter" id="counter">Завдання 1 з 20</span></div>
+
+  <div id="testView">
+  <p class="question" id="question"></p>
+  <ul class="options" id="options"></ul>
+
+  <p class="answers-label" id="answersLabel">Позначте відповіді:</p>
+  <div class="answer-grid" id="answerGrid"></div>
+
+  <div class="row">
+    <div class="left">
+      <button class="btn" id="skip">Пропустити</button>
+    </div>
+  </div>
+
+  <div class="explain hidden" id="explain"></div>
+  </div>
+
+  <div id="theoryView" class="hidden"></div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Список тестів" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Теми</h2>
+    <button type="button" class="drawer-close" id="drawerClose" aria-label="Закрити список">✕</button>
+  </div>
+  <input type="search" class="topic-search" id="topicSearch" placeholder="Знайти тему" aria-label="Знайти тему" autocomplete="off">
+  <ul class="topic-list" id="topicList"></ul>
+</aside>
+
+<button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ===== ДАНІ ТЕСТУ =====
+   id — номер завдання; q — текст; note — примітка (наприклад, про ілюстрацію);
+   options — варіанти; labels — підписи варіантів (за замовчуванням А, Б, В, Г);
+   multi — скільки відповідей потрібно обрати (для завдань з кількома відповідями);
+   ordered — true, якщо важлива послідовність вибору (хронологія, відповідності);
+   hint — власний підпис над кнопками відповідей; answerText — власний текст правильної відповіді;
+   correct (необов'язково), explain (необов'язково) — правильна відповідь і пояснення. */
+const LETTERS = ["А", "Б", "В", "Г"];
+
+const tasks = [
+  { id: "27.7.",
+    q: "Яка мета проведення операції «Захід»?",
+    options: ["Знищення соціальної бази українського визвольного руху", "Забезпечення лісозаготівель Сибіру робочою силою", "Заселення і господарське освоєння новоприєднаних земель", "Забезпечення робітниками шахт Донбасу й Казахстану"] },
+  { id: "27.16.",
+    q: "Яку кризу в Україні характеризують масові вилучення хліба й заборони ринкової торгівлі зерном 1946 року?",
+    options: ["Голод 1946–1947 років", "Голодомор 1932–1933 років", "Колективізацію 1929 року", "Кризу 1989 року"] },
+  { id: "27.17.",
+    q: "Які головні завдання ставилися перед четвертою п’ятирічкою в УРСР?",
+    options: ["Житлове будівництво", "Відбудова соціальної сфери й інфраструктури", "Відбудова важкої та енергетичної промисловості", "Створення окремого республіканського народногосподарського комплексу"] },
+  { id: "27.18.",
+    q: "Який напрям економічного розвитку був пріоритетним у повоєнній УРСР?",
+    options: ["Розбудова сучасної інфраструктури всієї республіки", "Розвиток господарства Західної України", "Розбудова чорноморських портів", "Відбудова цукрових заводів Правобережжя"] },
+  { id: "27.19.",
+    q: "У якому році відбувалися події, пов’язані з ліквідацією Української греко-католицької церкви?",
+    options: ["1945 рік", "1946 рік", "1947 рік", "1951 рік"] },
+  { id: "27.21.",
+    q: "Яку церкву після насильницької ліквідації радянською владою називали «церквою в катакомбах»?",
+    options: ["Українську греко-католицьку церкву", "Українську автокефальну православну церкву 1921 року", "Російську православну церкву", "Лютеранську церкву"] },
+  { id: "27.22.",
+    q: "Яке явище характеризувало радянізацію західних областей України після Другої світової війни?",
+    options: ["Примусова колективізація, репресії та конфіскації", "Відкриття приватних господарств за НЕПом", "Встановлення багатопартійної демократії", "Передання промисловості місцевому самоврядуванню"] },
+  { id: "27.24.",
+    q: "Чим повоєнна радянізація Західної України відрізнялася від подій 1939–1941 років?",
+    options: ["Ширшим здійсненням примусової колективізації", "Відмовою від переслідування інакодумців", "Запровадженням автономного уряду", "Скасуванням радянської адміністрації"] },
+  { id: "27.25.",
+    q: "Яке твердження правильно характеризує діяльність ОУН та УПА після Другої світової війни?",
+    options: ["Учасники визвольного руху сподівалися на підтримку США", "УПА перейшла від підпільної боротьби до великих регулярних операцій", "Для виходу з блокад УПА здійснювала рейди лише на територію Польщі", "Після війни ОУН діяла тільки на заході України"] },
+  { id: "27.27.",
+    q: "Яка характеристика повоєнної боротьби ОУН і УПА була типовою для радянської офіційної пропаганди?",
+    options: ["Зображення підпільників як «банд» та «націоналістів»", "Визнання їх законною незалежною армією", "Заклик вступати до лав УПА", "Підтримка української державної незалежності"] },
+  { id: "27.28.",
+    q: "До якої ідеологічної кампанії належала постанова про «помилки» в дослідженнях історії України?",
+    options: ["Лисенківщина", "Ждановщина", "Інтернаціоналізм", "Буржуазний націоналізм"] },
+  { id: "27.30.",
+    q: "Яке твердження відповідає радянській політиці щодо історичної науки в повоєнні роки?",
+    options: ["Підпорядкування історичних досліджень офіційній ідеології", "Повне усунення партійного контролю", "Заборона викладання історії СРСР", "Визнання необмеженого наукового плюралізму"] },
+  { id: "27.31.",
+    q: "Яку ідеологічну кампанію супроводжували звинувачення українських учених і митців у «безрідному космополітизмі»?",
+    options: ["Боротьбу з космополітизмом", "Політику українізації", "Культурну революцію 1920-х років", "Десталінізацію"] },
+  { id: "27.33.",
+    q: "Який символ містився на державному прапорі УРСР повоєнного періоду?",
+    options: ["Серп, молот і п’ятикутна зірка", "Тризуб на синьо-жовтому тлі", "Золотий лев на блакитному тлі", "Білий хрест на червоному тлі"] },
+  { id: "27.36.",
+    q: "Яка з названих подій не відбулася в 1947 році?",
+    options: ["Грошова реформа в СРСР", "Ліквідація Української греко-католицької церкви", "Операція «Вісла»", "Операція «Захід»"] },
+  { id: "27.41.",
+    q: "Установіть відповідність між українськими історичними діячами та фактами їхніх біографій.\n\n1) Із 1944 року очолював УГКЦ, перебував під арештом\n2) Поет, автор «Пісні про Сталіна», керував Спілкою письменників\n3) Письменник, якого 1951 року звинувачували у націоналізмі за твір «Любіть Україну»\n4) Головнокомандувач УПА, загинув 1950 року",
+    matrix: true, multi: 4, cols: ["1", "2", "3", "4"],
+    labels: ["А", "Б", "В", "Г", "Д"],
+    answerText: "1–Г, 2–Д, 3–А, 4–В",
+    options: ["Володимир Сосюра", "Василь Кук", "Роман Шухевич", "Йосип Сліпий", "Максим Рильський"] },
+  { id: "27.42.",
+    q: "Установіть відповідність між діячами науки, культури й українського визвольного руху та їхніми досягненнями.\n\n1) Сергій Лебедєв\n2) Олександр Богомолець\n3) Володимир Філатов\n4) Андрій Малишко",
+    matrix: true, multi: 4, cols: ["1", "2", "3", "4"],
+    labels: ["А", "Б", "В", "Г", "Д"],
+    answerText: "1–Б, 2–А, 3–Г, 4–Д",
+    options: ["Розробив лікувальну сироватку для загоєння ран",
+              "Очолив створення першої вітчизняної цифрової обчислювальної машини",
+              "Став головнокомандувачем УПА після загибелі Шухевича",
+              "Розробляв методи трансплантації рогівки ока",
+              "Поет, автор «Україно моя!», звинувачений у націоналізмі"] },
+  { id: "27.48.",
+    q: "Які причини призвели до ліквідації Української греко-католицької церкви?",
+    multi: 3,
+    labels: ["1", "2", "3", "4", "5", "6", "7"],
+    options: ["Церква активно підтримувала збройний опір УПА",
+              "Мешканців Західної України прагнули об’єднати у спільній церкві",
+              "Після війни радянська влада прагнула об’єднати всі церкви світу",
+              "Прагнення радянської влади встановити ідеологічний контроль",
+              "Намір ліквідувати впливову соціально активну церкву",
+              "УГКЦ була єдиною впливовою українською церквою",
+              "Політика ждановщини"] },
+  { id: "27.49.",
+    q: "Які джерела використовували для повоєнної відбудови господарства УРСР?",
+    multi: 3,
+    labels: ["1", "2", "3", "4", "5", "6", "7"],
+    options: ["Репарації Німеччини",
+              "Праця німецьких військовополонених",
+              "Індустріалізація Західної України",
+              "Фінансова допомога ООН та інших організацій",
+              "Перекачування коштів із сільського господарства",
+              "Допомога США за планом Маршалла",
+              "Упровадження ринкової економіки"] },
+  { id: "27.50.",
+    q: "Які явища характеризували розвиток української культури в повоєнний період?",
+    multi: 3,
+    labels: ["1", "2", "3", "4", "5", "6", "7"],
+    options: ["Реабілітація митців «розстріляного відродження»",
+              "Запрошення західноєвропейських і американських фахівців",
+              "Панування «ждановщини»",
+              "Повернення до політики українізації",
+              "Репресії проти Леся Курбаса та театру «Березіль»",
+              "Боротьба з «українським буржуазним націоналізмом»",
+              "«Лисенківщина»"] }
+];
+
+/* ===== ТЕОРІЯ (кнопка «Т») =====
+   Блок: { h: заголовок, p: абзац, list: [пункти], quote: цитата-джерело, after: абзац після списку }.
+   Між блоками автоматично малюється лінія. Дозволено <b>...</b>. */
+const theory = [
+  { h: "Нові повоєнні кордони",
+    p: "Після війни було врегульовано значну частину кордонів УРСР. Договори з Польщею, Чехословаччиною та Румунією закріпили державні межі радянської України. У <b>1945 р.</b> Закарпаття увійшло до УРСР; у <b>1951 р.</b> відбувся обмін прикордонними територіями з Польщею.",
+    after: "Українська РСР 1945 р. стала однією з держав-засновниць ООН, хоча її зовнішня політика фактично контролювалася союзним центром." },
+  { h: "Відбудова економіки",
+    p: "<b>Четвертий п’ятирічний план 1946–1950 рр.</b> ставив за мету швидко відновити промисловість, транспорт і енергетику. Пріоритет надавали важкій промисловості, військово-промисловому сектору, шахтам і металургії. Дніпровську ГЕС відбудували після руйнувань.",
+    after: "Відбудову здійснювали коштом державного перерозподілу, жорсткої економії, праці військовополонених, репарацій і використання ресурсів сільського господарства. Товари щоденного вжитку й житло відновлювалися повільніше." },
+  { h: "Голод 1946–1947 років",
+    p: "Посуха, важкі повоєнні умови та незмінно високі плани хлібозаготівель спричинили <b>голод 1946–1947 рр.</b> На тлі нестачі продовольства держава продовжувала вилучати зерно, що поглиблювало становище селян.",
+    after: "У 1947 р. скасували карткову систему й провели грошову реформу. Ці рішення не означали швидкого підвищення рівня життя: значна частина населення й надалі потерпала від нестачі товарів." },
+  { h: "Радянізація Західної України",
+    p: "Після відновлення радянської влади на західних землях прискорили колективізацію, державний контроль над промисловістю, культурою та освітою. Усі важливі управлінські рішення ухвалювали партійні структури.",
+    after: "Масові арешти, депортації та обмеження релігійного життя стали складовою радянізації. Це призвело до тривалого протистояння з учасниками українського підпілля й частиною місцевого населення." },
+  { h: "УГКЦ та ліквідація її структур",
+    p: "У <b>березні 1946 р.</b> радянська влада організувала у Львові <b>псевдособор</b>, на якому проголосили ліквідацію церковної єдності УГКЦ з Римом і приєднання до Російської православної церкви. Це відбувалося під контролем влади, без вільного волевиявлення церковної спільноти.",
+    after: "Митрополит <b>Йосип Сліпий</b> та інші церковні діячі були репресовані. УГКЦ продовжувала існувати підпільно; релігійне переслідування стало важливою ознакою повоєнного тоталітаризму." },
+  { h: "Протистояння ОУН та УПА",
+    p: "Після 1945 р. підрозділи УПА й підпільні мережі ОУН продовжували боротьбу проти радянських репресивних структур. Радянська влада застосовувала блокади, агентурну роботу, силові операції та масові виселення сімей учасників підпілля.",
+    after: "У <b>1950 р.</b> загинув головнокомандувач УПА <b>Роман Шухевич</b>. <b>Василь Кук</b> згодом очолював підпільний рух. Сили повстанців поступово скорочувалися під впливом переважаючого радянського апарату." },
+  { h: "Примусові переселення",
+    p: "У <b>1947 р.</b> польська комуністична влада здійснила <b>операцію «Вісла»</b>: українське населення примусово переселяли з південно-східних районів Польщі на північ і захід країни. Метою було, зокрема, позбавлення українського підпілля підтримки.",
+    after: "У <b>жовтні 1947 р.</b> радянська влада провела <b>операцію «Захід»</b> — масову депортацію родин, яких пов’язували з ОУН та УПА. Потрібно не плутати ці дві операції, адже їх здійснювали різні державні апарати." },
+  { h: "Культура під тиском ідеології",
+    p: "Наприкінці 1940-х років у культурі панувала <b>«ждановщина»</b> — кампанії проти творчих і наукових підходів, які не відповідали партійним приписам. Письменників звинувачували в «українському буржуазному націоналізмі». У 1951 р. критикували вірш Володимира Сосюри «Любіть Україну».",
+    after: "У науці поширювалася <b>«лисенківщина»</b> — нав’язування ідей Трохима Лисенка та переслідування генетиків. Водночас українські вчені досягали результатів у медицині, математиці й обчислювальній техніці; під керівництвом Сергія Лебедєва створено ранню електронну обчислювальну машину." },
+  { h: "Хронологічні орієнтири",
+    list: ["<b>1945</b> — Закарпаття увійшло до УРСР; Україна стала членом-засновником ООН.",
+           "<b>1946–1950</b> — четверта п’ятирічка.",
+           "<b>Березень 1946</b> — Львівський псевдособор щодо УГКЦ.",
+           "<b>1946–1947</b> — повоєнний голод.",
+           "<b>1947</b> — грошова реформа.",
+           "<b>1947</b> — операції «Вісла» та «Захід».",
+           "<b>1950</b> — загибель Романа Шухевича.",
+           "<b>1951</b> — кампанія проти твору В. Сосюри «Любіть Україну»."] },
+  { h: "Ключові поняття",
+    list: ["<b>Відбудова</b> — повоєнне відновлення зруйнованого господарства.",
+           "<b>Радянізація</b> — поширення радянського режиму на західні області.",
+           "<b>«Вісла»</b> — примусове переселення українців у Польщі 1947 р.",
+           "<b>«Захід»</b> — масова депортація зі Західної України 1947 р.",
+           "<b>Ждановщина</b> — ідеологічний контроль і переслідування в культурі та науці.",
+           "<b>Лисенківщина</b> — державне нав’язування псевдонаукових поглядів у біології."] }
+];
+
+/* Правильні відповіді: індекси варіантів (0 = А/1, 1 = Б/2, 2 = В/3, 3 = Г/4 ...).
+   Для завдання з кількома відповідями — масив індексів; для matrix — по одному індексу на кожен стовпець. */
+const ANSWERS = [0, 0, 2, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, [3, 4, 0, 2], [1, 0, 3, 4], [1, 3, 4], [0, 1, 4], [2, 5, 6]];
+tasks.forEach((t, i) => { t.correct = ANSWERS[i]; });
+
+/* Пояснення, що з'являються після відповіді: why — «Чому так», repeat — заголовок блоку теорії для посилання «Повторити». */
+const EXPLAIN = [
+  { why: "Операція «Захід» (жовтень 1947 р.) — масова депортація родин, яких пов’язували з ОУН та УПА. Її мета — <b>знищити соціальну базу українського визвольного руху</b>.", repeat: "Примусові переселення" },
+  { why: "Масові вилучення хліба за незмінно високих планів хлібозаготівель після посухи спричинили <b>голод 1946–1947 рр.</b> Голодомор 1932–1933 рр. і колективізація належать до іншого періоду.", repeat: "Голод 1946–1947 років" },
+  { why: "Четверта п’ятирічка (1946–1950 рр.) мала швидко відновити промисловість, транспорт і енергетику, насамперед <b>важку та енергетичну промисловість</b>. Житло й товари щоденного вжитку відновлювалися повільніше.", repeat: "Відбудова економіки" },
+  { why: "Пріоритетом повоєнної відбудови були важка промисловість, військово-промисловий сектор, шахти й металургія, що вимагало <b>розбудови інфраструктури республіки загалом</b>. Інші варіанти вказують на вузькі регіональні напрями, які пріоритетними не були.", repeat: "Відбудова економіки" },
+  { why: "Псевдособор у Львові, на якому проголосили ліквідацію церковної єдності УГКЦ з Римом, відбувся в березні <b>1946 р.</b>", repeat: "УГКЦ та ліквідація її структур" },
+  { why: "Після насильницької ліквідації 1946 р. <b>УГКЦ</b> продовжувала існувати підпільно — звідси назва «церква в катакомбах».", repeat: "УГКЦ та ліквідація її структур" },
+  { why: "Радянізація західних областей означала прискорену <b>колективізацію</b>, державний контроль над промисловістю, масові арешти, депортації та конфіскації. Приватні господарства за НЕПом чи багатопартійність були неможливі.", repeat: "Радянізація Західної України" },
+  { why: "Повоєнна радянізація відрізнялася від 1939–1941 рр. <b>ширшим здійсненням примусової колективізації</b>. Переслідування інакодумців тривало, а радянська адміністрація зберігалася.", repeat: "Радянізація Західної України" },
+  { why: "Правильне твердження — про сподівання учасників визвольного руху на підтримку США. Решта хибна: після війни УПА й ОУН діяли переважно підпільно й малими групами (а не регулярними операціями) та не лише на заході.", repeat: "Протистояння ОУН та УПА" },
+  { why: "Радянська пропаганда зображала підпільників як «банди» й «націоналістів», аби дискредитувати український визвольний рух.", repeat: "Протистояння ОУН та УПА" },
+  { why: "Постанови про «помилки» в дослідженнях історії України належали до кампанії <b>ждановщини</b> — ідеологічного контролю й переслідувань у культурі та науці наприкінці 1940-х років.", repeat: "Культура під тиском ідеології" },
+  { why: "У повоєнні роки історичні дослідження було підпорядковано <b>офіційній партійній ідеології</b>, а науковий плюралізм не допускався.", repeat: "Культура під тиском ідеології" },
+  { why: "Звинувачення в «безрідному космополітизмі» супроводжували <b>боротьбу з космополітизмом</b> — ідеологічну кампанію кінця 1940-х років. Українізація, культурна революція 1920-х і десталінізація належать до інших епох.", repeat: "Культура під тиском ідеології" },
+  { why: "На державному прапорі УРСР повоєнного періоду були <b>серп, молот і п’ятикутна зірка</b> — символи радянської влади.", repeat: "Нові повоєнні кордони" },
+  { why: "Ліквідація УГКЦ (псевдособор) відбулася в <b>березні 1946 р.</b>, а не 1947-го. Грошова реформа, операції «Вісла» та «Захід» були 1947 р.", repeat: "Хронологічні орієнтири" },
+  { why: "Йосип Сліпий з 1944 р. очолював УГКЦ і був репресований <b>(1–Г)</b>; Максим Рильський — поет, автор «Пісні про Сталіна», керував Спілкою письменників <b>(2–Д)</b>; Володимир Сосюра — письменник, якого 1951 р. звинувачували у націоналізмі за вірш «Любіть Україну» <b>(3–А)</b>; Роман Шухевич — головнокомандувач УПА, загинув 1950 р. <b>(4–В)</b>. Василь Кук <b>(Б)</b> — зайвий варіант.", repeat: "Культура під тиском ідеології" },
+  { why: "Сергій Лебедєв очолив створення першої вітчизняної електронної обчислювальної машини <b>(1–Б)</b>; Олександр Богомолець розробив лікувальну сироватку <b>(2–А)</b>; Володимир Філатов розробляв методи трансплантації рогівки ока <b>(3–Г)</b>; Андрій Малишко — поет, автор «Україно моя!», якого звинувачували в націоналізмі <b>(4–Д)</b>. Варіант <b>В</b> (головнокомандувач УПА після Шухевича) — зайвий.", repeat: "Культура під тиском ідеології" },
+  { why: "УГКЦ ліквідували через прагнення радянської влади встановити ідеологічний контроль <b>(4)</b>, намір ліквідувати впливову соціально активну церкву <b>(5)</b> та бажання об’єднати мешканців Західної України у спільній церкві — Російській православній <b>(2)</b>. Хибні: звинувачення в підтримці УПА <b>(1)</b>, «об’єднання всіх церков світу» <b>(3)</b>, ідея єдиної впливової української церкви <b>(6)</b> та ждановщина <b>(7)</b>, яка стосувалася культури й науки.", repeat: "УГКЦ та ліквідація її структур" },
+  { why: "Відбудову здійснювали коштом репарацій Німеччини <b>(1)</b>, праці німецьких військовополонених <b>(2)</b> та ресурсів сільського господарства <b>(5)</b>. План Маршалла, ринкова економіка й індустріалізація Західної України не були джерелами відбудови.", repeat: "Відбудова економіки" },
+  { why: "Для повоєнної культури були характерні <b>ждановщина (3)</b>, боротьба з «українським буржуазним націоналізмом» <b>(6)</b> та <b>лисенківщина (7)</b>. Реабілітація «розстріляного відродження», українізація й репресії проти Курбаса не відповідають цьому періодові.", repeat: "Культура під тиском ідеології" }
+];
+tasks.forEach((t, i) => { t.explain = EXPLAIN[i]; });
+
+function renderExplain(t) {
+  const box = $("explain");
+  if (!(INSTANT_FEEDBACK && isDone(current) && t.explain)) {
+    box.className = "explain hidden";
+    box.innerHTML = "";
+    return;
+  }
+  const right = isRight(current);
+  const labels = labelsOf(t);
+  const ans = t.answerText || correctSet(t).map(i => labels[i]).join(t.ordered ? " → " : ", ");
+  box.className = "explain " + (right ? "good" : "bad");
+  box.innerHTML =
+    '<div class="score">Правильна відповідь: <b>' + ans + '</b>. Бали: ' + (right ? 1 : 0) +
+    ' з 1. Після показу відповіді змінити її вже не можна.</div>' +
+    '<h4>Чому так</h4><p class="why">' + t.explain.why + '</p>' +
+    '<p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';
+  const a = $("repeatLink");
+  a.textContent = t.explain.repeat;
+  a.onclick = e => { e.preventDefault(); showTheoryAt(t.explain.repeat); };
+}
+
+function showTheoryAt(heading) {
+  showTheory();
+  const idx = theory.findIndex(b => b.h === heading);
+  const blocks = document.querySelectorAll ? document.querySelectorAll(".theory-block") : [];
+  if (idx >= 0 && blocks[idx]) blocks[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+const INSTANT_FEEDBACK = true; // true — після відповіді одразу показувати правильно/неправильно
+
+const correctSet = t => Array.isArray(t.correct) ? t.correct : [t.correct];
+function isDone(i) {
+  const t = tasks[i], p = state[i].picked, n = p.length;
+  if (t.matrix) return n === t.cols.length && p.every(x => x !== null && x !== undefined);
+  return n === (t.multi || 1);
+}
+function isRight(i) {
+  const t = tasks[i], p = state[i].picked, c = correctSet(t);
+  if (t.ordered || t.matrix) return p.length === c.length && c.every((x, k) => p[k] === x);
+  return p.length === c.length && c.every(x => p.includes(x));
+}
+
+const TOTAL = tasks.length;
+
+/* ===== СТАН ===== */
+let current = 0;
+let inTheory = false;
+const state = tasks.map(() => ({ picked: [] }));
+const TOPIC_ID = 27; // номер теми цієї сторінки
+const LS_KEY = "hist" + TOPIC_ID + "-progress";
+const summaryKey = n => "progress-topic-" + n;
+
+try {
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+  if (saved && saved.state && saved.state.length === TOTAL) {
+    saved.state.forEach((s, i) => { if (Array.isArray(s.picked)) state[i].picked = s.picked; });
+    current = Math.min(saved.current || 0, TOTAL - 1);
+  }
+} catch (e) {}
+
+function save() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, current }));
+    // короткий підсумок для меню: скільки завдань уже виконано
+    const answered = state.filter((_, i) => isDone(i)).length;
+    localStorage.setItem(summaryKey(TOPIC_ID), JSON.stringify({ answered, total: TOTAL }));
+  } catch (e) {}
+}
+
+const $ = id => document.getElementById(id);
+const labelsOf = t => t.labels || LETTERS;
+
+/* ===== СІТКА НОМЕРІВ ===== */
+function buildNums() {
+  const box = $("nums");
+  box.innerHTML = "";
+  const t = document.createElement("button");
+  t.className = "num theory-btn";
+  t.id = "tBtn";
+  t.textContent = "Т";
+  t.setAttribute("aria-label", "Теорія");
+  t.onclick = showTheory;
+  box.appendChild(t);
+
+  tasks.forEach((_, i) => {
+    const b = document.createElement("button");
+    b.className = "num";
+    b.dataset.i = i;
+    b.textContent = i + 1;
+    b.setAttribute("aria-label", "Завдання " + (i + 1));
+    b.onclick = () => go(i);
+    box.appendChild(b);
+  });
+}
+
+function paintNums() {
+  [...$("nums").children].forEach(b => {
+    if (b.id === "tBtn") {
+      b.className = "num theory-btn" + (inTheory ? " current" : "");
+      return;
+    }
+    const i = +b.dataset.i;
+    b.className = "num";
+    if (state[i].picked.length) {
+      if (INSTANT_FEEDBACK && isDone(i)) b.classList.add(isRight(i) ? "correct" : "wrong");
+      else b.classList.add("answered");
+    }
+    if (!inTheory && i === current) b.classList.add("current");
+  });
+}
+
+/* ===== ТЕОРІЯ ===== */
+function buildTheory() {
+  const v = $("theoryView");
+  v.innerHTML = '<h2 class="theory-title">Теорія</h2>';
+  theory.forEach(item => {
+    const d = document.createElement("div");
+    d.className = "theory-block";
+    const h = document.createElement("h3");
+    h.textContent = item.h;
+    d.appendChild(h);
+    if (item.p) { const p = document.createElement("p"); p.innerHTML = item.p; d.appendChild(p); }
+    if (item.quote) { const q = document.createElement("blockquote"); q.textContent = item.quote; d.appendChild(q); }
+    if (item.list) {
+      const ul = document.createElement("ul");
+      item.list.forEach(x => { const li = document.createElement("li"); li.innerHTML = x; ul.appendChild(li); });
+      d.appendChild(ul);
+    }
+    if (item.after) { const p = document.createElement("p"); p.className = "after"; p.innerHTML = item.after; d.appendChild(p); }
+    v.appendChild(d);
+  });
+  const end = document.createElement("div");
+  end.className = "theory-end";
+  v.appendChild(end);
+}
+
+function updateToTop() {
+  const show = inTheory && window.scrollY > 200;
+  $("toTop").classList.toggle("show", show);
+}
+
+function showTheory() {
+  inTheory = true;
+  $("testView").classList.add("hidden");
+  $("theoryView").classList.remove("hidden");
+  $("counter").textContent = "Теорія";
+  paintNums();
+  window.scrollTo({ top: 0 });
+  updateToTop();
+}
+
+/* ===== ТЕСТ ===== */
+function render() {
+  inTheory = false;
+  updateToTop();
+  $("theoryView").classList.add("hidden");
+  $("testView").classList.remove("hidden");
+  const t = tasks[current];
+  const s = state[current];
+  const labels = labelsOf(t);
+  const done = INSTANT_FEEDBACK && isDone(current);
+
+  $("counter").textContent = "Завдання " + (current + 1) + " з " + TOTAL;
+
+  const q = $("question");
+  q.textContent = "";
+  const idEl = document.createElement("b");
+  idEl.textContent = t.id + " ";
+  q.appendChild(idEl);
+  q.appendChild(document.createTextNode(t.q));
+  if (t.note) {
+    const em = document.createElement("em");
+    em.textContent = t.note;
+    q.appendChild(em);
+  }
+
+  $("answersLabel").textContent = t.hint || (t.multi
+    ? "Позначте відповіді (потрібно обрати " + t.multi + "):"
+    : "Позначте відповіді:");
+
+  const ul = $("options");
+  ul.innerHTML = "";
+  t.options.forEach((text, i) => {
+    const li = document.createElement("li");
+    const pos = t.ordered ? s.picked.indexOf(i) : -1;
+    let cls = t.matrix ? "option locked" : "option" + (s.picked.includes(i) ? " selected" : "");
+    if (done && !t.matrix) {
+      if (t.ordered) {
+        if (pos >= 0) cls += correctSet(t)[pos] === i ? " right" : " wrong";
+      } else {
+        if (correctSet(t).includes(i)) cls += " right";
+        else if (s.picked.includes(i)) cls += " wrong";
+      }
+      cls += " locked";
+    }
+    li.className = cls;
+    li.tabIndex = t.matrix ? -1 : 0;
+    li.innerHTML = '<span class="letter"></span><span class="txt"></span>';
+    li.querySelector(".letter").textContent = /\bright\b/.test(cls) ? "✓" : /\bwrong\b/.test(cls) ? "✕" : labels[i];
+    li.querySelector(".txt").textContent = (pos >= 0 ? "[" + (pos + 1) + "] " : "") + text;
+    if (!t.matrix) {
+      li.onclick = () => pick(i);
+      li.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(i); } };
+    }
+    ul.appendChild(li);
+  });
+
+  const grid = $("answerGrid");
+  grid.innerHTML = "";
+  grid.className = "answer-grid" + (t.matrix ? " matrix" : "");
+  (t.matrix ? [] : labels).forEach((L, i) => {
+    const on = s.picked.includes(i);
+    const pos = s.picked.indexOf(i);
+    const col = document.createElement("div");
+    col.className = "answer-col";
+    const b = document.createElement("b");
+    b.textContent = L;
+    const bx = document.createElement("button");
+    let bc = "box" + (on ? " on" : "");
+    let mark = on ? (t.ordered ? String(pos + 1) : "✓") : "";
+    if (done) {
+      let ok, bad;
+      if (t.ordered) { ok = on && correctSet(t)[pos] === i; bad = on && !ok; }
+      else { ok = correctSet(t).includes(i); bad = !ok && on; }
+      if (ok) { bc = "box right"; mark = "✓"; }
+      else if (bad) { bc = "box wrong"; mark = "✕"; }
+      bc += " locked";
+    }
+    bx.className = bc;
+    bx.textContent = mark;
+    bx.setAttribute("aria-label", "Відповідь " + L);
+    bx.onclick = () => pick(i);
+    col.appendChild(b);
+    col.appendChild(bx);
+    grid.appendChild(col);
+  });
+
+  if (t.matrix) {
+    const c = correctSet(t);
+    t.cols.forEach((cl, ci) => {
+      const col = document.createElement("div");
+      col.className = "answer-col";
+      const b = document.createElement("b");
+      b.textContent = cl;
+      col.appendChild(b);
+      labels.forEach((L, ri) => {
+        const on = s.picked[ci] === ri;
+        let bc = "box" + (on ? " on" : "");
+        let mark = L;
+        if (done) {
+          if (ri === c[ci]) { bc = "box right"; mark = "✓"; }
+          else if (on) { bc = "box wrong"; mark = "✕"; }
+          bc += " locked";
+        }
+        const bx = document.createElement("button");
+        bx.className = bc;
+        bx.textContent = mark;
+        bx.setAttribute("aria-label", "Для " + cl + " — " + L);
+        bx.onclick = () => pickCell(ci, ri);
+        col.appendChild(bx);
+      });
+      grid.appendChild(col);
+    });
+  }
+
+  renderExplain(t);
+
+  paintNums();
+  save();
+}
+
+function pickCell(ci, ri) {
+  const s = state[current];
+  if (INSTANT_FEEDBACK && isDone(current)) return; // відповідь зафіксовано
+  const p = s.picked;
+  if (p[ci] === ri) p[ci] = null;
+  else {
+    while (p.length <= ci) p.push(null);
+    p[ci] = ri;
+  }
+  while (p.length && (p[p.length - 1] === null || p[p.length - 1] === undefined)) p.pop();
+  render();
+}
+
+function pick(i) {
+  const t = tasks[current];
+  const s = state[current];
+  if (INSTANT_FEEDBACK && isDone(current)) return; // відповідь зафіксовано
+  const k = s.picked.indexOf(i);
+  if (k >= 0) s.picked.splice(k, 1);
+  else if (t.multi) { if (s.picked.length < t.multi) s.picked.push(i); }
+  else s.picked = [i];
+  render();
+}
+
+function go(i) {
+  current = Math.max(0, Math.min(TOTAL - 1, i));
+  render();
+  window.scrollTo({ top: 0 });
+}
+
+/* ===== КНОПКИ ===== */
+$("skip").onclick = () => go(current + 1 >= TOTAL ? 0 : current + 1);
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (inTheory || $("drawer").classList.contains("open")) return;
+  if (e.key === "ArrowRight") go(current + 1);
+  if (e.key === "ArrowLeft") go(current - 1);
+});
+$("toTop").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+window.addEventListener("scroll", updateToTop, { passive: true });
+
+$("total").textContent = TOTAL;
+buildNums();
+buildTheory();
+render();      // готуємо вигляд тесту (з урахуванням збереженого прогресу)
+showTheory();   // при відкритті першою показується вкладка «Т» з теорією
+</script>
+</body>
+</html>
