@@ -1,0 +1,462 @@
+<!DOCTYPE html><html lang="uk"><head><meta name="color-scheme" content="dark"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Тема 11. Українські землі в другій половині XVIII ст.</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap&subset=latin-ext" rel="stylesheet"><style>
+:root{--cell:36px;--cell-font:16px;--green:#00bc8c;--green-dark:#00a077;--border:#00bc8c;--active-bg:#0b5c49;--text:#fff;--muted:#c8c8c8;--bg:#222;--panel:#303030;--line:#444;--ok:#00bc8c;--bad:#e74c3c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Lato,'Segoe UI',Arial,sans-serif;font-size:17px}.wrap{max-width:860px;margin:0 auto;padding:16px 24px 60px}.topbar{display:flex;gap:10px;align-items:stretch;margin:4px 0 18px}.home-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border:1px solid var(--green);color:var(--text);background:transparent;font-size:17px;text-decoration:none;transition:background .15s}.home-btn:hover{background:var(--green)}.top-line{border-top:2px solid #444;margin-bottom:12px}.meta div{line-height:1.75;font-size:18px}.meta span{color:var(--muted)}.nums{display:flex;flex-wrap:wrap;gap:13px;margin:26px 0 22px}.num{width:var(--cell);height:var(--cell);flex:0 0 var(--cell);border:1px solid var(--border);background:var(--panel);font:inherit;font-size:var(--cell-font);line-height:1;color:var(--text);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}.num.current{background:var(--active-bg);box-shadow:0 0 6px 2px rgba(0,188,140,.55)}.num.correct{background:#0b5c49}.num.wrong{background:#6b2620;border-color:var(--bad)}.num.answered{background:#1d4a40}.num.theory-btn{font-weight:700}.divider{position:relative;text-align:right;margin:30px 0 40px;height:40px}.divider::before{content:'';position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--line)}.counter{position:relative;display:inline-block;padding:8px 14px;background:var(--bg);border:1px solid var(--border);font-size:17px}.question{font-size:18px;margin:0 0 22px;line-height:1.5;white-space:pre-line}.options{margin:0 0 30px;padding:0;list-style:none}.option{display:flex;align-items:flex-start;gap:8px;margin:0 0 6px;cursor:pointer;max-width:100%}.option .letter{background:var(--panel);width:var(--cell);height:var(--cell);flex:0 0 var(--cell);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:var(--cell-font);line-height:1}.option .txt{font-size:18px;line-height:1.4;padding-top:6px}.option.selected .letter{background:var(--active-bg);box-shadow:inset 0 0 0 1px var(--border)}.option.right .letter{background:var(--ok)}.option.wrong .letter{background:var(--bad)}.answers-label{font-size:18px;margin:0 0 10px}.answer-grid{display:flex;gap:7px;margin-bottom:26px;overflow-x:auto}.answer-col{display:flex;flex-direction:column;align-items:center;gap:4px}.answer-col b{font-size:var(--cell-font);width:var(--cell);text-align:center}.box{width:var(--cell);height:var(--cell);flex:0 0 var(--cell);border:1px solid #555;border-radius:4px;background:var(--panel);cursor:pointer;font-size:var(--cell-font);line-height:1;display:flex;align-items:center;justify-content:center;padding:0;color:var(--text)}.box.on{background:var(--active-bg);border-color:var(--border)}.option.locked,.box.locked{cursor:default}.box.right{background:var(--ok);border-color:var(--ok)}.box.wrong{background:var(--bad);border-color:var(--bad)}.matrix .box.on{background:var(--green);border-color:var(--green)}.row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px}.btn{display:block;width:212px;height:43px;border:0;font:inherit;font-size:17px;color:#fff;background:var(--green);cursor:pointer}.btn:hover{background:var(--green-dark)}.left{display:flex;flex-direction:column;gap:20px}button:focus-visible,a:focus-visible,.option:focus-visible{outline:3px solid #3498db;outline-offset:2px}.explain{margin-top:24px;padding:18px 20px;border-left:4px solid var(--border);background:var(--panel);font-size:17px;line-height:1.55}.explain.good{border-left-color:var(--ok)}.explain.bad{border-left-color:var(--bad)}.explain h4{margin:16px 0 4px;font-size:17px;color:var(--green)}.explain .why{margin:0}.explain .repeat{margin:16px 0 0;font-size:15px;color:#9a9a9a}.explain a{color:var(--green)}.hidden{display:none}.theory-title{font-size:24px;margin:0 0 6px}.theory-block{padding:18px 0;border-top:1px solid var(--line)}.theory-block:first-of-type{border-top:0}.theory-block h3{margin:0 0 8px;font-size:18px;color:var(--green)}.theory-block b{color:var(--text)}.theory-block ul{margin:6px 0 0;padding-left:22px;color:var(--muted);font-size:18px;line-height:1.6}.theory-block li{margin:0 0 6px}.theory-end{border-top:1px solid var(--line)}.to-top{position:fixed;right:max(20px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:var(--green);color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s,background .15s;z-index:50}.to-top.show{opacity:1;visibility:visible;transform:none}.to-top:hover{background:var(--green-dark)}@media(max-width:560px){.wrap{padding:12px 14px 40px}:root{--cell:32px;--cell-font:14px}.nums{gap:9px}.btn,.left{width:100%}.row{flex-direction:column}}
+</style></head><body><div class="wrap"><div class="topbar"><a class="home-btn" href="main.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>На головну</a></div><div class="top-line"></div><div class="meta"><div><span>Предмет:</span> Історія України</div><div><span>Розділ:</span> Українські землі в другій половині XVIII ст.</div><div><span>Тема:</span> Тема 11. Українські землі в другій половині XVIII ст.</div><div><span>Кількість завдань:</span> <b style="font-weight:500" id="total">20</b></div></div><div class="nums" id="nums"></div><div class="divider"><span class="counter" id="counter">Завдання 1 з 20</span></div><div id="testView"><p class="question" id="question"></p><ul class="options" id="options"></ul><p class="answers-label" id="answersLabel">Позначте відповіді:</p><div class="answer-grid" id="answerGrid"></div><div class="row"><div class="left"><button class="btn" id="skip">Пропустити</button></div></div><div class="explain hidden" id="explain" aria-live="polite"></div></div><div id="theoryView" class="hidden"></div></div><button type="button" class="to-top" id="toTop" aria-label="Піднятися догори" title="Нагору"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></button><script>
+/* Матеріал і ключі перенесені з повідомлення користувача без історичного фактчекінгу. */
+const tasks=[
+  {
+    "id": "11.1.",
+    "q": "Укажіть правильне твердження про гетьманування Кирила Розумовського.",
+    "options": [
+      "Генеральні зібрання були старшинськими з'їздами за взірцем польського сейму",
+      "Друга Малоросійська колегія скасувала Генеральні зібрання",
+      "територія Слобожанщини була підпорядкована Другій Малоросійській колегії",
+      "після ліквідації Запорозької Січі на її землях було створено округ Нова Сербія"
+    ],
+    "correct": 0,
+    "repeat": 3
+  },
+  {
+    "id": "11.2.",
+    "q": "У джерелі вказано на: «...Запорозька Січ остаточно зруйнована... за зухвалі вчинки цих козаків... Їх злочини: привласнення собі земель Новоросійської губернії, приймали до себе в козаки...»",
+    "options": [
+      "причини ліквідації Запорозької Січі",
+      "результати ліквідації Запорозької Січі",
+      "наслідки ліквідації Запорозької Січі",
+      "сутність ліквідації Запорозької Січі"
+    ],
+    "correct": 0,
+    "repeat": 5
+  },
+  {
+    "id": "11.3.",
+    "q": "Документ про ліквідацію Запорозької Січі було видано 1775 р. Видання документа було пов'язане із",
+    "options": [
+      "завершенням першого поділу Речі Посполитої",
+      "придушенням Коліївщини",
+      "проведенням реформ Марії-Терезії та Йосифа II",
+      "укладенням російсько-турецького Кючук-Кайнарджійського миру"
+    ],
+    "correct": 3,
+    "repeat": 5
+  },
+  {
+    "id": "11.4.",
+    "q": "Друга Малоросійська колегія була створена з метою",
+    "options": [
+      "контролю над Генеральною військовою канцелярією та Генеральним судом",
+      "остаточної ліквідації автономії Гетьманщини і збільшення доходів імператорської казни",
+      "координації управління Гетьманщиною, Вольностями Війська Запорозького і Слобожанщиною",
+      "реорганізації управління на Правобережжі внаслідок поділів Речі Посполитої"
+    ],
+    "correct": 1,
+    "repeat": 4
+  },
+  {
+    "id": "11.5.",
+    "q": "Запорозька Січ у другій половині XVIII ст.",
+    "options": [
+      "повністю залежала від матеріального забезпечення з боку Гетьманщини",
+      "перетворилася на потужний осередок аграрного виробництва, заснованого на вільнонайманій праці",
+      "стала головним центром торгівлі Гетьманщини",
+      "зберігала роль форпосту проти численних нападів Кримського ханства й Османської імперії"
+    ],
+    "correct": 3,
+    "repeat": 5
+  },
+  {
+    "id": "11.6.",
+    "q": "Після ліквідації Запорозької Січі її землі увійшли до складу",
+    "options": [
+      "Харківського намісництва",
+      "Слобідсько-Української губернії",
+      "Новоросійської губернії",
+      "особливого Запорозького округу"
+    ],
+    "correct": 2,
+    "repeat": 5
+  },
+  {
+    "id": "11.7.",
+    "q": "Кримське ханство було визнано незалежним від Османської імперії",
+    "options": [
+      "унаслідок поділів Речі Посполитої",
+      "за Кючук-Кайнарджійським миром",
+      "за Ясським миром",
+      "за Карловицькою угодою"
+    ],
+    "correct": 1,
+    "repeat": 8
+  },
+  {
+    "id": "11.8.",
+    "q": "Що не було умовою Кючук-Кайнарджійського миру?",
+    "options": [
+      "Росія приєднала причорноморські землі в межиріччі Дніпра і Південного Бугу",
+      "Росія отримала фортеці Керч, Єнікале, Кінбурн, Азов",
+      "Кримське ханство визнане незалежним від Османської імперії",
+      "Османська імперія визнала приєднання до Росії Криму і Кубані"
+    ],
+    "correct": 3,
+    "repeat": 8
+  },
+  {
+    "id": "11.9.",
+    "q": "Одна з причин Коліївщини —",
+    "options": [
+      "ліквідація Гетьманщини",
+      "створення Барської конфедерації",
+      "наступ на права Запорозької Січі",
+      "ліквідація автономії Слобожанщини"
+    ],
+    "correct": 1,
+    "repeat": 6
+  },
+  {
+    "id": "11.10.",
+    "q": "Реформи Марії-Терезії та Йосифа II в Австрійській імперії",
+    "options": [
+      "мали на меті посилити вплив польської шляхти в Галичині й Закарпатті",
+      "сприяли модернізації західноукраїнських земель",
+      "активізували опришківський рух",
+      "супроводжувалися репресіями проти українського населення"
+    ],
+    "correct": 1,
+    "repeat": 9
+  },
+  {
+    "id": "11.11.",
+    "q": "Одним із результатів поділів Речі Посполитої було",
+    "options": [
+      "об'єднання більшості українських земель у складі Російської імперії",
+      "скасування кріпосного права на Правобережній Україні",
+      "зрівняння в правах православної і греко-католицької церков",
+      "створення Галицько-Буковинського генерал-губернаторства"
+    ],
+    "correct": 0,
+    "repeat": 8
+  },
+  {
+    "id": "11.12.",
+    "q": "Кого описує історичний портрет: «Він часто діяв усупереч обставинам. Він не закінчив Києво-Могилянської академії, але мав енциклопедичні знання. З 47 років і до кінця життя був \"мандрівним університетом\" України. У центрі його інтересів — щастя людини та суспільне життя. Спасіння від несправедливості він вбачав у самопізнанні, добропорядності і невтомній праці»?",
+    "options": [
+      "Артема Веделя",
+      "Григорія Сковороду",
+      "Кирила Розумовського",
+      "Максима Залізняка"
+    ],
+    "correct": 1,
+    "repeat": 10
+  },
+  {
+    "id": "11.13.",
+    "q": "Яке твердження є правильним щодо автора цих рядків: «Що є свобода? Добро в ній якеє? Кажуть, неначе воно золотеє? Ні ж бо, не злотне: зрівнявши все злото, проти свободи воно лиш болото»?",
+    "options": [
+      "останній гетьман України, який провів серію модернізаційних реформ",
+      "останній отаман Запорозької Січі, який поплатився свободою",
+      "мандрівний філософ, який наголошував на необхідності пошуку «сродної праці»",
+      "архітектор, який збудував Покровську церкву на Подолі"
+    ],
+    "correct": 2,
+    "repeat": 10
+  },
+  {
+    "id": "11.14.",
+    "q": "Розташуйте події в хронологічній послідовності.",
+    "options": [
+      "указ про прикріплення селян Лівобережжя до місця («за останньою ревізією»)",
+      "повстання Максима Залізняка, обрання Івана Гонти, Умань",
+      "Маніфест про остаточне зруйнування Запорозької Січі",
+      "Генеральний опис Малоросії П. Рум'янцева (1765–1769)"
+    ],
+    "correct": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "repeat": 1,
+    "ordered": true,
+    "multi": 4
+  },
+  {
+    "id": "11.15.",
+    "q": "Установіть послідовність заснування козацьких Січей.",
+    "options": [
+      "Олешківська",
+      "Задунайська",
+      "Підпільненська",
+      "Кам'янська"
+    ],
+    "correct": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "repeat": 5,
+    "ordered": true,
+    "multi": 4
+  },
+  {
+    "id": "11.16.",
+    "q": "Установіть послідовність заходів із ліквідації автономії українських земель у другій половині XVIII ст.",
+    "options": [
+      "скасування Гетьманщини",
+      "остаточна ліквідація Підпільненської Січі",
+      "ліквідація полкового устрою",
+      "поширення кріпацтва на Лівобережжя та Слобожанщину"
+    ],
+    "correct": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "repeat": 4,
+    "ordered": true,
+    "multi": 4
+  },
+  {
+    "id": "11.17.",
+    "q": "Увідповідніть поняття з його визначенням.\n\n1  адміністративно-територіальна одиниця Нової Січі\n2  адміністративно-територіальна одиниця Російської імперії\n3  хутірське козацьке господарство\n4  учасник повстанського селянсько-козацького руху на Правобережжі в другій половині XVIII ст.",
+    "options": [
+      "«гайдамака»",
+      "«зимівник»",
+      "«секуляризація»",
+      "«паланка»",
+      "«губернія»"
+    ],
+    "correct": [
+      3,
+      4,
+      1,
+      0
+    ],
+    "repeat": 2,
+    "matrix": true,
+    "multi": 4,
+    "cols": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "labels": [
+      "А",
+      "Б",
+      "В",
+      "Г",
+      "Д"
+    ]
+  },
+  {
+    "id": "11.18.",
+    "q": "Увідповідніть дату з подією.\n\n1  1764 р.\n2  1768 р.\n3  1775 р.\n4  1783 р.",
+    "options": [
+      "Коліївщина",
+      "запровадження кріпацтва в колишній Гетьманщині",
+      "остаточна ліквідація Гетьманщини",
+      "скасування полково-сотенного устрою на Лівобережжі",
+      "остаточна ліквідація Запорозької Січі"
+    ],
+    "correct": [
+      2,
+      0,
+      4,
+      1
+    ],
+    "repeat": 1,
+    "matrix": true,
+    "multi": 4,
+    "cols": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "labels": [
+      "А",
+      "Б",
+      "В",
+      "Г",
+      "Д"
+    ]
+  },
+  {
+    "id": "11.19.",
+    "q": "Назвіть основні заходи гетьмана Кирила Розумовського. (оберіть три)",
+    "options": [
+      "увів у Гетьманщині кріпацтво",
+      "з України виведено російські війська",
+      "здійснив військову та судову реформи",
+      "перевів суд і військо у підпорядкування імперії",
+      "збирав старшинські з'їзди — Генеральні зібрання",
+      "установив самодержавну форму правління в Гетьманщині",
+      "відкрив Київський і Батуринський університети"
+    ],
+    "correct": [
+      1,
+      2,
+      4
+    ],
+    "repeat": 3,
+    "multi": 3,
+    "labels": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ]
+  },
+  {
+    "id": "11.20.",
+    "q": "Друга Малоросійська колегія (оберіть три)",
+    "options": [
+      "була заснована імператором Петром I для уніфікації імперського управління",
+      "складалася з чотирьох представників генеральної старшини і чотирьох російських чиновників",
+      "загальмувала процес закріпачення селянства Лівобережної Гетьманщини і Слобожанщини",
+      "перевела козацтво на контрактну армійську службу",
+      "організувала Генеральний опис Малоросії",
+      "урівняла в правах Генеральну і полкову старшину з рядовим козацтвом",
+      "ліквідувала полково-сотенний устрій Гетьманщини, створивши Малоросійське генерал-губернаторство"
+    ],
+    "correct": [
+      1,
+      4,
+      6
+    ],
+    "repeat": 4,
+    "multi": 3,
+    "labels": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ]
+  }
+];
+const theory=[
+  {
+    "h": "Зміст програми",
+    "list": [
+      "Факти. Внутрішня політика останніх очільників Гетьманщини. Діяльність Другої Малоросійської колегії. Ліквідація Запорозької Січі. Ліквідація автономного устрою Гетьманщини та Слобожанщини. Гайдамацький та опришківський рухи. Зміни в політичному становищі українських земель після поділів Речі Посполитої (1772, 1793, 1795 рр.). Реформи Марії Терезії та Йосифа II та їх вплив на українські землі. Культура і духовність. Персоналії: Кирило Розумовський, Петро Калнишевський, Олекса Довбуш, Максим Залізняк, Іван Гонта, Григорій Сковорода, Артем Ведель, Іван Григорович-Барський."
+    ]
+  },
+  {
+    "h": "Дати",
+    "list": [
+      "<b>1764 р.</b> — остаточна ліквідація гетьманства.",
+      "<b>1768 р.</b> — Коліївщина.",
+      "<b>1775 р.</b> — остаточна ліквідація Запорозької Січі.",
+      "<b>1780–1782 рр.</b> — ліквідація особистої залежності селян в Австрійській імперії.",
+      "<b>1783 р.</b> — закріпачення селян Лівобережної та Слобідської України, підкорення Росією Кримського ханства."
+    ]
+  },
+  {
+    "h": "Поняття та терміни",
+    "list": [
+      "<b>Нова (Підпільненська) Січ</b> — Запорозька Січ (1734–1775), утворена козаками, що повернулися на територію Російської імперії після розгрому Січі 1709 р.",
+      "<b>Задунайська Січ</b> — Січ, заснована козаками на території Османської імперії в гирлі Дунаю після ліквідації Нової Січі (1775–1828).",
+      "<b>Опришок</b> — учасник селянського повстанського руху в Галичині, на Закарпатті, Буковині проти польської шляхти, молдовських бояр, угорських феодалів, згодом проти австрійської адміністрації.",
+      "<b>Гайдамака</b> — польська назва учасників українського національно-визвольного руху XVIII ст. на Правобережній Україні, що об'єднав селян, козаків, міщан і збіднілих шляхтичів.",
+      "<b>Коліївщина</b> — гайдамацьке повстання на Правобережній Україні (1768).",
+      "<b>Паланка</b> — адміністративно-територіальна одиниця Нової Січі.",
+      "<b>Зимівник</b> — хутірське козацьке господарство.",
+      "<b>Секуляризація</b> — вилучення державою церковних і монастирських земель."
+    ]
+  },
+  {
+    "h": "Гетьманування Кирила Розумовського (1750–1764)",
+    "list": [
+      "1741 р. до влади прийшла імператриця Єлизавета, яка дала дозвіл на вибори нового гетьмана, адже Росія потребувала козацької підтримки у протистоянні з Османською імперією. 1750 р. гетьманом став Кирило Розумовський (1728–1803), брат чоловіка імператриці; освіта в університетах Європи, граф, у 18 років — президент Академії наук. Узяв участь у палацовому перевороті, що привів до влади Катерину II.",
+      "Політика: переніс резиденцію з Глухова до Батурина і розбудував його (палац — архітектор Ч. Камерон); справи України спрямовувалися через Колегію закордонних справ; підпорядкував своїй адміністрації Запорозьку Січ і Київ; скликав старшинські з'їзди — Генеральні зібрання (за польським взірцем сейму); виступив із проєктом спадкового гетьманства; домігся заборони закріпачення українців; розмежував виконавчу і судову гілки влади, запровадив земські, підкоморські, гродські суди; створив регулярні козацькі полки, уніфікував озброєння, удосконалив артилерію; з Гетьманщини вивели російські війська; запроваджено обов'язкове навчання козацьких дітей; планував заснувати університет у Батурині.",
+      "10 листопада 1764 р. указ Катерини II про ліквідацію гетьманської влади: Розумовський змушений піти у відставку. Його правління називають «золотою осінню Гетьманщини».",
+      "Історичне значення Гетьманщини: проіснувала 115 років; захистила український народ від асиміляції, соціальної експлуатації, національно-релігійних утисків з боку польської влади; забезпечила умови для остаточного становлення українського народу, розвитку мови і культури; управління здійснювали самі українці; створення Гетьманщини було складовою загальноєвропейських процесів формування національних держав."
+    ]
+  },
+  {
+    "h": "Друга Малоросійська колегія (1764–1786)",
+    "list": [
+      "Для управління Гетьманщиною створено другу Малоросійську колегію з чотирьох представників генеральної старшини та чотирьох російських чиновників; очолив генерал-губернатор Петро Рум'янцев. Мета: ліквідувати залишки автономії, закріпачити селян, збільшити збір податків. Проведено Генеральний опис Малоросії: перепис населення, повинностей і податків, опис земель (майже тисяча томів). Генеральна військова канцелярія, Генеральний військовий суд та інші установи перетворені на департаменти колегії.",
+      "Результат: полково-сотенний устрій скасовано (1781–1782); створено Малоросійське генерал-губернаторство, яке ділилося на намісництва (Київське, Чернігівське, Новгород-Сіверське); козаки перейменовані на регулярні (карабінерські) полки; старшина прирівнювалася до російського дворянства; секуляризація монастирських земель; указ 1783 р. закріпачив селян Лівобережжя і Слобожанщини («прикріплення до місця за останньою ревізією»).",
+      "Ліквідація автономії Слобожанщини: 1765 р. на території слобідських полків створено Слобідсько-Українську губернію; козаки отримали статус «військових обивателів»; старшина отримала дворянство."
+    ]
+  },
+  {
+    "h": "Запорозька Січ у XVIII ст. і її ліквідація",
+    "list": [
+      "Після зруйнування Січі 1709 р. запорожці оселилися на території Кримського ханства (Олешківська Січ, 1711). 1734 р. за гетьманування Данила Апостола Росія дозволила їм повернутися — Нова (Підпільненська) Січ (1734–1775). Підпорядковувалася російському командуванню; запорозькі землі — Вольності Війська Запорозького; поділ на паланки (8), курені; зимівники; кошовий отаман, військова старшина, Січова рада; торгівля, промисли, землеробство; форпост проти кримських набігів; осередок козацьких традицій.",
+      "Причини ліквідації: Січ як вільна республіканська козацька організація не вписувалася в імперський устрій; прихисток для втікачів; політика колонізації Півдня (Нова Сербія, Слов'яно-Сербія, Новоросійська губернія); після Кючук-Кайнарджійського миру (1774) Січ стала непотрібною в обороні від Османської імперії і Криму.",
+      "Червень 1775 р.: війська генерала Петра Текелі за наказом Катерини II оточили й зруйнували Січ без бою; маніфест Катерини II (3 серпня 1775 р.) оголосив Січ остаточно зруйнованою «з викоріненням на майбутнє й самої назви запорозьких козаків». Останнього кошового отамана Петра Калнишевського заслали на Соловки (де він пробув до смерті в 1803 р.); землі увійшли до Новоросійської губернії. Частина козаків пішла за Дунай — Задунайська Січ (1775–1828), інші — створили Чорноморське козацьке військо (на Кубані)."
+    ]
+  },
+  {
+    "h": "Гайдамаччина. Коліївщина (1768)",
+    "list": [
+      "Причини: соціально-економічний і національно-релігійний гніт на Правобережжі (панщина, утиски православних — православне духівництво і шляхта як керівники); діяльність Барської конфедерації (1768) — об'єднання польських шляхтичів, спрямоване проти короля і за захист католицизму; чутки про «золоту грамоту» імператриці; гайдамацькі рухи (опришківство і гайдамацтво).",
+      "Перебіг: навесні 1768 р. запорожець Максим Залізняк зі своїм загоном вийшов з Мотронинського монастиря (Холодний Яр); захоплення Жаботина, Лисянки, Умані; до повстання приєднався сотник Іван Гонта (наймит графа Потоцького) разом із козацькою міліцією. Погром Умані (червень 1768 р.). Російські війська і польські відділи придушили повстання; Залізняка заслано до Сибіру, Гонту стратили жорстоко. Значення: найбільше українське повстання XVIII ст."
+    ]
+  },
+  {
+    "h": "Опришківський рух",
+    "list": [
+      "Опришки діяли в Карпатах (Галичина, Закарпаття, Буковина) проти польських панів, молдовських бояр, угорських феодалів. Найвідоміший ватажок — Олекса Довбуш (1700–1745) з Печеніжина; діяв з 1738 р.; загинув 1745 р. у Космачі від руки Степана Дзвінки; про нього збереглося багато легенд, пісень. Опришківство продовжувалось у XIX ст. (Устим Кармелюк на Поділлі)."
+    ]
+  },
+  {
+    "h": "Поділи Речі Посполитої. Приєднання до Російської імперії та Австрії",
+    "list": [
+      "Перший поділ (1772): Галичина, Західне Поділля (Руське воєводство, Белзьке, частина Холмщини й Волині) відійшли до Австрії (Королівство Галичини і Лодомерії). Другий поділ (1793): Російська імперія отримала Київщину, Брацлавщину, Поділля, частину Волині — Київська, Подільська, Волинська губернії (з 1796). Третій поділ (1795): решта Волині і Холмщина до Росії.",
+      "Південь: Російсько-турецькі війни (1768–1774, 1787–1791). Кючук-Кайнарджійський мир (1774): Кримське ханство визнано незалежним від Османської імперії; Росія отримала Керч, Єнікале, Кінбурн, Азов; 1783 р. Катерина II анексувала Кримський півострів (маніфест). Ясський мир (1791–1792): Османська імперія визнала приєднання Криму і Кубані; кордон по Дністру; землі між Південним Бугом і Дністром — до Росії. Заснування Херсона (1778), Севастополя (1783), Катеринослава (1784), Одеси (1794), Миколаєва (1789).",
+      "Колонізація Півдня: Нова Сербія, Слов'яно-Сербія; запрошення поселенців; Новоросійська губернія.",
+      "Результат: об'єднання більшості українських земель у складі Російської імперії; західноукраїнські землі — під владою Австрії (Галичина, Закарпаття, Буковина — від 1774/75 р.)."
+    ]
+  },
+  {
+    "h": "Реформи Марії Терезії та Йосифа II",
+    "list": [
+      "«Освічений абсолютизм» в Австрійській монархії: Марія Терезія (1740–1780) та її син Йосиф II (1780–1790).",
+      "<b>Заходи: аграрна реформа</b> — обмеження панщини (з 1778 р. не більше 3 днів на тиждень, а 1780–1782 р. Йосиф II скасував особисту залежність селян: селяни звільнені від особистої залежності й отримали певні громадянські права); патент про віротерпимість (1781); греко-католицьку церкву урівняли в правах з католицькою; створення Генеральної семінарії у Відні (Барбареум) для греко-католицького духівництва; Львівський університет (1784); початкова освіта рідною мовою (нормальні школи); адміністративна реформа — Галичина поділена на кола (повіти); німецька мова — урядова; поширення німецької колонізації. Реформи сприяли модернізації й піднесенню національної свідомості на західноукраїнських землях."
+    ]
+  },
+  {
+    "h": "Культура",
+    "list": [
+      "Умови: поступова утрата автономії; «втеча мізків» до імперських центрів (Санкт-Петербург, Москва); поширення Просвітництва, класицизму, рококо; бароко поступається класицизму.",
+      "Освіта: Києво-Могилянська академія; колегіуми (Харківський, Чернігівський, Переяславський); у Чернігівському колегіумі відкриті класи інженерно-природничого профілю; народні школи; університет у Львові.",
+      "<b>Григорій Сковорода (1722–1794)</b> — філософ, поет, педагог, «мандрівний філософ»; навчався в Києво-Могилянській академії; з 47 років мандрував; ідея «сродної праці», самопізнання, щастя, «пізнай самого себе»; твори: «Сад божественних пісень», «Байки харківські», діалоги; «Всякому місту — звичай і права, всяка голова має свій розум». Відомі рядки: «Що є свобода? Добро в ній якеє? Кажуть, неначе воно золотеє...»",
+      "<b>Музика: Артем Ведель (1767–1808)</b> — композитор, хорові концерти; диригент; Максим Березовський (1745–1777) — композитор; Дмитро Бортнянський (1751–1825) — композитор, капельмейстер.",
+      "Архітектура: бароко пізньої доби; Андріївська церква в Києві (1744–1767, архітектор Б. Растреллі, рококо); собор Св. Юра у Львові (архітектор Б. Меретин, скульптор Й. Пінзель, рококо); Успенський собор Почаївської лаври (Г. Гофман); Покровська церква на Подолі та Набережно-Микільська церква в Києві — архітектор Іван Григорович-Барський (1713–1791); Троїцька соборна церква у Самарі (Новомосковськ) — дерев'яна, без жодного цвяха (1773–1779); Батуринський палац Розумовського (Ч. Камерон) — класицизм.",
+      "Образотворче мистецтво: портрети, іконопис, гравюра; Іван Мигура, Григорій Левицький, Дмитро Левицький — портретисти; козацькі літописи; Історія русів (кінець XVIII ст.)."
+    ]
+  }
+];
+
+const LETTERS=['А','Б','В','Г'],TOTAL=tasks.length,TOPIC_ID=11,LS_KEY='hist'+TOPIC_ID+'-progress',INSTANT_FEEDBACK=true;
+const $=id=>document.getElementById(id),labelsOf=t=>t.labels||LETTERS,correctSet=t=>Array.isArray(t.correct)?t.correct:[t.correct];
+let current=0,inTheory=false;const state=tasks.map(()=>({picked:[]}));
+function isDone(i){const t=tasks[i],p=state[i].picked;return t.matrix?p.length===4&&p.every(x=>Number.isInteger(x)):p.length===(t.multi||1);}
+function isRight(i){const t=tasks[i],p=state[i].picked,c=correctSet(t);return p.length===c.length&&(t.matrix||t.ordered?c.every((x,k)=>p[k]===x):c.every(x=>p.includes(x)));}
+try{const s=JSON.parse(localStorage.getItem(LS_KEY)||'null');if(s&&Array.isArray(s.state)&&s.state.length===TOTAL){s.state.forEach((v,i)=>{if(!v||!Array.isArray(v.picked))return;const t=tasks[i],p=v.picked;if(p.length<=(t.multi||1)&&p.every(x=>(t.matrix&&x===null)||(Number.isInteger(x)&&x>=0&&x<t.options.length))&&(t.matrix||new Set(p).size===p.length))state[i].picked=p;});if(Number.isInteger(s.current))current=Math.max(0,Math.min(TOTAL-1,s.current));}}catch(e){}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify({state,current}));localStorage.setItem('progress-topic-'+TOPIC_ID,JSON.stringify({answered:state.filter((_,i)=>isDone(i)).length,total:TOTAL}));}catch(e){}}
+function buildNums(){const box=$('nums');box.innerHTML='';const b=document.createElement('button');b.id='tBtn';b.className='num theory-btn';b.textContent='Т';b.setAttribute('aria-label','Теорія');b.onclick=showTheory;box.appendChild(b);tasks.forEach((_,i)=>{const b=document.createElement('button');b.className='num';b.dataset.i=i;b.textContent=i+1;b.setAttribute('aria-label','Завдання '+(i+1));b.onclick=()=>go(i);box.appendChild(b);});}
+function paintNums(){[...$('nums').children].forEach(b=>{if(b.id==='tBtn'){b.className='num theory-btn'+(inTheory?' current':'');return;}const i=+b.dataset.i;b.className='num';if(state[i].picked.length)b.classList.add(isDone(i)?isRight(i)?'correct':'wrong':'answered');if(!inTheory&&current===i)b.classList.add('current');});}
+function buildTheory(){const v=$('theoryView');v.innerHTML='<h2 class="theory-title">Теорія</h2>';theory.forEach((item,i)=>{const d=document.createElement('div');d.className='theory-block';d.id='theory-'+i;const h=document.createElement('h3');h.textContent=item.h;d.appendChild(h);const ul=document.createElement('ul');item.list.forEach(x=>{const li=document.createElement('li');li.innerHTML=x;ul.appendChild(li);});d.appendChild(ul);v.appendChild(d);});const end=document.createElement('div');end.className='theory-end';v.appendChild(end);}
+function updateToTop(){$('toTop').classList.toggle('show',inTheory&&window.scrollY>200);}
+function showTheory(){inTheory=true;$('testView').classList.add('hidden');$('theoryView').classList.remove('hidden');$('counter').textContent='Теорія';paintNums();window.scrollTo({top:0});updateToTop();}
+function showTheoryAt(i){showTheory();$('theory-'+i).scrollIntoView({behavior:'smooth',block:'start'});}
+function renderExplain(t){const box=$('explain');if(!isDone(current)){box.className='explain hidden';box.innerHTML='';return;}const right=isRight(current),labels=labelsOf(t),c=correctSet(t);const ans=t.matrix?c.map((x,k)=>(k+1)+'–'+labels[x]).join(', '):c.map(x=>labels[x]).join(t.ordered?' → ':', ');box.className='explain '+(right?'good':'bad');box.innerHTML='<div class="score">Правильна відповідь: <b>'+ans+'</b>. Бали: '+(right?1:0)+' з 1. Після показу відповіді змінити її вже не можна.</div><h4>Чому так</h4><p class="why"></p><p class="repeat">Повторити: <a href="#" id="repeatLink"></a></p>';let text;if(t.matrix)text=c.map((x,k)=>(k+1)+' — '+t.options[x]).join('; ')+'.';else if(t.ordered)text='Правильна послідовність за наданим ключем: '+c.map(x=>t.options[x]).join(' → ')+'.';else text='За наданим ключем правильні '+(c.length>1?'твердження: ':'відповідь: ')+c.map(x=>t.options[x]).join('; ')+'.';box.querySelector('.why').textContent=text;const a=$('repeatLink');a.textContent=theory[t.repeat].h;a.onclick=e=>{e.preventDefault();showTheoryAt(t.repeat);};}
+function render(){inTheory=false;updateToTop();$('theoryView').classList.add('hidden');$('testView').classList.remove('hidden');const t=tasks[current],p=state[current].picked,labels=labelsOf(t),done=isDone(current),c=correctSet(t);$('counter').textContent='Завдання '+(current+1)+' з '+TOTAL;const q=$('question');q.textContent='';const b=document.createElement('b');b.textContent=t.id+' ';q.append(b,document.createTextNode(t.q));$('answersLabel').textContent=t.matrix?'Установіть відповідності для кожного стовпця:':t.ordered?'Позначте події у правильній послідовності (потрібно обрати 4):':t.multi?'Позначте відповіді (потрібно обрати '+t.multi+'):':'Позначте відповіді:';
+const ul=$('options');ul.innerHTML='';t.options.forEach((text,i)=>{const li=document.createElement('li'),pos=t.ordered?p.indexOf(i):-1;let cls=t.matrix?'option locked':'option'+(p.includes(i)?' selected':'');if(done&&!t.matrix){if(t.ordered){if(pos>=0)cls+=c[pos]===i?' right':' wrong';}else if(c.includes(i))cls+=' right';else if(p.includes(i))cls+=' wrong';cls+=' locked';}li.className=cls;li.tabIndex=t.matrix?-1:0;li.innerHTML='<span class="letter"></span><span class="txt"></span>';li.querySelector('.letter').textContent=/\bright\b/.test(cls)?'✓':/\bwrong\b/.test(cls)?'✕':labels[i];li.querySelector('.txt').textContent=(pos>=0?'['+(pos+1)+'] ':'')+text;if(!t.matrix){li.setAttribute('role','button');li.setAttribute('aria-disabled',String(done));li.onclick=()=>pick(i);li.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(i);}};}ul.appendChild(li);});
+const grid=$('answerGrid');grid.innerHTML='';grid.className='answer-grid'+(t.matrix?' matrix':'');function cell(col,label,on,ok,bad,mark,action){const bx=document.createElement('button');bx.className='box'+(done?(ok?' right':bad?' wrong':'')+' locked':on?' on':'');bx.textContent=done?(ok?'✓':bad?'✕':mark):mark;bx.setAttribute('aria-label',label);bx.setAttribute('aria-pressed',String(on));bx.setAttribute('aria-disabled',String(done));bx.onclick=action;col.appendChild(bx);}if(t.matrix){t.cols.forEach((cl,ci)=>{const col=document.createElement('div');col.className='answer-col';const b=document.createElement('b');b.textContent=cl;col.appendChild(b);labels.forEach((L,ri)=>{const on=p[ci]===ri;cell(col,'Для '+cl+' — '+L,on,c[ci]===ri,on&&c[ci]!==ri,L,()=>pickCell(ci,ri));});grid.appendChild(col);});}else{labels.forEach((L,i)=>{const col=document.createElement('div');col.className='answer-col';const b=document.createElement('b');b.textContent=L;col.appendChild(b);const on=p.includes(i),pos=p.indexOf(i),ok=t.ordered?on&&c[pos]===i:c.includes(i);cell(col,'Відповідь '+L,on,ok,on&&!ok,on?(t.ordered?String(pos+1):'✓'):'',()=>pick(i));grid.appendChild(col);});}renderExplain(t);paintNums();save();}
+function pick(i){if(isDone(current))return;const t=tasks[current],s=state[current],k=s.picked.indexOf(i);if(k>=0)s.picked.splice(k,1);else if(t.multi){if(s.picked.length<t.multi)s.picked.push(i);}else s.picked=[i];render();}
+function pickCell(ci,ri){if(isDone(current))return;const p=state[current].picked;if(p[ci]===ri)p[ci]=null;else{while(p.length<=ci)p.push(null);p[ci]=ri;}while(p.length&&p[p.length-1]==null)p.pop();render();}
+function go(i){current=Math.max(0,Math.min(TOTAL-1,i));render();window.scrollTo({top:0});}
+$('skip').onclick=()=>go(current+1>=TOTAL?0:current+1);$('toTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});window.addEventListener('scroll',updateToTop,{passive:true});document.addEventListener('keydown',e=>{if(inTheory||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;if(e.key==='ArrowRight'){e.preventDefault();go(current+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(current-1);}});$('total').textContent=TOTAL;buildNums();buildTheory();render();showTheory();
+</script></body></html>
