@@ -5,12 +5,6 @@
 //   #results  – екран результатів (лише для вхідного тесту)
 (function () {
   const L = ["А", "Б", "В", "Г", "Д"];
-  const KIND = {
-    single: "Завдання з вибором однієї правильної відповіді",
-    match: "Завдання на встановлення відповідності (логічні пари)",
-    order: "Завдання на встановлення послідовності",
-    three: "Завдання з вибором трьох правильних відповідей із семи"
-  };
   const TYPE_NAME = { single: "Одна відповідь", match: "Логічні пари", order: "Послідовність", three: "Три з семи" };
 
   const tasks = TEST.tasks;
@@ -45,6 +39,13 @@
     return [null, null, null, null];
   }
   function isShown(i) { return exam ? (state.review || !!state.revealed[i]) : !!state.revealed[i]; }
+  // відповідь повна: усі потрібні позначки зроблено
+  function isComplete(i) {
+    const t = tasks[i], a = state.answers[i];
+    if (t.type === "single") return a !== null;
+    if (t.type === "three") return a.length === 3;
+    return a.every(v => v !== null);
+  }
   function isAnswered(i) {
     const a = state.answers[i];
     if (a === null) return false;
@@ -93,7 +94,12 @@
       const a = state.answers[i];
       if (a.includes(c)) a.splice(a.indexOf(c), 1);
       else if (a.length < 3) a.push(c);
-      else notice = "Можна позначити лише три варіанти. Зніміть позначку з одного, щоб обрати інший.";
+    } else if (t.type === "order") {
+      // події позначаються по черзі: перший клік – перша подія, другий – друга…
+      const list = state.answers[i].filter(v => v !== null);
+      const k = list.indexOf(c);
+      if (k >= 0) list.splice(k, 1); else list.push(c);
+      state.answers[i] = [0, 1, 2, 3].map(n => list[n] === undefined ? null : list[n]);
     } else {
       const a = state.answers[i];
       if (a[r] === c) a[r] = null;
@@ -103,6 +109,7 @@
         a[r] = c;
       }
     }
+    if (isComplete(i)) state.revealed[i] = true;
     save();
     render({ keepFocus: [r, c] });
   }
@@ -114,7 +121,6 @@
   function metaHtml() {
     const rows = TEST.meta.map(([k, v]) => "<li>" + esc(k) + ": <b>" + esc(v) + "</b></li>");
     rows.push("<li>Кількість завдань: <b>" + tasks.length + "</b></li>");
-    if (exam && !state.finished) rows.push('<li class="timer">Час: <b id="timer">' + clock(state.elapsed) + "</b> з орієнтовних 60 хв</li>");
     return '<ul class="meta">' + rows.join("") + "</ul>";
   }
   function clock(sec) {
@@ -145,56 +151,79 @@
     return h + "</nav>";
   }
   // state(k): "key" – правильний варіант, "wrong" – позначений помилково
-  function optsHtml(items, keys, state) {
+  function optsHtml(items, keys, state, sel, prefix) {
     return '<ul class="opts">' + items.map((txt, k) => {
       const st = state ? state(k) : "";
+      const pre = prefix ? prefix(k) : "";
       const mark = st === "key" ? "✓" : st === "wrong" ? "✕" : keys[k];
       const sr = st === "key" ? '<span class="visually-hidden">правильна відповідь: </span>' :
         st === "wrong" ? '<span class="visually-hidden">помилкова відповідь: </span>' : "";
-      return '<li><span class="key' + (st ? " is-" + st : "") + '" aria-hidden="' + (st ? "true" : "false") + '">' + mark +
-        "</span><span>" + sr + esc(txt) + "</span></li>";
+      const cls = st ? " is-" + st : (sel && sel(k) ? " is-sel" : "");
+      return '<li><span class="key' + cls + '" aria-hidden="' + (st ? "true" : "false") + '">' + mark +
+        "</span><span>" + sr + pre + esc(txt) + "</span></li>";
     }).join("") + "</ul>";
   }
   function bodyHtml(t, i) {
     const st = isShown(i) ? (k => isKey(t, 0, k) ? "key" : isChecked(i, 0, k) ? "wrong" : "") : null;
-    if (t.type === "single") return optsHtml(t.options, L, st);
-    if (t.type === "order") return optsHtml(t.items, L);
-    if (t.type === "three") return optsHtml(t.options, t.options.map((_, k) => k + 1), st);
+    const a = state.answers[i];
+    if (t.type === "single") return optsHtml(t.options, L, st, k => a === k);
+    if (t.type === "three") return optsHtml(t.options, t.options.map((_, k) => k + 1), st, k => a.includes(k));
+    if (t.type === "order") {
+      const ost = isShown(i) ? (k => { const p = a.indexOf(k); return p < 0 ? "" : t.answer[p] === k ? "key" : "wrong"; }) : null;
+      return optsHtml(t.items, L, ost, k => a.includes(k), k => a.indexOf(k) >= 0 ? "[" + (a.indexOf(k) + 1) + "] " : "");
+    }
     return '<div class="pairs">' + optsHtml(t.left, [1, 2, 3, 4]) + optsHtml(t.right, L) + "</div>";
   }
+  function cellHtml(cls, on, label, r, c, text, locked) {
+    return '<button type="button" role="checkbox" class="' + cls + '" aria-checked="' + on + '" aria-label="' + label +
+      '" data-r="' + r + '" data-c="' + c + '"' + (locked ? ' aria-disabled="true"' : "") + ">" + text + "</button>";
+  }
   function sheetHtml(i, locked, showKey) {
-    const t = tasks[i];
-    let cols, rows;
-    if (t.type === "single") { cols = L.slice(0, 4); rows = [null]; }
-    else if (t.type === "three") { cols = [1, 2, 3, 4, 5, 6, 7]; rows = [null]; }
-    else if (t.type === "match") { cols = L.slice(0, 5); rows = [1, 2, 3, 4]; }
-    else { cols = L.slice(0, 4); rows = [1, 2, 3, 4]; }
-    const hasRows = rows[0] !== null;
-
-    let h = '<table class="sheet' + (locked ? " locked" : "") + '" role="presentation"><tr>' + (hasRows ? "<th></th>" : "");
-    cols.forEach(c => { h += "<th>" + c + "</th>"; });
-    h += "</tr>";
-    rows.forEach((rowName, r) => {
-      h += "<tr>" + (hasRows ? '<th class="row-h">' + rowName + "</th>" : "");
-      cols.forEach((colName, c) => {
-        const on = isChecked(i, r, c);
-        let cls = "cell";
-        if (showKey && isKey(t, r, c)) cls += " is-key";
-        else if (showKey && on) cls += " is-wrong";
-        const label = (hasRows ? "Рядок " + rowName + ", " : "") + "варіант " + colName;
-        h += '<td><button type="button" role="checkbox" class="' + cls + '" aria-checked="' + on + '" aria-label="' + label +
-          '" data-r="' + r + '" data-c="' + c + '"' + (locked ? ' aria-disabled="true"' : "") + "></button></td>";
+    const t = tasks[i], a = state.answers[i];
+    let h = '<div class="sheet' + (t.type === "match" ? " matrix" : "") + (locked ? " locked" : "") + '">';
+    if (t.type === "match") {
+      // стовпець – номер 1–4, у ньому літери А–Д
+      [0, 1, 2, 3].forEach(r => {
+        h += '<div class="sheet-col"><b>' + (r + 1) + "</b>";
+        L.forEach((letter, c) => {
+          const on = a[r] === c;
+          let cls = "cell" + (on ? " on" : ""), text = letter;
+          if (showKey && t.answer[r] === c) { cls = "cell is-key"; text = "✓"; }
+          else if (showKey && on) { cls = "cell is-wrong"; text = "✕"; }
+          h += cellHtml(cls, on, "Для " + (r + 1) + " – " + letter, r, c, text, locked);
+        });
+        h += "</div>";
       });
-      h += "</tr>";
+      return h + "</div>";
+    }
+    const cols = t.type === "three" ? [1, 2, 3, 4, 5, 6, 7] : L.slice(0, 4);
+    cols.forEach((colName, c) => {
+      let on, text, ok;
+      if (t.type === "order") {
+        const p = a.indexOf(c);
+        on = p >= 0; text = on ? String(p + 1) : ""; ok = on && t.answer[p] === c;
+      } else {
+        on = isChecked(i, 0, c); text = on ? "✓" : ""; ok = isKey(t, 0, c);
+      }
+      let cls = "cell" + (on ? " on" : "");
+      if (showKey && ok) { cls = "cell is-key"; text = "✓"; }
+      else if (showKey && on) { cls = "cell is-wrong"; text = "✕"; }
+      h += '<div class="sheet-col"><b>' + colName + "</b>" + cellHtml(cls, on, "Відповідь " + colName, 0, c, text, locked) + "</div>";
     });
-    return h + "</table>";
+    return h + "</div>";
+  }
+  function sheetHint(t) {
+    if (t.type === "single") return "Позначте відповідь:";
+    if (t.type === "three") return "Позначте відповіді (потрібно обрати 3):";
+    if (t.type === "order") return "Позначте події у хронологічному порядку (потрібно обрати 4):";
+    return "Позначте відповідність: для кожного номера оберіть одну літеру.";
   }
   function feedbackHtml(i) {
     const t = tasks[i], got = score(i), max = maxPoints(t);
     const cls = got === max ? "" : got > 0 ? " partial" : " wrong";
     let h = '<div class="feedback' + cls + '" role="status"><p class="verdict">Правильна відповідь: <b>' + keyText(t) + "</b>. " +
       "Бали: " + got + " з " + max + "." +
-      (exam && !state.review ? " Після показу відповіді змінити її вже не можна." : "") + "</p>";
+      (!state.review ? " Після показу відповіді змінити її вже не можна." : "") + "</p>";
     if (t.explain) h += '<h3 class="why">Чому так</h3><p class="why-text">' + t.explain + "</p>";
     // посилання на теми, до яких стосується завдання (крім теми поточної сторінки)
     const here = (location.pathname.match(/tema([\d-]+)\.html$/) || [])[1];
@@ -229,25 +258,17 @@
     const last = cur === tasks.length - 1;
 
     h += '<div class="rule"><span>Завдання ' + (cur + 1) + " з " + tasks.length + "</span></div>";
-    h += '<p class="task-kind">' + KIND[t.type] + "</p>";
-    h += '<p class="task-text">' + esc(t.text) + "</p>";
+    h += '<p class="task-text"><b>' + (cur + 1) + ".</b> " + esc(t.text) + "</p>";
     h += bodyHtml(t, cur);
-    h += '<p class="sheet-label">Позначте відповіді:</p>' + sheetHtml(cur, locked, shown);
-    if (notice) h += '<div class="feedback partial" role="alert">' + notice + "</div>";
-    if (shown) h += feedbackHtml(cur);
+    h += '<p class="sheet-label">' + sheetHint(t) + "</p>" + sheetHtml(cur, locked, shown);
 
-    const nextLabel = isAnswered(cur) || shown ? "Наступне завдання" : "Пропустити";
-    h += '<div class="actions"><div class="stack">';
+    h += '<div class="actions">';
     if (!(exam && state.review && last)) {
-      h += '<button type="button" class="btn btn-act btn-green" data-act="next">' + (exam && last && !state.review ? "Завершити тест" : nextLabel) + "</button>";
+      h += '<button type="button" class="btn btn-act btn-green" data-act="next">' + (exam && last && !state.review ? "Завершити тест" : "Пропустити") + "</button>";
     }
-    if (!shown) h += '<button type="button" class="btn btn-act btn-green" data-act="reveal">Показати відповідь</button>';
     if (exam && state.review) h += '<button type="button" class="btn btn-act btn-ghost" data-act="results">До результатів</button>';
-    else if (exam) { if (!last) h += '<button type="button" class="btn btn-act btn-ghost" data-act="finish">Завершити тест</button>'; }
-    else if (shown) h += '<button type="button" class="btn btn-act btn-ghost" data-act="retry">Спробувати ще раз</button>';
     h += "</div>";
-    if (!(exam && state.review)) h += '<div><button type="button" class="btn btn-act btn-red" data-act="later">Продовжити пізніше</button></div>';
-    h += "</div>";
+    if (shown) h += feedbackHtml(cur);
 
     if (confirmOpen) {
       const empty = tasks.filter((_, i) => !isAnswered(i)).length;
